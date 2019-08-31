@@ -21,20 +21,15 @@ const defaultStyles = {
   }
 };
 
-export default class RevOps extends Component {
+export default class SignupForm extends Component {
   static propTypes = {
     text: PropTypes.string
-  }
-
-  constructor(props) {
-    super(props)
-
   }
 
   componentDidMount () {
     const script = document.createElement("script")
 
-    script.src = "https://js.verygoodvault.com/vgs-collect/1/vgs-collect-examples.js"
+    script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -46,7 +41,7 @@ export default class RevOps extends Component {
   initialize() {
     const styles = this.props.styles === undefined? defaultStyles : this.props.styles
 
-    var f = VGSCollect.create("tntq4dwvhri", function(state) {});
+    var f = VGSCollect.create("tnt6ryfiprp", function(state) {});
 
     f.field("#cc-holder .field-space", {
       type: "text",
@@ -82,7 +77,7 @@ export default class RevOps extends Component {
   }
 
   onSubmit() {
-    
+
   }
 
 

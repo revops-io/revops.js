@@ -28,20 +28,16 @@ export default class CreditCardForm extends Component {
   state = {
     errors: false,
   }
+
   static propTypes = {
     styles: PropTypes.object,
     onComplete: PropTypes.func,
   }
 
-  constructor(props) {
-    super(props)
-  }
-
-
   componentDidMount () {
     const script = document.createElement("script")
 
-    script.src = "https://js.verygoodvault.com/vgs-collect/1/vgs-collect-examples.js"
+    script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -52,7 +48,7 @@ export default class CreditCardForm extends Component {
   initialize = () => {
     const styles = this.props.styles === undefined? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create("tntq4dwvhri", function(state) {});
+    const form = VGSCollect.create("tnt6ryfiprp", function(state) {});
     form.field("#cc-holder .field-space", {
       type: "text",
       name: "card.name",
