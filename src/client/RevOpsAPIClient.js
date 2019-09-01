@@ -13,8 +13,14 @@ export class RevOpsAPIClient {
 
   createURL(path) {
     if(path && path.startsWith('/') !== true) {
-      return this.url + '/' + path
+      if(path.startsWith('http') !== true) {
+        path = '/' + path
+      } else {
+        return path
+      }
     }
+
+    return this.url + path
   }
 
   get(path, query = {}, onError = false, onSuccess = false) {

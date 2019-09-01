@@ -32,7 +32,7 @@ describe('RevOpsAPIClient', () => {
       },
       {
         param: '',
-        expected: 'https://localhost:5050/',
+        expected: 'https://localhost:5050',
       },
       {
         param: '/test',
@@ -55,9 +55,5 @@ describe('RevOpsAPIClient', () => {
 
   })
 
-  it('initiates a GET request to RevOpsAPIClient', () => {
-    let client = new RevOpsAPIClient()
-    client.get()
-    expect(superagent.called.length).to.equal(0)
-  })
+
 })
