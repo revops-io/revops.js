@@ -1,8 +1,14 @@
+import axios from 'axios'
+import MockAdapter from 'axios-mock-adapter'
 import RevOpsAPIClient from './RevOpsAPIClient'
 
-const superagent = jest.mock('superagent')
+var mockAxios = new MockAdapter(axios)
 
 describe('RevOpsAPIClient', () => {
+  afterEach(() => {
+    mockAxios.reset()
+  })
+
   it('initializes a RevOpsAPIClient with sandbox url', () => {
     const urls_to_test = [
       {
@@ -55,5 +61,47 @@ describe('RevOpsAPIClient', () => {
 
   })
 
+  it('initiates a GET request and cancels it', async () => {
+    mockAxios.onAny('/').reply(200, {})
 
+    let client = new RevOpsAPIClient()
+    let configuration = {
+      onCancel: sinon.spy(),
+      onSuccess: sinon.spy(),
+      onError: sinon.spy(),
+    }
+    const { request, source } = client.get('/', configuration)
+
+    // Send Cancelation Request
+    await source.cancel('cancel get request')
+
+    // Assert cancelation was called
+    await request.then(() => {
+      expect(configuration.onCancel.called).to.equal(true)
+      expect(configuration.onSuccess.called).to.equal(false)
+      expect(configuration.onError.called).to.equal(false)
+    })
+
+  })
+
+  it('initiates a GET request and error occurs', async () => {
+    mockAxios.onAny('/').networkError()
+
+    let client = new RevOpsAPIClient()
+    let configuration = {
+      onCancel: sinon.spy(),
+      onSuccess: sinon.spy(),
+      onError: sinon.spy(),
+    }
+    const { request, source } = await client.get('/', configuration)
+
+    // Assert error was called
+    request.then(() => {
+      expect(configuration.onCancel.called).to.equal(false)
+      expect(configuration.onSuccess.called).to.equal(false)
+      expect(configuration.onError.called).to.equal(true)
+    })
+    // Assert onError was called
+
+  })
 })
