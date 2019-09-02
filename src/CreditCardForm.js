@@ -88,14 +88,30 @@ export default class CreditCardForm extends Component {
 
   }
 
+  buttonGrp = () => {
+    const { onLast, onCancel, finalStep = false } = this.props
+    return (
+      <div>
+        <button
+          className="ui left floated button"
+          onClick={() => onCancel()}>Cancel</button>
+        <button
+          className="ui right floated button"
+          onClick={this.onSubmit}>{finalStep ? 'Submit' : 'Next'}</button>
+        <button
+          className="ui right floated button"
+          onClick={() => onLast()}>Previous</button>
+      </div>
+    )
+  }
+
   handleError = (errors) => this.setState({
     errors
   })
 
-  onSubmit() {
-    this.props.onComplete()
+  onSubmit = () => {
+    this.props.onNext()
 
-    const handleError = this.handleError.bind(this)
     this.form.submit(
       "/post",
       {
@@ -104,14 +120,12 @@ export default class CreditCardForm extends Component {
         }
       },
       function(status, data) {
-        let elem = document.getElementsByClassName("card-success")[0];
-        elem.classList.remove("hidden");
         if(this.props.onSubmit !== false) {
           this.props.onComplete()
         }
       },
       function(errors) {
-        handleError(errors)
+        () => this.handleError(errors)
       }
     )
   }
@@ -126,11 +140,6 @@ export default class CreditCardForm extends Component {
         id="credit-card-example"
         className="container py-lg-5 example-container"
         >
-
-          <div className="card-success hidden">
-            <i className="fa fa-check"></i>
-            <p>Payment Successful!</p>
-          </div>
           <div className="form-container">
             <div className="card-front">
               <div className="shadow"></div>
@@ -163,9 +172,7 @@ export default class CreditCardForm extends Component {
             </div>
             <div className="card-back"><div className="card-stripe"></div></div>
           </div>
-          <button onClick={() => this.onSubmit()} type="submit" className="fluid ui button">
-            Connect Card <i className="fas fa-arrow-circle-right"></i>
-          </button>
+          {this.buttonGrp()}
         </section>
     )
   }

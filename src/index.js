@@ -1,3 +1,5 @@
+import "./styles.css"
+
 const styleDependencies = [
   "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css",
   "https://use.fontawesome.com/releases/v5.7.2/css/all.css",
@@ -27,11 +29,17 @@ const addJS = (url, onload = () => {}) => {
   document.body.appendChild(script);
 }
 
+
+
 export { default as StandardTerms } from './StandardTerms'
 export { default as CreditCardForm } from './CreditCardForm'
 export { default as SignupForm } from './SignupForm'
 export { default as StepNavigation } from './StepNavigation'
 export { default as PayAsYouGoForm } from './PayAsYouGoForm'
+export { default as ContactInformation } from './ContactInformation'
+export { default as FormProgress } from './FormProgress'
+export { default as PaymentMethod } from './PaymentMethod'
+export { default as PaymentPortal } from './PaymentPortal'
 
 styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
 jsDependencies.forEach(js => addJS(js))

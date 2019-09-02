@@ -25,8 +25,9 @@ export default class SignupForm extends Component {
   static propTypes = {
     text: PropTypes.string
   }
+  form = null
 
-  componentDidMount () {
+  componentDidMount() {
     const script = document.createElement("script")
 
     script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
@@ -41,9 +42,9 @@ export default class SignupForm extends Component {
   initialize() {
     const styles = this.props.styles === undefined? defaultStyles : this.props.styles
 
-    var f = VGSCollect.create("tnt6ryfiprp", function(state) {});
+    const form = VGSCollect.create("tnt6ryfiprp", function(state) {});
 
-    f.field("#cc-holder .field-space", {
+    form.field("#cc-holder .field-space", {
       type: "text",
       name: "card.name",
       placeholder: "Joe Business",
@@ -51,7 +52,7 @@ export default class SignupForm extends Component {
       css: styles
     });
 
-    f.field("#cc-number .field-space", {
+    form.field("#cc-number .field-space", {
       type: "card-number",
       name: "card.number",
       placeholder: "Card number",
@@ -59,7 +60,7 @@ export default class SignupForm extends Component {
       css: styles
     });
 
-    f.field("#cc-cvc .field-space", {
+    form.field("#cc-cvc .field-space", {
       type: "card-security-code",
       name: "card.cvc",
       placeholder: "344",
@@ -67,34 +68,63 @@ export default class SignupForm extends Component {
       css: styles
     });
 
-    f.field("#cc-exp .field-space", {
+    form.field("#cc-exp .field-space", {
       type: "card-expiration-date",
       name: "card.expirationDate",
       placeholder: "01 / 2016",
       validations: ["required", "validCardExpirationDate"],
       css: styles
     });
+
+    this.form = form
   }
 
-  onSubmit() {
+  onSubmit = () => {
+    this.props.onNext(this.form.state)
 
+    // const handleError = this.handleError.bind(this)
+    this.form.submit(
+      "/post",
+      {
+        headers: {
+          "x-custom-header": "Oh yes. I am a custom header"
+        }
+      },
+      function (status, data) {
+        if (this.props.onSubmit !== false) {
+          this.props.onSubmit()
+        }
+      },
+      function (errors) {
+        () => this.handleError(errors)
+      }
+    )
   }
 
+  buttonGrp = () => {
+    const { onLast, onCancel } = this.props
+    return (
+      <div>
+        <button
+          className="ui left floated button"
+          onClick={() => onCancel()}>Cancel</button>
+        <button
+          className="ui right floated button"
+          onClick={this.onSubmit}>Next</button>
+        <button
+          className="ui right floated button"
+          onClick={() => onLast()}>Previous</button>
+      </div>
+    )
+  }
 
   render() {
-    const {
-      text
-    } = this.props
 
     return (
       <section
         id="credit-card-example"
         className="container py-lg-5 example-container"
         >
-          <div className="card-success hidden">
-            <i className="fa fa-check"></i>
-            <p>Payment Successful!</p>
-          </div>
           <div className="form-container">
             <div className="card-front">
               <div className="shadow"></div>
@@ -126,11 +156,8 @@ export default class SignupForm extends Component {
               </form>
             </div>
             <div className="card-back"><div className="card-stripe"></div></div>
-
-            <button onClick={this.onSubmit} type="submit" className="card-btn" id="cc-form-submit">
-              Sign up <i className="fas fa-arrow-circle-right"></i>
-            </button>
           </div>
+          {this.buttonGrp()}
         </section>
     )
   }
