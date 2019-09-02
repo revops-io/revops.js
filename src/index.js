@@ -40,6 +40,11 @@ export { default as ContactInformation } from './ContactInformation'
 export { default as FormProgress } from './FormProgress'
 export { default as PaymentMethod } from './PaymentMethod'
 export { default as PaymentPortal } from './PaymentPortal'
+export { default as AchForm } from './AchForm'
+export { default as EmailInvoice } from './EmailInvoice'
+export { default as StripeForm } from './StripeForm'
+export { default as AddressForm } from './AddressForm'
+export { default as Wrapper } from './Wrapper'
 
 styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
 jsDependencies.forEach(js => addJS(js))
