@@ -3,8 +3,6 @@ import axios from 'axios'
 const REVOPS_HTTP_URL = 'https://tnt6ryfiprp.SANDBOX.verygoodproxy.com'
 const AUTH_TOKEN = 'slujibu'
 
-
-
 export class RevOpsAPIClient {
   url = REVOPS_HTTP_URL
 
@@ -20,10 +18,6 @@ export class RevOpsAPIClient {
     this.request.defaults.headers.common['Authorization'] = AUTH_TOKEN
     this.request.defaults.headers.post['Content-Type'] = 'application/json'
     this.request.defaults.headers.get['Content-Type'] = 'application/json'
-  }
-
-  createQueryString(query) {
-    return
   }
 
   createURL(path) {
