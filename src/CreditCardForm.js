@@ -8,37 +8,42 @@ import {
 import './styles.css'
 
 const defaultStyles = {
-  border: "none",
-  background: "rgba(215, 224, 235, 0.18);",
-  height: "40px",
-  lineHeight: "normal",
-  padding: "0 10px",
-  color: "white",
-  fontSize: "12px",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  letterSpacing: ".7px",
-  transition: 'border-color .15s ease-in-out',
-  "&::placeholder": {
-    color: "white",
-    fontSize: "12px",
-    opacity: ".5"
-  }
+  border: 'none',
+  background: 'rgba(215, 224, 235, 0.18);',
+  height: '40px',
+  lineHeight: 'normal',
+  padding: '0 10px',
+  color: 'white',
+  fontSize: '12px',
+  boxSizing: 'border-box',
+  borderRadius: '4px',
+  letterSpacing: '.7px',
+  '&::placeholder': {
+    color: 'white',
+    fontSize: '12px',
+    opacity: '.5',
+  },
 };
 
-
 export default class CreditCardForm extends Component {
-  form = null
-  state = {
-    errors: false,
+  constructor(props) {
+    super(props)
+    this.state = {
+      errors: false,
+    }
+    this.form = {};
   }
 
   static propTypes = {
     styles: PropTypes.object,
     onComplete: PropTypes.func,
+    onNext: PropTypes.func,
+    onCancel: PropTypes.func,
+    onLast: PropTypes.func,
+    onError: PropTypes.func,
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const script = document.createElement("script")
 
     script.src = REVOPS_VAULT_COLLECT
@@ -50,9 +55,9 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const styles = this.props.styles === undefined? defaultStyles : this.props.styles
+    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create(REVOPS_VAULT_ID, function(state) {});
+    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     form.field("#cc-holder .field-space", {
       type: "text",
       name: "card.name",
@@ -87,97 +92,87 @@ export default class CreditCardForm extends Component {
       css: styles
     })
 
-
     this.form = form
+  }
 
+  onSubmit = () => {
+    const { form } = this
+    const { onNext, accountModel, onError } = this.props
+
+    // onNext({}, {...accountModel, 'contact-form': true })
+
+    form.submit('/post', {
+      serializer: 'deep',
+      serialization: 'formData',
+      data: accountModel,
+      mapDotToObject: 'merge',
+    },
+      (status, response) => {
+        onNext(status, response)
+      },
+      (errors) => {
+        onError(errors)
+      });
   }
 
   buttonGrp = () => {
-    const { onLast, onCancel, finalStep = false } = this.props
+    const { onLast, onCancel, finalStep } = this.props
     return (
       <div>
         <button
-          className="ui left floated button"
+          id="form-cancel-btn"
+          className="ui left floated button secondary basic"
           onClick={() => onCancel()}>Cancel</button>
         <button
-          className="ui right floated button"
+          id="form-next-btn"
+          className="ui right floated button positive"
           onClick={this.onSubmit}>{finalStep ? 'Submit' : 'Next'}</button>
         <button
-          className="ui right floated button"
+          id="form-prev-btn"
+          className="ui right floated button positive basic"
           onClick={() => onLast()}>Previous</button>
       </div>
     )
   }
 
-  handleError = (errors) => this.setState({
-    errors
-  })
-
-  onSubmit = () => {
-    this.props.onNext()
-
-    this.form.submit(
-      "/post",
-      {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
-      },
-      function(status, data) {
-        if(this.props.onSubmit !== false) {
-          this.props.onComplete()
-        }
-      },
-      function(errors) {
-        () => this.handleError(errors)
-      }
-    )
-  }
-
   render() {
-    const {
-      text
-    } = this.props
 
     return (
-      <section
-        id="credit-card-example"
-        className="container py-lg-5 example-container"
-        >
-          <div className="form-container">
-            <div className="card-front">
-              <div className="shadow"></div>
-              <div className="image-container">
-                <span className="amount">Bank of Awesome</span>
-                <span className="card-image"> <i className="far fa-credit-card"></i> </span>
+      <section>
+        <div className="form-container">
+          <div className="card-front">
+            <div className="shadow"></div>
+            <div className="image-container">
+              <span className="amount">Bank of Awesome</span>
+              <span className="card-image"> <i className="far fa-credit-card"></i> </span>
+            </div>
+
+            <form id="cc-form">
+              <div id="cc-number" className="card-number-container">
+                <label htmlFor="cc-number" className="hidden"> Card Number </label>
+                <span className="field-space">  </span>
               </div>
 
-              <form id="cc-form">
-                <div id="cc-number" className="card-number-container">
-                  <label htmlFor="cc-number" className="hidden"> Card Number </label>
-                  <span className="field-space">  </span>
+              <div id="cc-holder" className="cardholder-container">
+                <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+                <span className="field-space"></span>
+              </div>
 
-                </div>
+              <div id="cc-exp" className="exp-container">
+                <label htmlFor="cc-exp" className="hidden"> Expiration </label>
+                <span className="field-space"></span>
+              </div>
 
-                <div id="cc-holder" className="cardholder-container">
-                  <label htmlFor="cc-holder" className="hidden">Card Holder</label>
-                  <span className="field-space"></span>
-                </div>
+              <div id="cc-cvc" className="cvc-container">
+                <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
+                <span className="field-space"></span>
+              </div>
 
-                <div id="cc-exp" className="exp-container">
-                  <label htmlFor="cc-exp" className="hidden"> Expiration </label>
-                  <span className="field-space"></span>
-                </div>
-                <div id="cc-cvc" className="cvc-container">
-                  <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
-                  <span className="field-space"></span>
-                </div>
-              </form>
-            </div>
-            <div className="card-back"><div className="card-stripe"></div></div>
+            </form>
           </div>
-          {this.buttonGrp()}
-        </section>
+        </div>
+        {this.buttonGrp()}
+      </section>
     )
   }
 }
