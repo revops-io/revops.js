@@ -8,10 +8,8 @@ import {
   RevOpsAPIClient
 } from '../client'
 
-export function makeAccount(props) {
+export function makeAccount(props = {}) {
   return new Account({
-    billingContact: new BillingContact(props.billingContact),
-    shippingContact: new ShippingContact(props.shippingContact),
     externalId: props.externalId,
     name: props.name,
   })
@@ -23,9 +21,9 @@ export function makeAccount(props) {
  */
 export function createAccount(
   account: Account,
-  onSuccess: function,
-  onError: function,
-  onCancel: function,
+  onSuccess,
+  onError,
+  onCancel,
 ) {
   let client = new RevOpsAPIClient()
   return client.put(`/accounts/${account.id}`, account, {
