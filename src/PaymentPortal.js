@@ -7,24 +7,27 @@ import {
   FormProgress,
   PaymentMethod,
   SignupForm,
-} from 'revops-js'
+  AddressForm,
+  Wrapper
+} from './index'
 
+const CustomMessage = () => {
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <h1>Thank You!</h1>
+      <h2>MemSQL</h2>
+      <a href="example.com">See your deal</a>
+    </div>
+  )
+}
 
 const steps = [
   {
-    title: 'Payment Info',
-    description: 'Choose payment method',
-    component: PaymentMethod,
-  },
-  {
     title: 'Contact Info',
     description: 'Review standard terms',
-    component: ContactInformation,
-  },
-  {
-    title: 'Sign Up',
-    description: 'Review standard terms',
-    component: SignupForm,
+    component: (props) => (
+      <ContactInformation {...props}>Hello</ContactInformation>
+    ),
   },
   {
     title: 'Terms',
@@ -32,14 +35,40 @@ const steps = [
     component: StandardTerms,
   },
   {
+    title: 'Address Info',
+    description: 'Address',
+    component: (props) => <AddressForm {...props} />,
+  },
+  {
+    title: 'Payment Info',
+    description: 'Choose payment method',
+    component: PaymentMethod,
+  },
+  {
+    title: 'Sign Up',
+    description: 'Review standard terms',
+    component: SignupForm,
+  },
+  {
     title: 'Card Info',
     description: 'Review standard terms',
     component: CreditCardForm,
   },
+  {
+    title: 'All Set',
+    description: 'Address',
+    component: (props) =>
+      (<Wrapper {...props} >
+        <CustomMessage />
+      </Wrapper>),
+  },
 ]
 
 export const PaymentPortal = ({ ...props }) => {
-  return <FormProgress steps={steps} {...props} />
+  return <FormProgress
+    accountId={"hello-fresh"}
+    steps={steps}
+    {...props} />
 
 }
 
