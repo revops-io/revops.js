@@ -86,7 +86,7 @@ describe('RevOpsAPIClient', () => {
   })
 
   it('initiates a GET request and error occurs', async () => {
-    mockAxios.onGet('/').networkError()
+    mockAxios.onGet('https://vault.revops.io/').networkError()
 
     let client = new RevOpsAPIClient()
     let configuration = {
@@ -98,7 +98,7 @@ describe('RevOpsAPIClient', () => {
 
     // Assert error was called
     request.then((error) => {
-      expect(error.response.status).to.equal(404)
+      expect(error.message).to.equal('Network Error')
       expect(configuration.onCancel.called).to.equal(false)
       expect(configuration.onSuccess.called).to.equal(false)
       expect(configuration.onError.called).to.equal(true)
@@ -106,7 +106,7 @@ describe('RevOpsAPIClient', () => {
   })
 
   it('initiates a POST request and error occurs', async () => {
-    mockAxios.onPost('/').networkError()
+    mockAxios.onPost('https://vault.revops.io/').networkError()
 
     let client = new RevOpsAPIClient()
     let configuration = {
@@ -117,7 +117,8 @@ describe('RevOpsAPIClient', () => {
     const { request, source } = await client.post('/', {}, configuration)
 
     // Assert error was called
-    request.then(() => {
+    request.then((error) => {
+      expect(error.message).to.equal('Network Error')
       expect(configuration.onCancel.called).to.equal(false)
       expect(configuration.onSuccess.called).to.equal(false)
       expect(configuration.onError.called).to.equal(true)

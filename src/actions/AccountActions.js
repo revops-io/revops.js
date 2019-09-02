@@ -8,18 +8,28 @@ import {
   RevOpsAPIClient
 } from '../client'
 
-export  function createAccount(props, onSuccess, onError, onCancel) {
-  let account = new Account({
+export function makeAccount(props) {
+  return new Account({
     billingContact: new BillingContact(props.billingContact),
     shippingContact: new ShippingContact(props.shippingContact),
     externalId: props.externalId,
     name: props.name,
   })
+}
 
+/* `createAccount` will create an account on RevOps
+ * account - An account object.
+ * returns { request, source }
+ */
+export function createAccount(
+  account: Account,
+  onSuccess: function,
+  onError: function,
+  onCancel: function,
+
+) {
   let client = new RevOpsAPIClient()
-  let response = client.post('/accounts', account, {
+  return client.post('/accounts', account, {
     onSuccess, onError, onCancel
   })
-
-  return account
 }
