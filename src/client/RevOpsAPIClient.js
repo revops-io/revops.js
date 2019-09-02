@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const REVOPS_HTTP_URL = 'https://tnt6ryfiprp.SANDBOX.verygoodproxy.com'
+const REVOPS_HTTP_URL = 'https://vault.revops.io'
 const AUTH_TOKEN = 'slujibu'
 
 export class RevOpsAPIClient {
