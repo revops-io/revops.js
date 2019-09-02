@@ -8,19 +8,27 @@ import {
 import './styles.css'
 
 const defaultStyles = {
-  background: "#FFFFFF",
-  border: "1px solid #CED7E6",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height:  "40px",
-  padding: "0 16px"
+  border: 'none',
+  background: 'rgba(215, 224, 235, 0.18);',
+  height: '40px',
+  lineHeight: 'normal',
+  padding: '0 10px',
+  color: 'white',
+  fontSize: '12px',
+  boxSizing: 'border-box',
+  borderRadius: '4px',
+  letterSpacing: '.7px',
+  '&::placeholder': {
+    color: 'white',
+    fontSize: '12px',
+    opacity: '.5',
+  },
 };
 
 export default class ContactInformation extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      errors: 0,
       errors: false,
     }
     this.form = {};
@@ -29,6 +37,10 @@ export default class ContactInformation extends Component {
   static propTypes = {
     styles: PropTypes.object,
     onComplete: PropTypes.func,
+    onNext: PropTypes.func,
+    onCancel: PropTypes.func,
+    onLast: PropTypes.func,
+    onError: PropTypes.func,
   }
 
   componentDidMount() {
@@ -69,32 +81,26 @@ export default class ContactInformation extends Component {
     });
 
     this.form = form
-
   }
 
-  handleError = (errors) => this.setState({
-    errors
-  })
-
   onSubmit = () => {
+    const { form} = this
+    const { onNext, accountModel, onError } = this.props
+  
+    onNext({}, {...accountModel, 'contact-form': true })
 
-    this.form.submit(
-      "/post",
-      {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
+    form.submit('/post', {
+      serializer: 'deep',
+      serialization: 'formData',
+      data: accountModel,
+      mapDotToObject: 'merge',
       },
-      function (status, data) {
-        if (this.props.onSubmit !== false) {
-          this.props.onComplete()
-        }
-      },
-      function (errors) {
-        () => this.handleError(errors)
-      }
-    )
-    this.props.onNext()
+       (status, response) => {
+        onNext(status, response)
+      }, 
+      (errors) => {
+        onError(errors)
+      });
   }
 
   buttonGrp = () => {
