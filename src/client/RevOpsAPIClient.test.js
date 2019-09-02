@@ -126,7 +126,7 @@ describe('RevOpsAPIClient', () => {
   })
 
   it('initiates a POST request and cancel occurs', async () => {
-    mockAxios.onPost('/').reply(201, {})
+    mockAxios.onPost('https://vault.revops.io/').reply(201, {})
 
     let client = new RevOpsAPIClient()
     let configuration = {
@@ -142,6 +142,29 @@ describe('RevOpsAPIClient', () => {
     // Assert cancelation was called
     await request.then((result) => {
       expect(result.message).to.equal('cancel post request')
+      expect(configuration.onCancel.called).to.equal(true)
+      expect(configuration.onSuccess.called).to.equal(false)
+      expect(configuration.onError.called).to.equal(false)
+    })
+  })
+
+  it('initiates a PUT request and cancel occurs', async () => {
+    mockAxios.onPut('https://vault.revops.io/').reply(201, {})
+
+    let client = new RevOpsAPIClient()
+    let configuration = {
+      onCancel: sinon.spy(),
+      onSuccess: sinon.spy(),
+      onError: sinon.spy(),
+    }
+    const { request, source } = client.put('/', {}, configuration)
+
+    // Send Cancelation Request
+    await source.cancel('cancel put request')
+
+    // Assert cancelation was called
+    await request.then((result) => {
+      expect(result.message).to.equal('cancel put request')
       expect(configuration.onCancel.called).to.equal(true)
       expect(configuration.onSuccess.called).to.equal(false)
       expect(configuration.onError.called).to.equal(false)

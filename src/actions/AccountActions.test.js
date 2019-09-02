@@ -13,7 +13,6 @@ describe('AccountActions', () => {
     uuid.mockClear()
     mockAxios.reset()
     uuid.mockImplementation(() => 'test-uuid')
-    mockAxios.onAny('https://vault.revops.io/accounts').reply(200, {})
   })
 
   it('makeAccount', () => {
@@ -29,6 +28,8 @@ describe('AccountActions', () => {
       }
     )
 
+    mockAxios.onAny(`https://vault.revops.io/accounts/${account.id}`).reply(200, {})
+
     let { request, source }  = actions.createAccount(account,
       onSuccess,
       onError,
@@ -43,7 +44,6 @@ describe('AccountActions', () => {
   })
 
   it('makeAccount w/ custom externalId', () => {
-
     ['external-123', '', null, false].map(
       (externalId) => {
         let account = actions.makeAccount({

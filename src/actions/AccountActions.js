@@ -26,10 +26,9 @@ export function createAccount(
   onSuccess: function,
   onError: function,
   onCancel: function,
-
 ) {
   let client = new RevOpsAPIClient()
-  return client.post('/accounts', account, {
+  return client.put(`/accounts/${account.id}`, account, {
     onSuccess, onError, onCancel
   })
 }

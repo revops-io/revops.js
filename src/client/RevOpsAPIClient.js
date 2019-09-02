@@ -127,6 +127,31 @@ export class RevOpsAPIClient {
       request
     }
   }
+
+  put(path, data = {}, params = {
+    onError: false,
+    onSuccess: false,
+    onCancel: false,
+  }) {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+
+    const url = this.createURL(path)
+
+    let request = axios.put(url, data, {
+      cancelToken: source.token,
+      validateStatus: function (status) {
+        return status < 300; // Reject only if the status code is greater than or equal to 500
+      }
+    })
+    .then(this.handleResponse(params))
+    .catch(this.handleError(params))
+
+    return {
+      source,
+      request
+    }
+  }
 }
 
 export default RevOpsAPIClient
