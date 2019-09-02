@@ -13,11 +13,11 @@ describe('RevOpsAPIClient', () => {
     const urls_to_test = [
       {
         param: false,
-        expected: 'https://tnt6ryfiprp.SANDBOX.verygoodproxy.com',
+        expected: 'https://vault.revops.io',
       },
       {
         param: '',
-        expected: 'https://tnt6ryfiprp.SANDBOX.verygoodproxy.com',
+        expected: 'https://vault.revops.io',
       },
       {
         param: 'https://localhost:5050',
