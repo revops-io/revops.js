@@ -1,7 +1,7 @@
 /*Credit cart styles example*/
 
 body {
-  padding: 40px;
+  padding: 40px;;
 }
 
 /*Credit cart styles example*/
@@ -215,7 +215,7 @@ label {
 
 .field-space iframe {
   border: 0 none transparent;
-  height: 100%;
+  height: 50px;
   vertical-align: middle;
   width: 100%;
 }
