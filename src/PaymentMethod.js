@@ -8,20 +8,16 @@ import {
 
 import {
   CreditCardForm,
-} from 'revops-js'
+  AchForm,
+  EmailInvoice,
+  StripeForm,
+} from './index'
 
 import './styles.css'
 
-const defaultStyles = {
-  background: "#FFFFFF",
-  border: "1px solid #CED7E6",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height: "40px",
-  padding: "0 16px"
-};
 
 const PaymentMethods = [
+  { value: '', text: '' },
   { value: 'Stripe', text: 'Stripe' },
   { value: 'ACH', text: 'Pay by Check' },
   { value: 'CC', text: 'Credit Card' },
@@ -30,10 +26,11 @@ const PaymentMethods = [
 
 
 export default class PaymentMethod extends Component {
-  constructor(props){
+  constructor(props) {
     super(props)
     this.state = {
       errors: false,
+      method: false,
     }
     this.form = null
   }
@@ -41,66 +38,12 @@ export default class PaymentMethod extends Component {
   static propTypes = {
     styles: PropTypes.object,
     onComplete: PropTypes.func,
+    onNext: PropTypes.func,
+    onCancel: PropTypes.func,
+    onLast: PropTypes.func,
+    onError: PropTypes.func,
   }
-
-  componentDidMount() {
-    const script = document.createElement("script")
-
-    script.src = REVOPS_VAULT_COLLECT
-    script.async = true
-    script.onload = () => {
-      this.initialize()
-    }
-    document.body.appendChild(script);
-  }
-
-  initialize = () => {
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
-
-    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
-    // Create VGS Collect field for country
-    form.field('#payment-method .field-space', {
-      type: 'dropdown',
-      name: 'payment_type',
-      placeholder: 'Select a payment method',
-      validations: ['required'],
-      options: [...PaymentMethods],
-      defaultValue: PaymentMethods[0],
-      css: styles
-    });
-
-    this.form = form
-
-  }
-
-  handleError = (errors) => this.setState({
-    errors
-  })
-
-  onSubmit = () => {
-
-
-    this.form.submit(
-      "/post",
-      {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
-      },
-      function (status, data) {
-        console.log(data)
-        if (this.props.onSubmit !== false) {
-          this.props.onComplete()
-        }
-      },
-      function (errors) {
-        () => this.handleError(errors)
-      }
-    )
-
-    this.props.onNext()
-  }
-
+  
   buttonGrp = () => {
     const { onLast, onCancel } = this.props
     return (
@@ -108,9 +51,6 @@ export default class PaymentMethod extends Component {
         <button
           className="ui left floated button"
           onClick={() => onCancel()}>Cancel</button>
-        <button
-          className="ui right floated button"
-          onClick={this.onSubmit}>Next</button>
         <button
           className="ui right floated button"
           onClick={() => onLast()}>Previous</button>
@@ -122,20 +62,19 @@ export default class PaymentMethod extends Component {
     const { method } = this.state
     return (
       <section className="">
-        <select
-          className="ui dropdown"
-          onChange={e => this.setState({method: e.target.value})}>
-          {
-            PaymentMethods.map(method => {
-              return <option key={method.value} value={method.value}>{method.text}</option>
-            })
-          }
-        </select>
         <form id="contact-form" className="ui form">
-          <div id="payment-method" className="field">
-            <label >Payment methods</label>
-            <span className="field-space"></span>
-          </div>
+          <label>Select Payment Method</label>
+          <select
+            style={{ width: '100%' }}
+            className="ui dropdown"
+            onChange={e => this.setState({ method: e.target.value })}>
+            {
+              PaymentMethods.map(method => {
+                return <option key={method.value} value={method.value}>{method.text}</option>
+              })
+            }
+          </select>
+          <br />
           {
             method === 'CC' &&
             <div id="cc-info">
@@ -145,23 +84,23 @@ export default class PaymentMethod extends Component {
           {
             method === 'Stripe' &&
             <div id="stripe-info">
-              <h1>Stripe Info</h1>
+              <StripeForm {...this.props} />
             </div>
           }
           {
             method === 'EMAIL' &&
             <div id="email-info">
-              <h1>Email</h1>
+              <EmailInvoice {...this.props} />
             </div>
           }
           {
             method === 'ACH' &&
             <div id="bank-info">
-              <h1>Bank Info</h1>
+              <AchForm {...this.props} />
             </div>
           }
         </form>
-        {this.buttonGrp()}
+        {this.state.method === false && this.buttonGrp()}
       </section>
     )
   }
