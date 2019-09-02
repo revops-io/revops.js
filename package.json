@@ -18,6 +18,8 @@
     "test:watch": "react-scripts test --env=jsdom",
     "build": "rollup -c",
     "start": "rollup -c -w",
+    "lint": "./node_modules/.bin/standard",
+    "lint-fix": "./node_modules/.bin/standard --fix",
     "prepare": "npm run build",
     "predeploy": "cd example && npm install && npm run build",
     "deploy": "gh-pages -d example/build"
@@ -58,7 +60,8 @@
     "rollup-plugin-postcss": "^2.0.3",
     "rollup-plugin-url": "^1.4.0",
     "sinon": "^7.4.1",
-    "sinon-chai": "^3.3.0"
+    "sinon-chai": "^3.3.0",
+    "standard": "^14.1.0"
   },
   "files": [
     "dist"
@@ -66,5 +69,10 @@
   "dependencies": {
     "axios": "^0.19.0",
     "lodash": "^4.17.15"
+  },
+  "standard": {
+    "ignore": [
+      "build/*"
+    ]
   }
 }
