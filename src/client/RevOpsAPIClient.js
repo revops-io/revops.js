@@ -122,7 +122,6 @@ export class RevOpsAPIClient {
     .then(this.handleResponse(params))
     .catch(this.handleError(params))
 
-
     return {
       source,
       request
