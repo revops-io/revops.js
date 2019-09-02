@@ -71,7 +71,7 @@ export class RevOpsAPIClient {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
 
-    const url = this.createURL(path)
+    let url = this.createURL(path)
     if(params.query !== false &&
       typeof(params.query) === 'object' &&
       Object.values(params.query).length > 0
@@ -104,7 +104,7 @@ export class RevOpsAPIClient {
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
 
-    const url = this.createURL(path)
+    let url = this.createURL(path)
     if(params.query !== false &&
       typeof(params.query) === 'object' &&
       Object.values(params.query).length > 0

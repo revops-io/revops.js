@@ -1,17 +1,21 @@
-export class EntityDate extends Date {
-  toIsoString = () => {
-    var tzo = -this.getTimezoneOffset(),
+export class EntityDate {
+  constructor() {
+    this._date = new Date()
+  }
+
+  toIsoString() {
+    var tzo = -this._date.getTimezoneOffset(),
         dif = tzo >= 0 ? '+' : '-',
         pad = function(num) {
             var norm = Math.floor(Math.abs(num));
             return (norm < 10 ? '0' : '') + norm;
         };
-    return this.getFullYear() +
-        '-' + pad(this.getMonth() + 1) +
-        '-' + pad(this.getDate()) +
-        'T' + pad(this.getHours()) +
-        ':' + pad(this.getMinutes()) +
-        ':' + pad(this.getSeconds()) +
+    return this._date.getFullYear() +
+        '-' + pad(this._date.getMonth() + 1) +
+        '-' + pad(this._date.getDate()) +
+        'T' + pad(this._date.getHours()) +
+        ':' + pad(this._date.getMinutes()) +
+        ':' + pad(this._date.getSeconds()) +
         dif + pad(tzo / 60) +
         ':' + pad(tzo % 60);
   }
