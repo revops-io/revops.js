@@ -2,6 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
+  REVOPS_VAULT_COLLECT,
+  REVOPS_VAULT_ID,
+} from './client/VaultConfig'
+
+import {
   CreditCardForm,
 } from 'revops-js'
 
@@ -41,7 +46,7 @@ export default class PaymentMethod extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
+    script.src = REVOPS_VAULT_COLLECT
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -52,7 +57,7 @@ export default class PaymentMethod extends Component {
   initialize = () => {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create("tnt6ryfiprp", function (state) { });
+    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     // Create VGS Collect field for country
     form.field('#payment-method .field-space', {
       type: 'dropdown',
@@ -117,7 +122,7 @@ export default class PaymentMethod extends Component {
     const { method } = this.state
     return (
       <section className="">
-        <select 
+        <select
           className="ui dropdown"
           onChange={e => this.setState({method: e.target.value})}>
           {
@@ -132,25 +137,25 @@ export default class PaymentMethod extends Component {
             <span className="field-space"></span>
           </div>
           {
-            method === 'CC' && 
+            method === 'CC' &&
             <div id="cc-info">
               <CreditCardForm {...this.props} />
             </div>
           }
           {
-            method === 'Stripe' && 
+            method === 'Stripe' &&
             <div id="stripe-info">
               <h1>Stripe Info</h1>
             </div>
           }
           {
-            method === 'EMAIL' && 
+            method === 'EMAIL' &&
             <div id="email-info">
               <h1>Email</h1>
             </div>
           }
           {
-            method === 'ACH' && 
+            method === 'ACH' &&
             <div id="bank-info">
               <h1>Bank Info</h1>
             </div>

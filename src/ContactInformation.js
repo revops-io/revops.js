@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import {
+  REVOPS_VAULT_COLLECT,
+  REVOPS_VAULT_ID,
+} from './client/VaultConfig'
 
 import './styles.css'
 
@@ -30,7 +34,7 @@ export default class ContactInformation extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
+    script.src = REVOPS_VAULT_COLLECT
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -41,7 +45,7 @@ export default class ContactInformation extends Component {
   initialize = () => {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create("tnt6ryfiprp", function (state) { });
+    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     form.field("#customer-name .field-space", {
       type: "text",
       name: "name",

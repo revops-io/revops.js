@@ -37,8 +37,9 @@ const steps = [
     component: CreditCardForm,
   },
 ]
+
 export const PaymentPortal = ({ ...props }) => {
-  return <FormProgress {...props} steps={steps} />
+  return <FormProgress steps={steps} {...props} />
 
 }
 
