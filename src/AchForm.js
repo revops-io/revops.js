@@ -16,7 +16,6 @@ export default class AchForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      errors: 0,
       errors: false,
     }
     this.form = {};
@@ -46,24 +45,26 @@ export default class AchForm extends Component {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     const form = VGSCollect.create("tnt6ryfiprp", function (state) { });
-    form.field("#cc-name .field-space", {
+    form.field("#bank-name .field-space", {
       type: "text",
       name: "name",
-      placeholder: "Pat Smalley",
+      placeholder: "Chase Bank",
       validations: ["required"],
       css: styles
     });
-    form.field("#customer-email .field-space", {
+
+    form.field("#bank-acct-number .field-space", {
       type: "text",
       name: "email",
-      placeholder: "patsmalley@company.com",
+      placeholder: "XXXXXXXXXXXXX",
       validations: ["required"],
       css: styles
     });
-    form.field("#customer-phone .field-space", {
+
+    form.field("#bank-routing-number .field-space", {
       type: "text",
       name: "phone",
-      placeholder: "(800)-555-5555",
+      placeholder: "XXXXXXXXXX",
       validations: ["required"],
       css: styles
     });
@@ -77,24 +78,23 @@ export default class AchForm extends Component {
   })
 
   onSubmit = () => {
+    const { form} = this
+    const { onNext, accountModel, onError } = this.props
+  
+    onNext({}, {...accountModel, 'contact-form': true })
 
-    this.form.submit(
-      "/post",
-      {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
+    form.submit('/post', {
+      serializer: 'deep',
+      serialization: 'formData',
+      data: accountModel,
+      mapDotToObject: 'merge',
       },
-      function (status, data) {
-        if (this.props.onSubmit !== false) {
-          this.props.onComplete()
-        }
-      },
-      function (errors) {
-        () => this.handleError(errors)
-      }
-    )
-    this.props.onNext()
+       (status, response) => {
+        onNext(status, response)
+      }, 
+      (errors) => {
+        onError(errors)
+      });
   }
 
   buttonGrp = () => {
@@ -121,18 +121,18 @@ export default class AchForm extends Component {
     return (
       <section>
         <form id="contact-form" className="ui form">
-          <div id="customer-name" className="field">
-            <label>Name</label>
+          <div id="bank-name" className="field">
+            <label>Bank Name</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="customer-email" className="field">
-            <label >Email</label>
+          <div id="bank-routing-number" className="field">
+            <label >Routing Number</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="customer-phone" className="field">
-            <label>Phone</label>
+          <div id="bank-acct-number" className="field">
+            <label>Account Number</label>
             <span className="field-space"></span>
           </div>
 
