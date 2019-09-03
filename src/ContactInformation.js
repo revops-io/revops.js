@@ -84,36 +84,23 @@ export default class ContactInformation extends Component {
   }
 
   handleError(errors) {
-    debugger
     console.log('[error] ContactInformation', errors)
   }
 
   onSubmit = () => {
     const { form} = this
-    const { onNext, accountModel, onError } = this.props
+    const { onNext, accountModel, onError, onComplete } = this.props
 
-    form.submit(`/v1/accounts/${accountModel.id}`,
+    accountModel.saveWithSecureForm(
+      form,
       {
-        serializer: 'deep',
-        serialization: 'json',
-        data: accountModel,
-        mapDotToObject: 'merge',
-      },
-      (status, response) => {
-        if (status >= 400) {
-          if(!!onError !== false && typeof(onError) === 'function') {
-            onError({status, response})
-          }
-
-          this.handleError({status, response})
-        } else {
-          onNext(status, {...response, 'contact-form': true })
-          onComplete()
-        }
-      },
-      (errors) => {
-        onError(errors)
-        this.handleError(errors)
+        formName: 'contact-form',
+        onError: (errors) => {
+          this.handleError(errors)
+          onError(errors)
+        },
+        onComplete,
+        onNext,
       }
     )
 
