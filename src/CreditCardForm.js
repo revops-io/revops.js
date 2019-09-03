@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+
+import { makeAccount } from './actions/AccountActions'
+
 import {
   REVOPS_VAULT_COLLECT,
   REVOPS_VAULT_ID,
@@ -56,11 +59,15 @@ export default class CreditCardForm extends Component {
 
   initialize = () => {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
-
+    const { accountModel } = this.props
     const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+
     form.field("#cc-holder .field-space", {
       type: "text",
       name: "billingPreferences.cardName",
+      defaultValue: !!accountModel.billingPreferences.cardName === true
+        ? accountModel.billingPreferences.cardName
+        : "",
       placeholder: "Joe Business",
       validations: ["required"],
       css: styles
@@ -69,6 +76,9 @@ export default class CreditCardForm extends Component {
     form.field("#cc-number .field-space", {
       type: "card-number",
       name: "billingPreferences.cardNumber",
+      defaultValue: !!accountModel.billingPreferences.cardNumber === true
+        ? accountModel.billingPreferences.cardNumber
+        : "",
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
@@ -79,6 +89,9 @@ export default class CreditCardForm extends Component {
       type: "card-security-code",
       name: "billingPreferences.cardCvv",
       placeholder: "344",
+      defaultValue: !!accountModel.billingPreferences.cardCvv === true
+        ? accountModel.billingPreferences.cardCvv
+        : "",
       validations: ["required", "validCardSecurityCode"],
       errorColor: "rgba(240, 0, 0)",
       css: styles
@@ -88,6 +101,9 @@ export default class CreditCardForm extends Component {
       type: "card-expiration-date",
       name: "billingPreferences.cardExpdate",
       placeholder: "01 / 2016",
+      defaultValue: !!accountModel.billingPreferences.cardExpdate === true
+        ? accountModel.billingPreferences.cardExpdate
+        : "",
       validations: ["required", "validCardExpirationDate"],
       css: styles
     })
@@ -97,8 +113,18 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accountModel, onError, onComplete = false } = this.props
+    const { onNext, onError, onComplete = false } = this.props
+    let { accountModel } = this.props
 
+    accountModel = makeAccount({
+      ...accountModel, 
+      billingPreferences: {
+        ...accountModel.billingPreferences, 
+        paymentMethod: "credit-card"
+      }
+    })
+
+    debugger
     accountModel.saveWithSecureForm(
       form,
       {
@@ -111,7 +137,7 @@ export default class CreditCardForm extends Component {
   buttonGrp = () => {
     const { onLast, onCancel, finalStep } = this.props
     return (
-      <div>
+      <div id="form-nav">
         <button
           id="form-cancel-btn"
           className="ui left floated button secondary basic"
@@ -133,37 +159,31 @@ export default class CreditCardForm extends Component {
     return (
       <section>
         <div className="form-container">
-          <div className="card-front">
-            <div className="shadow"></div>
-            <div className="image-container">
-              <span className="amount">Bank of Awesome</span>
-              <span className="card-image"> <i className="far fa-credit-card"></i> </span>
+
+          <form id="cc-form">
+            <div id="cc-number" className="card-number-container">
+              <label htmlFor="cc-number" className="hidden"> Card Number </label>
+              <span className="field-space">  </span>
             </div>
 
-            <form id="cc-form">
-              <div id="cc-number" className="card-number-container">
-                <label htmlFor="cc-number" className="hidden"> Card Number </label>
-                <span className="field-space">  </span>
-              </div>
+            <div id="cc-holder" className="cardholder-container">
+              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+              <span className="field-space"></span>
+            </div>
 
-              <div id="cc-holder" className="cardholder-container">
-                <label htmlFor="cc-holder" className="hidden">Card Holder</label>
-                <span className="field-space"></span>
-              </div>
+            <div id="cc-exp" className="exp-container">
+              <label htmlFor="cc-exp" className="hidden"> Expiration </label>
+              <span className="field-space"></span>
+            </div>
 
-              <div id="cc-exp" className="exp-container">
-                <label htmlFor="cc-exp" className="hidden"> Expiration </label>
-                <span className="field-space"></span>
-              </div>
+            <div id="cc-cvc" className="cvc-container">
+              <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
+              <span className="field-space"></span>
+            </div>
 
-              <div id="cc-cvc" className="cvc-container">
-                <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
-                <span className="field-space"></span>
-              </div>
-
-            </form>
-          </div>
+          </form>
         </div>
+        <div class="ui clearing divider"></div>
         {this.buttonGrp()}
       </section>
     )

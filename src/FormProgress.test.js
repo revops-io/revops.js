@@ -32,7 +32,6 @@ describe('', () => {
     const wrapper = shallow(<FormProgress  {...mockProps} />)
     expect(wrapper.length).to.equal(1)
     expect(wrapper.find('.ui.grid').length).to.equal(1)
-    expect(wrapper.find('.link.item').length).to.equal(mockProps.steps.length)
   })
 
   it('Lower step bound', () => {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { makeAccount } from './actions/AccountActions'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -14,7 +15,7 @@ const defaultStyles = {
   border: "1px solid #CED7E6",
   boxSizing: "border-box",
   borderRadius: "4px",
-  height:  "40px",
+  height: "40px",
   padding: "0 16px"
 };
 
@@ -48,13 +49,17 @@ export default class AchForm extends Component {
   }
 
   initialize = () => {
+    const { accountModel } = this.props
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
-    
+
     form.field("#bank-name .field-space", {
       type: "text",
       name: "billingPreferences.bankName",
+      defaultValue: !!accountModel.billingPreferences.bankName === true
+        ? accountModel.billingPreferences.bankName
+        : "",
       placeholder: "Chase Bank",
       validations: ["required"],
       css: styles
@@ -64,6 +69,9 @@ export default class AchForm extends Component {
       type: "dropdown",
       name: "billingPreferences.bankCountry",
       validations: ["required"],
+      defaultValue: !!accountModel.billingPreferences.bankCountry === true
+        ? accountModel.billingPreferences.bankCountry
+        : "USA",
       options: [
         { value: 'USA', text: 'United States of America' },
         { value: 'Canada', text: 'Canada' },
@@ -75,6 +83,10 @@ export default class AchForm extends Component {
     form.field("#bank-holder-name .field-space", {
       type: "text",
       name: "billingPreferences.bankAccountHolderName",
+      defaultValue: !!accountModel.billingPreferences.bankAccountHolderName === true
+        ? accountModel.billingPreferences.bankAccountHolderName
+        : "",
+      placeholder: "Pat Smalley",
       validations: ["required"],
       css: styles
     });
@@ -82,6 +94,9 @@ export default class AchForm extends Component {
     form.field("#bank-acct-type .field-space", {
       type: "dropdown",
       name: "billingPreferences.bankAccountHolderType",
+      defaultValue: !!accountModel.billingPreferences.bankAccountHolderType === true
+        ? accountModel.billingPreferences.bankAccountHolderType
+        : "company",
       validations: ["required"],
       options: [
         { value: 'company', text: 'Company' },
@@ -93,6 +108,9 @@ export default class AchForm extends Component {
     form.field("#bank-acct-number .field-space", {
       type: "text",
       name: "billingPreferences.bankAccountNumber",
+      defaultValue: !!accountModel.billingPreferences.bankAccountNumber === true
+        ? accountModel.billingPreferences.bankAccountNumber
+        : "",
       placeholder: "XXXXXXXXXXXXX",
       validations: ["required"],
       css: styles
@@ -101,6 +119,9 @@ export default class AchForm extends Component {
     form.field("#bank-routing-number .field-space", {
       type: "text",
       name: "billingPreferences.bankRoutingNumber",
+      defaultValue: !!accountModel.billingPreferences.bankRoutingNumber === true
+        ? accountModel.billingPreferences.bankRoutingNumber
+        : "",
       placeholder: "XXXXXXXXXX",
       validations: ["required"],
       css: styles
@@ -112,7 +133,8 @@ export default class AchForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accountModel, onError, onComplete = false } = this.props
+    const { onNext, onError, onComplete = false } = this.props
+    let { accountModel } = this.props
 
     accountModel.saveWithSecureForm(
       form,
@@ -126,7 +148,7 @@ export default class AchForm extends Component {
   buttonGrp = () => {
     const { onLast, onCancel, finalStep } = this.props
     return (
-      <div>
+      <div id="form-nav">
         <button
           id="form-cancel-btn"
           className="ui left floated button secondary basic"
@@ -152,13 +174,13 @@ export default class AchForm extends Component {
             <span className="field-space"></span>
           </div>
 
-          <div id="bank-acct-country" className="field">
-            <label >Bank Country</label>
+          <div id="bank-holder-name" className="field">
+            <label >Account Holder Name</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="bank-holder-name" className="field">
-            <label >Account Holder Name</label>
+          <div id="bank-acct-country" className="field">
+            <label >Bank Country</label>
             <span className="field-space"></span>
           </div>
 
@@ -178,6 +200,7 @@ export default class AchForm extends Component {
           </div>
 
         </form>
+        <div class="ui clearing divider"></div>
         {this.buttonGrp()}
       </section>
     )

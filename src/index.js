@@ -45,6 +45,7 @@ export { default as EmailInvoice } from './EmailInvoice'
 export { default as StripeForm } from './StripeForm'
 export { default as AddressForm } from './AddressForm'
 export { default as Wrapper } from './Wrapper'
+export { default as SignUp } from './SignUp'
 
 styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
 jsDependencies.forEach(js => addJS(js))

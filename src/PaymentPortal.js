@@ -8,10 +8,13 @@ import {
   PaymentMethod,
   SignupForm,
   AddressForm,
+  // SignUp,
   Wrapper
 } from './index'
 
-const CustomMessage = () => {
+import { SignUp } from './SignUp'
+
+const CustomThankYouMessage = () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>Thank You!</h1>
@@ -21,55 +24,44 @@ const CustomMessage = () => {
   )
 }
 
+const CustomWelcomeMessage = () => {
+  return (
+    <div style={{ textAlign: 'center' }}>
+      <h1>Welcome</h1>
+      <p>Thank you for choosing MemSQL</p>
+    </div>
+  )
+}
+
 const steps = [
   {
-    title: 'Contact Info',
-    description: 'Review standard terms',
-    component: (props) => (
-      <ContactInformation {...props}>Hello</ContactInformation>
-    ),
+    title: 'Sign Up for Services',
+    component: SignUp
   },
   {
     title: 'Terms',
-    description: 'Review standard terms',
     component: StandardTerms,
   },
   {
-    title: 'Address Info',
-    description: 'Address',
-    component: (props) => <AddressForm {...props} />,
-  },
-  {
     title: 'Payment Info',
-    description: 'Choose payment method',
     component: PaymentMethod,
   },
   {
-    title: 'Sign Up',
-    description: 'Review standard terms',
-    component: SignupForm,
-  },
-  {
-    title: 'Card Info',
-    description: 'Review standard terms',
-    component: CreditCardForm,
-  },
-  {
-    title: 'All Set',
-    description: 'Address',
+    title: '',
     component: (props) =>
-      (<Wrapper {...props} >
-        <CustomMessage />
+      (<Wrapper showNav={false} {...props} >
+        <CustomThankYouMessage />
       </Wrapper>),
   },
 ]
 
 export const PaymentPortal = ({ ...props }) => {
-  return <FormProgress
-    accountId={"hello-fresh"}
-    steps={steps}
-    {...props} />
-
+  return (
+    <FormProgress
+      steps={steps}
+      acctEmail="cberns223@gmail.com"
+      {...props} />
+  )
 }
 
 export default PaymentPortal

@@ -14,13 +14,16 @@ export function makeAccount(props = {
   email,
   billingContact,
   shippingContact,
+  billingPreferences,
 }) {
   return new Account({
     ...props,
-    billingContact: !!props.billingContact !== false?
-      {...props.billingContact} : {},
-    shippingContact: !!props.shippingContact !== false?
-      {...props.shippingContact }: {},
+    billingContact: !!props.billingContact !== false ?
+      { ...props.billingContact } : {},
+    shippingContact: !!props.shippingContact !== false ?
+      { ...props.shippingContact } : {},
+    billingPreferences: !!props.billingPreferences !== false ?
+      { ...props.billingPreferences } : {},
   })
 }
 

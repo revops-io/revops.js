@@ -24,6 +24,7 @@ export class FormProgress extends React.Component {
       accountProps = { id: accountId, email: acctEmail }
     }
 
+    // accounts are keyed by email
     const accountModel = makeAccount({...accountProps, email: acctEmail})
     if(accountId === false && !!accountModel.id !== false) {
       document.cookie = `ro_account_id=${accountModel.id}`
@@ -69,13 +70,14 @@ export class FormProgress extends React.Component {
       <div>
         <h1 className="ui center aligned header">{companyName}</h1>
         <div className="ui grid">
-          <div className="thirteen wide column">
+          <div className="sixteen wide column">
             <div className="ui raised very padded container segment">
               {steps.map((step, i) => {
                 return (activeStep === i &&
-                  <div key={i}>
+                  <div id="form-module" key={i}>
                     <h1>{step.title}</h1>
                     <step.component
+                      firstStep={i === 0}
                       finalStep={ i === steps.length - 1}
                       accountModel={accountModel}
                       onCancel={this.cancel}
@@ -86,30 +88,6 @@ export class FormProgress extends React.Component {
                   </div>
                 )
               })}
-              <div>
-                {this.state.success && <div>Success</div>}
-                {this.state.error && <div>Error</div>}
-              </div>
-            </div>
-          </div>
-          <div className="three wide column">
-            <div className="ui vertical menu floated left">
-              {
-                steps.map((item, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className={`link item ${i === activeStep ? 'active' : i <= activeStep ? '' : 'disabled'}`}
-                      onClick={() => {
-                        if (i <= activeStep) {
-                          this.setState({ activeStep: i })
-                        }
-                      }}>
-                      {item.title}
-                    </div>
-                  )
-                })
-              }
             </div>
           </div>
 

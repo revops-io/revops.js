@@ -2,6 +2,7 @@ import {
   EntityModel,
   BillingContact,
   ShippingContact,
+  BillingPreferences,
 } from './index'
 
 export class Account extends EntityModel {
@@ -10,6 +11,7 @@ export class Account extends EntityModel {
   name: string
   billingContact: BillingContact
   shippingContact: ShippingContact
+  billingPreferences: BillingPreferences
 
   constructor(params = {}) {
     super(params)

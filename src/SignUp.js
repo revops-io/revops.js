@@ -25,7 +25,7 @@ const defaultStyles = {
   },
 };
 
-export default class ContactInformation extends Component {
+export class SignUp extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -59,48 +59,21 @@ export default class ContactInformation extends Component {
     let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
     
-    form.field("#customer-first-name .field-space", {
+    form.field("#signup-email .field-space", {
       type: "text",
-      name: "billingContact.firstName",
-      defaultValue: !!accountModel.billingContact.firstName === true 
-        ? accountModel.billingContact.firstName 
+      name: "email",
+      defaultValue: !!accountModel.email === true 
+        ? accountModel.email
         : "",
-      placeholder: !!accountModel.billingContact.firstName === true 
-        ? accountModel.billingContact.firstName 
-        : "Pat",
+      placeholder: "johndoe@example.com",
       validations: ["required"],
       css: styles
     });
 
-    form.field("#customer-last-name .field-space", {
-      type: "text",
-      name: "billingContact.lastName",
-      defaultValue: !!accountModel.billingContact.lastName === true 
-        ? accountModel.billingContact.lastName 
-        : "",
-      placeholder: "Smith",
-      validations: ["required"],
-      css: styles
-    });
-
-    form.field("#customer-email .field-space", {
-      type: "text",
-      name: "billingContact.email",
-      defaultValue: !!accountModel.billingContact.email === true 
-        ? accountModel.billingContact.email 
-        : "",
-      placeholder: "patsmith@example.com",
-      validations: ["required"],
-      css: styles
-    });
-    
-    form.field("#customer-phone .field-space", {
-      type: "text",
-      name: "billingContact.phone",
-      defaultValue: !!accountModel.billingContact.phone === true 
-        ? accountModel.billingContact.phone 
-        : "",
-      placeholder: "800-555-5555",
+    form.field("#signup-password .field-space", {
+      type: "password",
+      name: "password",
+      placeholder: "**********",
       validations: ["required"],
       css: styles
     });
@@ -145,28 +118,22 @@ export default class ContactInformation extends Component {
     return (
       <section>
         <form id="contact-form" className="ui form">
-          <div id="customer-first-name" className="field">
-            <label>First Name</label>
-            <span className="field-space"></span>
-          </div>
-          <div id="customer-last-name" className="field">
-            <label>Last Name</label>
+          <div id="signup-email" className="field">
+            <label>Email</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="customer-email" className="field">
-            <label >Email</label>
-            <span className="field-space"></span>
-          </div>
-
-          <div id="customer-phone" className="field">
-            <label>Phone</label>
+          <div id="signup-password" className="field">
+            <label>Password</label>
             <span className="field-space"></span>
           </div>
 
         </form>
+        <div class="ui clearing divider"></div>
         {this.buttonGrp()}
       </section>
     )
   }
 }
+
+export default SignUp

@@ -42,7 +42,7 @@ export default class PaymentMethod extends Component {
   buttonGrp = () => {
     const { onLast, onCancel } = this.props
     return (
-      <div>
+      <div id="form-nav">
         <button
           className="ui left floated button"
           onClick={() => onCancel()}>Cancel</button>
@@ -53,21 +53,30 @@ export default class PaymentMethod extends Component {
     )
   }
 
+  changePaymentMethod = (e) => {
+
+    this.setState({ method: e.target.value })
+  }
+
   render() {
     const { method } = this.state
     return (
       <section className="">
-        <label>Select Payment Method</label>
-        <select
-          style={{ width: '100%' }}
-          className="ui dropdown"
-          onChange={e => this.setState({ method: e.target.value })}>
-          {
-            PaymentMethods.map(method => {
-              return <option key={method.value} value={method.value}>{method.text}</option>
-            })
-          }
-        </select>
+        {method === false &&
+          <React.Fragment>
+            <label>Select Payment Method</label>
+            <select
+              style={{ width: '100%' }}
+              className="ui dropdown"
+              onChange={(e) => this.changePaymentMethod(e)} >
+              {
+                PaymentMethods.map(method => {
+                  return <option key={method.value} value={method.value}>{method.text}</option>
+                })
+              }
+            </select>
+          </React.Fragment>
+        }
         <br />
         {
           method === 'CC' &&
@@ -93,7 +102,7 @@ export default class PaymentMethod extends Component {
             <AchForm {...this.props} />
           </div>
         }
-
+        {method === false && <div class="ui clearing divider"></div>}
         {method === false && this.buttonGrp()}
       </section>
     )
