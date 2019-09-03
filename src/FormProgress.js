@@ -15,7 +15,22 @@ export class FormProgress extends React.Component {
   }
 
   componentDidMount() {
-    const accountModel = makeAccount({})
+    this.fetchAccount()
+    debugger
+  }
+
+  fetchAccount() {
+    var accountId = document.cookie.replace(/(?:(?:^|.*;\s*)ro_account_id\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+    let accountProps = {}
+    if(!!accountId !== false) {
+      accountProps = { id: accountId }
+    }
+
+    const accountModel = makeAccount(accountProps)
+    if(accountId === false && !!accountModel.id !== false) {
+      document.cookie = `ro_account_id=${accountModel.id}`
+    }
+
     this.setState({ accountModel })
   }
 
@@ -44,6 +59,9 @@ export class FormProgress extends React.Component {
     } else {
       this.setState({ complete: true })
       // send the data to RevOps
+      debugger
+
+
       console.log("Form Submitted")
     }
   }

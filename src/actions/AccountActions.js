@@ -8,10 +8,19 @@ import {
   RevOpsAPIClient
 } from '../client'
 
-export function makeAccount(props = {}) {
+export function makeAccount(props = {
+  id,
+  name,
+  email,
+  billingContact,
+  shippingContact,
+}) {
   return new Account({
-    externalId: props.externalId,
-    name: props.name,
+    ...props,
+    billingContact: !!props.billingContact !== false?
+      {...props.billingContact} : {},
+    shippingContact: !!props.shippingContact !== false?
+      {...props.shippingContact }: {},
   })
 }
 

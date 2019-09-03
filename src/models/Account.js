@@ -27,6 +27,7 @@ export class Account extends EntityModel {
       onNext,
     }
   ) {
+
     form.submit(`/v1/accounts/${this.id}`,
       {
         serializer: 'deep',
