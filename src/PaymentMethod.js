@@ -2,11 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  REVOPS_VAULT_COLLECT,
-  REVOPS_VAULT_ID,
-} from './client/VaultConfig'
-
-import {
   CreditCardForm,
   AchForm,
   EmailInvoice,
@@ -18,10 +13,10 @@ import './styles.css'
 
 const PaymentMethods = [
   { value: '', text: '' },
-  { value: 'Stripe', text: 'Stripe' },
+  // { value: 'Stripe', text: 'Stripe' },
   { value: 'ACH', text: 'Pay by Check' },
   { value: 'CC', text: 'Credit Card' },
-  { value: 'EMAIL', text: 'Email the bill' },
+  // { value: 'EMAIL', text: 'Email the bill' },
 ]
 
 
@@ -43,7 +38,7 @@ export default class PaymentMethod extends Component {
     onLast: PropTypes.func,
     onError: PropTypes.func,
   }
-  
+
   buttonGrp = () => {
     const { onLast, onCancel } = this.props
     return (
@@ -62,7 +57,7 @@ export default class PaymentMethod extends Component {
     const { method } = this.state
     return (
       <section className="">
-        <form id="contact-form" className="ui form">
+        {/* <form id="contact-form" className="ui form"> */}
           <label>Select Payment Method</label>
           <select
             style={{ width: '100%' }}
@@ -99,7 +94,7 @@ export default class PaymentMethod extends Component {
               <AchForm {...this.props} />
             </div>
           }
-        </form>
+        {/* </form> */}
         {this.state.method === false && this.buttonGrp()}
       </section>
     )
