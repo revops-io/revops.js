@@ -11,6 +11,10 @@ describe('', () => {
       onLast: jest.fn(),
       onNext: jest.fn(),
       onError: jest.fn(),
+      accountModel: {
+        id: "test",
+        saveWithSecureForm: jest.fn(),
+      },
       ...props,
     }}
   it('CreditCardForm should render without crashing', () => {

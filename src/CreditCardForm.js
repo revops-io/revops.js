@@ -60,7 +60,7 @@ export default class CreditCardForm extends Component {
     const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     form.field("#cc-holder .field-space", {
       type: "text",
-      name: "card.name",
+      name: "billingPreferences.cardName",
       placeholder: "Joe Business",
       validations: ["required"],
       css: styles
@@ -68,7 +68,7 @@ export default class CreditCardForm extends Component {
 
     form.field("#cc-number .field-space", {
       type: "card-number",
-      name: "card.number",
+      name: "billingPreferences.cardNumber",
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
@@ -77,7 +77,7 @@ export default class CreditCardForm extends Component {
 
     form.field("#cc-cvc .field-space", {
       type: "card-security-code",
-      name: "card.cvc",
+      name: "billingPreferences.cardCvv",
       placeholder: "344",
       validations: ["required", "validCardSecurityCode"],
       errorColor: "rgba(240, 0, 0)",
@@ -86,7 +86,7 @@ export default class CreditCardForm extends Component {
 
     form.field("#cc-exp .field-space", {
       type: "card-expiration-date",
-      name: "card.expirationDate",
+      name: "billingPreferences.cardExpdate",
       placeholder: "01 / 2016",
       validations: ["required", "validCardExpirationDate"],
       css: styles
@@ -97,22 +97,15 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accountModel, onError } = this.props
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
-    // onNext({}, {...accountModel, 'contact-form': true })
-
-    form.submit('/post', {
-      serializer: 'deep',
-      serialization: 'formData',
-      data: accountModel,
-      mapDotToObject: 'merge',
-    },
-      (status, response) => {
-        onNext(status, response)
-      },
-      (errors) => {
-        onError(errors)
-      });
+    accountModel.saveWithSecureForm(
+      form,
+      {
+        onError,
+        onComplete,
+        onNext
+      })
   }
 
   buttonGrp = () => {

@@ -85,25 +85,16 @@ export default class SignupForm extends Component {
   }
 
   onSubmit = () => {
-    this.props.onNext(this.form.state)
+    const { form } = this
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
-    // const handleError = this.handleError.bind(this)
-    this.form.submit(
-      "/post",
+    accountModel.saveWithSecureForm(
+      form,
       {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
-      },
-      function (status, data) {
-        if (this.props.onSubmit !== false) {
-          this.props.onSubmit()
-        }
-      },
-      function (errors) {
-        () => this.handleError(errors)
-      }
-    )
+        onError,
+        onComplete,
+        onNext
+      })
   }
 
   buttonGrp = () => {

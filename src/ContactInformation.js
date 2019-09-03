@@ -55,26 +55,36 @@ export default class ContactInformation extends Component {
   }
 
   initialize = () => {
+    let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
-
-    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
-    form.field("#customer-name .field-space", {
+    
+    form.field("#customer-first-name .field-space", {
       type: "text",
-      name: "name",
-      placeholder: "Pat Smalley",
+      name: "billingContact.firstName",
+      placeholder: "Pat",
       validations: ["required"],
       css: styles
     });
+
+    form.field("#customer-last-name .field-space", {
+      type: "text",
+      name: "billingContact.lastName",
+      placeholder: "Smalley",
+      validations: ["required"],
+      css: styles
+    });
+
     form.field("#customer-email .field-space", {
       type: "text",
-      name: "email",
+      name: "billingContact.email",
       placeholder: "patsmalley@company.com",
       validations: ["required"],
       css: styles
     });
+    
     form.field("#customer-phone .field-space", {
       type: "text",
-      name: "phone",
+      name: "billingContact.phone",
       placeholder: "(800)-555-5555",
       validations: ["required"],
       css: styles
@@ -83,27 +93,17 @@ export default class ContactInformation extends Component {
     this.form = form
   }
 
-  handleError(errors) {
-    console.log('[error] ContactInformation', errors)
-  }
-
   onSubmit = () => {
-    const { form} = this
-    const { onNext, accountModel, onError, onComplete } = this.props
+    const { form } = this
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
     accountModel.saveWithSecureForm(
       form,
       {
-        formName: 'contact-form',
-        onError: (errors) => {
-          this.handleError(errors)
-          onError(errors)
-        },
+        onError,
         onComplete,
-        onNext,
-      }
-    )
-
+        onNext
+      })
   }
 
   buttonGrp = () => {
@@ -130,8 +130,12 @@ export default class ContactInformation extends Component {
     return (
       <section>
         <form id="contact-form" className="ui form">
-          <div id="customer-name" className="field">
-            <label>Name</label>
+          <div id="customer-first-name" className="field">
+            <label>First Name</label>
+            <span className="field-space"></span>
+          </div>
+          <div id="customer-last-name" className="field">
+            <label>Last Name</label>
             <span className="field-space"></span>
           </div>
 

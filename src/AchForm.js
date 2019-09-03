@@ -1,6 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import {
+  REVOPS_VAULT_COLLECT,
+  REVOPS_VAULT_ID,
+} from './client/VaultConfig'
+
+
 import './styles.css'
 
 const defaultStyles = {
@@ -33,7 +39,7 @@ export default class AchForm extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
+    script.src = REVOPS_VAULT_COLLECT
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -44,18 +50,49 @@ export default class AchForm extends Component {
   initialize = () => {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create("tnt6ryfiprp", function (state) { });
+    let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+    
     form.field("#bank-name .field-space", {
       type: "text",
-      name: "name",
+      name: "billingPreferences.bankName",
       placeholder: "Chase Bank",
       validations: ["required"],
       css: styles
     });
 
+    form.field("#bank-acct-country .field-space", {
+      type: "dropdown",
+      name: "billingPreferences.bankCountry",
+      validations: ["required"],
+      options: [
+        { value: 'USA', text: 'United States of America' },
+        { value: 'Canada', text: 'Canada' },
+        { value: 'Mexico', text: 'Mexico' },
+      ],
+      css: styles
+    });
+
+    form.field("#bank-holder-name .field-space", {
+      type: "text",
+      name: "billingPreferences.bankAccountHolderName",
+      validations: ["required"],
+      css: styles
+    });
+
+    form.field("#bank-acct-type .field-space", {
+      type: "dropdown",
+      name: "billingPreferences.bankAccountHolderType",
+      validations: ["required"],
+      options: [
+        { value: 'company', text: 'Company' },
+        { value: 'individual', text: 'Individual' },
+      ],
+      css: styles
+    });
+
     form.field("#bank-acct-number .field-space", {
       type: "text",
-      name: "email",
+      name: "billingPreferences.bankAccountNumber",
       placeholder: "XXXXXXXXXXXXX",
       validations: ["required"],
       css: styles
@@ -63,7 +100,7 @@ export default class AchForm extends Component {
 
     form.field("#bank-routing-number .field-space", {
       type: "text",
-      name: "phone",
+      name: "billingPreferences.bankRoutingNumber",
       placeholder: "XXXXXXXXXX",
       validations: ["required"],
       css: styles
@@ -73,28 +110,17 @@ export default class AchForm extends Component {
 
   }
 
-  handleError = (errors) => this.setState({
-    errors
-  })
-
   onSubmit = () => {
-    const { form} = this
-    const { onNext, accountModel, onError } = this.props
-  
-    onNext({}, {...accountModel, 'contact-form': true })
+    const { form } = this
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
-    form.submit('/post', {
-      serializer: 'deep',
-      serialization: 'formData',
-      data: accountModel,
-      mapDotToObject: 'merge',
-      },
-       (status, response) => {
-        onNext(status, response)
-      }, 
-      (errors) => {
-        onError(errors)
-      });
+    accountModel.saveWithSecureForm(
+      form,
+      {
+        onError,
+        onComplete,
+        onNext
+      })
   }
 
   buttonGrp = () => {
@@ -123,6 +149,21 @@ export default class AchForm extends Component {
         <form id="contact-form" className="ui form">
           <div id="bank-name" className="field">
             <label>Bank Name</label>
+            <span className="field-space"></span>
+          </div>
+
+          <div id="bank-acct-country" className="field">
+            <label >Bank Country</label>
+            <span className="field-space"></span>
+          </div>
+
+          <div id="bank-holder-name" className="field">
+            <label >Account Holder Name</label>
+            <span className="field-space"></span>
+          </div>
+
+          <div id="bank-acct-type" className="field">
+            <label >Account Type</label>
             <span className="field-space"></span>
           </div>
 

@@ -21,13 +21,11 @@ export class Account extends EntityModel {
   saveWithSecureForm(
     form,
     {
-      formName,
       onError,
       onComplete,
       onNext,
     }
   ) {
-
     form.submit(`/v1/accounts/${this.id}`,
       {
         serializer: 'deep',
@@ -37,8 +35,8 @@ export class Account extends EntityModel {
       },
       (status, response) => {
         if (status >= 400) {
-          if(!!onError !== false && typeof(onError) === 'function') {
-            onError({status, response})
+          if (!!onError !== false && typeof (onError) === 'function') {
+            onError({ status, response })
           }
         } else {
           Object.keys(response).map(attrName =>
@@ -48,17 +46,15 @@ export class Account extends EntityModel {
           if(!!onNext !== false && typeof(onNext) === 'function') {
             onNext(status, {
               ...response,
-              [formName]: true
             })
           }
           if(!!onComplete !== false && typeof(onComplete) === 'function') {
             onComplete(response)
           }
-
         }
       },
       (errors) => {
-        if(!!onError !== false && typeof(onError) === 'function') {
+        if (!!onError !== false && typeof (onError) === 'function') {
           onError({
             errors,
             status: false,

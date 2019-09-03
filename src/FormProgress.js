@@ -2,8 +2,6 @@ import React from 'react'
 
 import { makeAccount } from './actions/AccountActions'
 
-import { acceptForm } from './helpers/FormValidation'
-
 import './styles.css'
 
 export class FormProgress extends React.Component {
@@ -16,17 +14,17 @@ export class FormProgress extends React.Component {
 
   componentDidMount() {
     this.fetchAccount()
-    debugger
   }
 
   fetchAccount() {
+    const { acctEmail } = this.props
     var accountId = document.cookie.replace(/(?:(?:^|.*;\s*)ro_account_id\s*\=\s*([^;]*).*$)|^.*$/, "$1")
     let accountProps = {}
     if(!!accountId !== false) {
-      accountProps = { id: accountId }
+      accountProps = { id: accountId, email: acctEmail }
     }
 
-    const accountModel = makeAccount(accountProps)
+    const accountModel = makeAccount({...accountProps, email: acctEmail})
     if(accountId === false && !!accountModel.id !== false) {
       document.cookie = `ro_account_id=${accountModel.id}`
     }
@@ -34,35 +32,15 @@ export class FormProgress extends React.Component {
     this.setState({ accountModel })
   }
 
-  nextStep = (status = { alwaysAccept: true }, response = {}) => {
-    const { activeStep, accountModel } = this.state
+  nextStep = (status, response) => {
+    const { activeStep } = this.state
     const { steps } = this.props
 
-    console.log('Should accept = ' + acceptForm(status))
-
-    // validate form
-    if (acceptForm(status)) {
-      // if we can accept the submission merge the incoming with the current model
-      this.setState({
-        error: false,
-        success: true,
-        accountModel: { ...accountModel, ...response },
-      })
-    } else {
-      this.setState({ error: true, success: false })
-    }
-
-    // Combine this logic with above when not testing
     if (activeStep < steps.length - 1) {
       this.setState({ activeStep: activeStep + 1 })
       window.scrollTo(0, 0);
     } else {
       this.setState({ complete: true })
-      // send the data to RevOps
-      debugger
-
-
-      console.log("Form Submitted")
     }
   }
 
@@ -85,7 +63,7 @@ export class FormProgress extends React.Component {
   }
 
   render() {
-    const { companyName, steps, styles } = this.props
+    const { companyName, steps } = this.props
     const { activeStep, accountModel } = this.state
     return (
       <div>
@@ -98,13 +76,13 @@ export class FormProgress extends React.Component {
                   <div key={i}>
                     <h1>{step.title}</h1>
                     <step.component
-                      finalStep={i === steps.length - 1}
+                      finalStep={ i === steps.length - 1}
                       accountModel={accountModel}
-                      styles={styles}
                       onCancel={this.cancel}
                       onError={this.onError}
                       onLast={this.lastStep}
-                      onNext={this.nextStep} />
+                      onNext={this.nextStep}
+                      {...this.props} />
                   </div>
                 )
               })}

@@ -10,6 +10,10 @@ describe('The AddressForm Component', () => {
       onLast: jest.fn(),
       onNext: jest.fn(),
       onError: jest.fn(),
+      accountModel: {
+        id: "test",
+        saveWithSecureForm: jest.fn(),
+      },
       ...props,
     }}
   it('AchForm should render without crashing', () => {

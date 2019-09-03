@@ -9,6 +9,10 @@ describe('The ContactInformation Component', () => {
       onCancel: jest.fn(),
       onLast: jest.fn(),
       onNext: jest.fn(),
+      accountModel: {
+        id: "test",
+        saveWithSecureForm: jest.fn(),
+      },
       ...props,
     }}
   it('ContactInformation should render without crashing', () => {
@@ -40,11 +44,10 @@ describe('The ContactInformation Component', () => {
     const wrapper = shallow(<ContactInformation  {...mockProps} />)
 
     wrapper.instance().onSubmit = jest.fn()
-    wrapper.instance().form.submit = jest.fn()
     wrapper.find('#form-next-btn').simulate('click')
 
     expect(wrapper.instance().onSubmit.call.length).to.equal(1)
-    expect(wrapper.instance().form.submit.call.length).to.equal(1)
+    expect(mockProps.accountModel.saveWithSecureForm.call.length).to.equal(1)
     expect(mockProps.onNext.call.length).to.equal(1)
   })
 })

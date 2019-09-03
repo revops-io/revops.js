@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import {
+  REVOPS_VAULT_COLLECT,
+  REVOPS_VAULT_ID,
+} from './client/VaultConfig'
 
 import './styles.css'
 
@@ -16,7 +20,6 @@ export default class EmailInvoice extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      errors: 0,
       errors: false,
     }
     this.form = {};
@@ -25,12 +28,16 @@ export default class EmailInvoice extends Component {
   static propTypes = {
     styles: PropTypes.object,
     onComplete: PropTypes.func,
+    onNext: PropTypes.func,
+    onCancel: PropTypes.func,
+    onLast: PropTypes.func,
+    onError: PropTypes.func,
   }
 
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = "https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js"
+    script.src = REVOPS_VAULT_COLLECT
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -38,10 +45,11 @@ export default class EmailInvoice extends Component {
     document.body.appendChild(script);
   }
 
+
   initialize = () => {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create("tnt6ryfiprp", function (state) { });
+    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     form.field("#customer-name .field-space", {
       type: "text",
       name: "name",
@@ -68,31 +76,19 @@ export default class EmailInvoice extends Component {
 
   }
 
-  handleError = (errors) => this.setState({
-    errors
-  })
-
   onSubmit = () => {
+    const { form } = this
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
-    this.form.submit(
-      "/post",
+    accountModel.saveWithSecureForm(
+      form,
       {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
-      },
-      function (status, data) {
-        if (this.props.onSubmit !== false) {
-          this.props.onComplete()
-        }
-      },
-      function (errors) {
-        () => this.handleError(errors)
-      }
-    )
-    this.props.onNext()
+        onError,
+        onComplete,
+        onNext
+      })
   }
-
+  
   buttonGrp = () => {
     const { onLast, onCancel, finalStep } = this.props
     return (

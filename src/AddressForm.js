@@ -48,37 +48,46 @@ export class AddressForm extends Component {
   }
 
   initialize = () => {
+    const { targetObj = 'shippingContact' } = this.props
+
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
-    // Create VGS Collect field for the first name
-    form.field('#cc-first-name', {
+
+    form.field('#first-name', {
       type: 'text',
-      name: 'shipping_first_name',
+      name: `${targetObj}.firstName`,
       placeholder: 'Joe',
       validations: ['required'],
       css: styles
     });
-    // Create VGS Collect field for the last name
-    form.field('#cc-last-name', {
+
+    form.field('#last-name', {
       type: 'text',
-      name: 'shipping_last_name',
-      placeholder: 'Business',
+      name: `${targetObj}.lastName`,
+      placeholder: 'Smith',
       validations: ['required'],
       css: styles,
     });
-    // Create VGS Collect field for an address
-    form.field('#cc-address', {
+
+    form.field('#address', {
       type: 'text',
-      name: 'shipping_address',
-      placeholder: 'Address',
+      name: `${targetObj}.address`,
+      placeholder: '123 Broadway St.',
       validations: ['required'],
       css: styles,
     });
-    // Create VGS Collect field for country
-    form.field('#cc-country', {
+
+    form.field('#address2', {
+      type: 'text',
+      name: `${targetObj}.address2`,
+      placeholder: 'P.O. Box 21231',
+      css: styles,
+    });
+
+    form.field('#country', {
       type: 'dropdown',
-      name: 'shipping_country',
+      name: `${targetObj}.country`,
       placeholder: 'Select Country',
       validations: ['required'],
       options: [
@@ -88,27 +97,27 @@ export class AddressForm extends Component {
       ],
       css: styles,
     });
-    // Create VGS Collect field for the city
-    form.field('#cc-city', {
+
+    form.field('#city', {
       type: 'text',
-      name: 'shipping_city',
+      name: `${targetObj}.city`,
       placeholder: 'City',
       validations: ['required'],
       css: styles
     });
-    // Create VGS Collect field for the region
-    form.field('#cc-region', {
+
+    form.field('#region', {
       type: 'text',
-      name: 'shipping_region',
+      name: `${targetObj}.firstName`,
       placeholder: 'Region',
       validations: ['required'],
       css: styles
     });
-    // Create VGS Collect field for zip code
-    form.field('#cc-zip', {
+
+    form.field('#zip', {
       type: 'zip-code',
-      name: 'shipping_zip',
-      placeholder: 'Zip Code',
+      name: `${targetObj}.firstName`,
+      placeholder: '01234',
       validations: ['required'],
       css: styles
     });
@@ -116,31 +125,18 @@ export class AddressForm extends Component {
     this.form = form
 
   }
-
-  handleError = (errors) => this.setState({
-    errors
-  })
-
+  
   onSubmit = () => {
-    const { form, handleError } = this
-    const { onNext } = this.props
+    const { form } = this
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
-    form.submit(
-      "/post",
+    accountModel.saveWithSecureForm(
+      form,
       {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
-      },
-      function (status, data) {
-        onNext(status)
-      },
-      function (errors) {
-        onNext(errors)
-        handleError(errors)
-      }
-    )
-
+        onError,
+        onComplete,
+        onNext
+      })
   }
 
   buttonGrp = () => {
@@ -169,38 +165,42 @@ export class AddressForm extends Component {
         <form id="contact-form" className="ui form">
 
           <div className="field">
-            <label htmlFor="cc-first-name">First Name</label>
-            <span id="cc-first-name" className="field-space"></span>
+            <label htmlFor="first-name">First Name</label>
+            <span id="first-name" className="field-space"></span>
           </div>
 
           <div className="field">
-            <label htmlFor="cc-last-name">Last Name</label>
-            <span id="cc-last-name" className="field-space"></span>
+            <label htmlFor="last-name">Last Name</label>
+            <span id="last-name" className="field-space"></span>
           </div>
 
           <div className="field">
-            <label htmlFor="cc-address">Address</label>
-            <span id="cc-address" className="field-space"></span>
+            <label htmlFor="address">Address</label>
+            <span id="address" className="field-space"></span>
+          </div>
+          <div className="field">
+            <label htmlFor="address22">Address 2</label>
+            <span id="address2" className="field-space"></span>
           </div>
 
           <div className="field">
-            <label htmlFor="cc-country">Country</label>
-            <span id="cc-country" className="field-space"></span>
+            <label htmlFor="country">Country</label>
+            <span id="country" className="field-space"></span>
           </div>
 
           <div className="field">
-            <label htmlFor="cc-city">City</label>
-            <span id="cc-city" className="field-space"></span>
+            <label htmlFor="city">City</label>
+            <span id="city" className="field-space"></span>
           </div>
 
           <div className="field">
-            <label htmlFor="cc-region">Region</label>
-            <span id="cc-region" className="field-space"></span>
+            <label htmlFor="region">State/Region</label>
+            <span id="region" className="field-space"></span>
           </div>
 
           <div className="field">
-            <label htmlFor="cc-zip">Zip Code</label>
-            <span id="cc-zip" className="field-space"></span>
+            <label htmlFor="zip">Zip Code</label>
+            <span id="zip" className="field-space"></span>
           </div>
           
         </form>

@@ -9,7 +9,7 @@ export const StandardTerms = ({onCancel, onLast, onNext, accountModel}) => {
         onClick={() => onCancel()}>Cancel</button>
       <button
         className="ui right floated button"
-        onClick={() => onNext({}, {...accountModel, 'term-accepted': true })}>Accept</button>
+        onClick={() => onNext()}>Accept</button>
       <button
         className="ui right floated button"
         onClick={() => onLast()}>Previous</button>

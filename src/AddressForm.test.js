@@ -10,6 +10,10 @@ describe('The AddressForm Component', () => {
       onLast: jest.fn(),
       onNext: jest.fn(),
       onError: jest.fn(),
+      accountModel: {
+        id: "test",
+        saveWithSecureForm: jest.fn(),
+      },
       ...props,
     }}
   it('AddressForm should render without crashing', () => {
@@ -45,7 +49,9 @@ describe('The AddressForm Component', () => {
     wrapper.find('#form-next-btn').simulate('click')
 
     expect(wrapper.instance().onSubmit.call.length).to.equal(1)
-    expect(wrapper.instance().form.submit.call.length).to.equal(1)
+    expect(mockProps.onNext.call.length).to.equal(1)
+    expect(wrapper.instance().onSubmit.call.length).to.equal(1)
+    expect(mockProps.accountModel.saveWithSecureForm.call.length).to.equal(1)
     expect(mockProps.onNext.call.length).to.equal(1)
   })
 })

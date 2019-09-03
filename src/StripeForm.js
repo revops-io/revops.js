@@ -68,29 +68,17 @@ export default class StripeForm extends Component {
 
   }
 
-  handleError = (errors) => this.setState({
-    errors
-  })
-
   onSubmit = () => {
+    const { form } = this
+    const { onNext, accountModel, onError, onComplete = false } = this.props
 
-    this.form.submit(
-      "/post",
+    accountModel.saveWithSecureForm(
+      form,
       {
-        headers: {
-          "x-custom-header": "Oh yes. I am a custom header"
-        }
-      },
-      function (status, data) {
-        if (this.props.onSubmit !== false) {
-          this.props.onComplete()
-        }
-      },
-      function (errors) {
-        () => this.handleError(errors)
-      }
-    )
-    this.props.onNext()
+        onError,
+        onComplete,
+        onNext
+      })
   }
 
   buttonGrp = () => {

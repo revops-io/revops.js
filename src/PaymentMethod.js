@@ -57,45 +57,44 @@ export default class PaymentMethod extends Component {
     const { method } = this.state
     return (
       <section className="">
-        {/* <form id="contact-form" className="ui form"> */}
-          <label>Select Payment Method</label>
-          <select
-            style={{ width: '100%' }}
-            className="ui dropdown"
-            onChange={e => this.setState({ method: e.target.value })}>
-            {
-              PaymentMethods.map(method => {
-                return <option key={method.value} value={method.value}>{method.text}</option>
-              })
-            }
-          </select>
-          <br />
+        <label>Select Payment Method</label>
+        <select
+          style={{ width: '100%' }}
+          className="ui dropdown"
+          onChange={e => this.setState({ method: e.target.value })}>
           {
-            method === 'CC' &&
-            <div id="cc-info">
-              <CreditCardForm {...this.props} />
-            </div>
+            PaymentMethods.map(method => {
+              return <option key={method.value} value={method.value}>{method.text}</option>
+            })
           }
-          {
-            method === 'Stripe' &&
-            <div id="stripe-info">
-              <StripeForm {...this.props} />
-            </div>
-          }
-          {
-            method === 'EMAIL' &&
-            <div id="email-info">
-              <EmailInvoice {...this.props} />
-            </div>
-          }
-          {
-            method === 'ACH' &&
-            <div id="bank-info">
-              <AchForm {...this.props} />
-            </div>
-          }
-        {/* </form> */}
-        {this.state.method === false && this.buttonGrp()}
+        </select>
+        <br />
+        {
+          method === 'CC' &&
+          <div id="cc-info">
+            <CreditCardForm {...this.props} />
+          </div>
+        }
+        {
+          method === 'Stripe' &&
+          <div id="stripe-info">
+            <StripeForm {...this.props} />
+          </div>
+        }
+        {
+          method === 'EMAIL' &&
+          <div id="email-info">
+            <EmailInvoice {...this.props} />
+          </div>
+        }
+        {
+          method === 'ACH' &&
+          <div id="bank-info">
+            <AchForm {...this.props} />
+          </div>
+        }
+
+        {method === false && this.buttonGrp()}
       </section>
     )
   }
