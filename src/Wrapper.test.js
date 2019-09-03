@@ -11,6 +11,7 @@ describe('', () => {
       onLast: jest.fn(),
       onNext: jest.fn(),
       onError: jest.fn(),
+      showNav: true,
       ...props,
     }}
   it('Wrapper should render without crashing', () => {
@@ -44,5 +45,12 @@ describe('', () => {
 
     wrapper.find('#form-next-btn').simulate('click')
     expect(mockProps.onNext.call.length).to.equal(1)
+  })
+
+  it('when showNav is false', () => {
+    const mockProps = generateMockProps({showNav: false})
+    const wrapper = shallow(<Wrapper  {...mockProps} />)
+
+    expect(wrapper.find('button').length).to.equal(0)
   })
 })
