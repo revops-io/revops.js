@@ -16,8 +16,15 @@ export default class App extends Component {
     return (
       <div className="ui container" style={{ marginTop: '3em' }}>
         <div>
-          <PaymentPortal 
-            companyName="VGS" 
+          <PaymentPortal
+            account={{
+              email: "johnnycash@revops.io",
+              accountId: "ACmy58bitaccountid",
+              billingPreferences: {
+                paymentType: 'credit-card',
+              }
+            }}
+            companyName="Bill.sh"
             styles={defaultStyles} />
         </div>
       </div>

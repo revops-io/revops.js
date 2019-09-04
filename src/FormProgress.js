@@ -17,15 +17,20 @@ export class FormProgress extends React.Component {
   }
 
   fetchAccount() {
-    const { acctEmail } = this.props
+    const { account } = this.props
     var accountId = document.cookie.replace(/(?:(?:^|.*;\s*)ro_account_id\s*\=\s*([^;]*).*$)|^.*$/, "$1")
-    let accountProps = {}
+    let accountProps = { ...account }
     if(!!accountId !== false) {
-      accountProps = { id: accountId, email: acctEmail }
+      accountProps = {
+        id: accountId,
+        ...account
+      }
     }
 
     // accounts are keyed by email
-    const accountModel = makeAccount({...accountProps, email: acctEmail})
+    const accountModel = makeAccount({
+      ...accountProps,
+    })
     if(accountId === false && !!accountModel.id !== false) {
       document.cookie = `ro_account_id=${accountModel.id}`
     }
