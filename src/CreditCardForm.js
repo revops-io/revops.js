@@ -88,7 +88,7 @@ export default class CreditCardForm extends Component {
     form.field("#cc-cvc .field-space", {
       type: "card-security-code",
       name: "billingPreferences.cardCvv",
-      placeholder: "344",
+      placeholder: "311",
       defaultValue: !!accountModel.billingPreferences.cardCvv === true
         ? accountModel.billingPreferences.cardCvv
         : "",
@@ -100,7 +100,7 @@ export default class CreditCardForm extends Component {
     form.field("#cc-exp .field-space", {
       type: "card-expiration-date",
       name: "billingPreferences.cardExpdate",
-      placeholder: "01 / 2016",
+      placeholder: "01 / 2022",
       defaultValue: !!accountModel.billingPreferences.cardExpdate === true
         ? accountModel.billingPreferences.cardExpdate
         : "",
@@ -117,14 +117,13 @@ export default class CreditCardForm extends Component {
     let { accountModel } = this.props
 
     accountModel = makeAccount({
-      ...accountModel, 
+      ...accountModel,
       billingPreferences: {
-        ...accountModel.billingPreferences, 
+        ...accountModel.billingPreferences,
         paymentMethod: "credit-card"
       }
     })
 
-    debugger
     accountModel.saveWithSecureForm(
       form,
       {

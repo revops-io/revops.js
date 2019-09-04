@@ -59,7 +59,6 @@ export const PaymentPortal = ({ ...props }) => {
   return (
     <FormProgress
       steps={steps}
-      acctEmail="cberns223@gmail.com"
       {...props} />
   )
 }
