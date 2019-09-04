@@ -18,11 +18,7 @@ export default class App extends Component {
         <div>
           <PaymentPortal
             account={{
-              email: "johnnycash@revops.io",
               accountId: "ACmy58bitaccountid",
-              billingPreferences: {
-                paymentType: 'credit-card',
-              }
             }}
             companyName="Bill.sh"
             styles={defaultStyles} />
