@@ -20,7 +20,8 @@ export default class App extends Component {
             account={{
               accountId: "ACmy58bitaccountid",
             }}
-            companyName="Bill.sh"
+            // should probably have a prop for logo -- Flo
+            companyName="memSQL"
             styles={defaultStyles} />
         </div>
       </div>
