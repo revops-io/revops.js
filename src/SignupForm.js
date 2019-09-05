@@ -6,7 +6,7 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
+import { ButtonGroup } from './ButtonGroup'
 
 const defaultStyles = {
   border: "none",
@@ -40,53 +40,6 @@ const inputStyles = {
     border: '2px solid #c550ff'
   },
 }
-const buttonStylesPrimary = {
-  // Styling for primary button
-  // is there a way to get shared styling across all the buttons?
-  // shared
-    padding: '.6875em 1.1875em',
-    transition: 'all .15s ease-in-out 0s',
-    borderRadius: '4px',
-  // end of shared
-  background: '#80c',
-  border: '1px solid #80c',
-  color: '#fff',
-  '&:hover': {
-    background: '#a0f',
-    border: '1px solid #a0f',
-    transform: 'translateY(-1px)'
-  },
-}
-const buttonStylesSecondary = {
-  // Styling for secondary button
-  // shared
-    padding: '.6875em 1.1875em',
-    transition: 'all .15s ease-in-out 0s',
-    borderRadius: '4px',
-  // end of shared
-  color: '#4c4a57',
-  background: '#fff',
-  border: '.0625em solid #c2c1c7',
-  '&:hover': {
-    boxShadow: '0 1px 4px rgba(27,26,33,.25)',
-    transform: 'translateY(-1px)',
-    filter: 'brightness(1.1)'
-  },
-  '&:focus': {
-    boxShadow: '0 1px 4px rgba(27,26,33,.25)',
-    transform: 'translateY(-1px)',
-    filter: 'brightness(1.1)'
-  },
-}
-const buttonStylesTertiary = {
-  // shared
-    padding: '.6875em 1.1875em',
-    transition: 'all .15s ease-in-out 0s',
-    borderRadius: '4px',
-  color: '#4c4a57',
-  border: 'none',
-  background: 'none'
-}
 
 export default class SignupForm extends Component {
   static propTypes = {
@@ -116,7 +69,8 @@ export default class SignupForm extends Component {
       name: "card.name",
       placeholder: "Joe Business",
       validations: ["required"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     form.field("#cc-number .field-space", {
@@ -124,7 +78,8 @@ export default class SignupForm extends Component {
       name: "card.number",
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     form.field("#cc-cvc .field-space", {
@@ -132,7 +87,8 @@ export default class SignupForm extends Component {
       name: "card.cvc",
       placeholder: "344",
       validations: ["required", "validCardSecurityCode"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     form.field("#cc-exp .field-space", {
@@ -140,40 +96,11 @@ export default class SignupForm extends Component {
       name: "card.expirationDate",
       placeholder: "01 / 2016",
       validations: ["required", "validCardExpirationDate"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     this.form = form
-  }
-
-  onSubmit = () => {
-    const { form } = this
-    const { onNext, accountModel, onError, onComplete = false } = this.props
-
-    accountModel.saveWithSecureForm(
-      form,
-      {
-        onError,
-        onComplete,
-        onNext
-      })
-  }
-
-  buttonGrp = () => {
-    const { onLast, onCancel } = this.props
-    return (
-      <div>
-        <button
-          className="ui left floated button"
-          onClick={() => onCancel()} style={buttonStylesTertiary}>Cancel</button>
-        <button
-          className="ui right floated button"
-          onClick={this.onSubmit} style={buttonStylesSecondary}>Next</button>
-        <button
-          className="ui right floated button"
-          onClick={() => onLast()} style={buttonStylesPrimary}>Previous</button>
-      </div>
-    )
   }
 
   render() {
@@ -215,7 +142,8 @@ export default class SignupForm extends Component {
             </div>
             <div className="card-back"><div className="card-stripe"></div></div>
           </div>
-          {this.buttonGrp()}
+          {/* {this.buttonGrp()} */}
+          <ButtonGroup onSubmit={this.onSubmit}/>
         </section>
     )
   }

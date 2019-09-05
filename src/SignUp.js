@@ -5,6 +5,8 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
+import { ButtonGroup } from './ButtonGroup'
+
 import './styles.css'
 
 const defaultStyles = {
@@ -129,7 +131,6 @@ export class SignUp extends Component {
         : "",
       placeholder: "johndoe@example.com",
       validations: ["required"],
-      // css: styles
       css: inputStyles
     });
 
@@ -138,7 +139,6 @@ export class SignUp extends Component {
       name: "password",
       placeholder: "**********",
       validations: ["required"],
-      // css: styles
       css: inputStyles
     });
 
@@ -158,32 +158,31 @@ export class SignUp extends Component {
       })
   }
 
-  buttonGrp = () => {
-    const { onLast, onCancel, finalStep } = this.props
-    return (
-      <div id="form-nav">
-        <button
-          id="form-cancel-btn"
-          className="ui left floated button"
-          onClick={() => onCancel()}
-          style={buttonStylesTertiary}
-          >Cancel</button>
-        <button
-          id="form-next-btn"
-          className="ui right floated button"
-          onClick={this.onSubmit}
-          style={buttonStylesPrimary}
-          >{finalStep ? 'Submit' : 'Next'}</button>
-        {/* If there are no previous steps, this button should not appear */}
-        <button
-          id="form-prev-btn"
-          className="ui right floated button"
-          onClick={() => onLast()}
-          style={buttonStylesSecondary}
-          >Previous</button>
-      </div>
-    )
-  }
+  // buttonGrp = () => {
+  //   const { onLast, onCancel, finalStep } = this.props
+  //   return (
+  //     <div id="form-nav">
+  //       <button
+  //         id="form-cancel-btn"
+  //         className="ui left floated button"
+  //         onClick={() => onCancel()}
+  //         style={buttonStylesTertiary}
+  //         >Cancel</button>
+  //       <button
+  //         id="form-next-btn"
+  //         className="ui right floated button"
+  //         onClick={this.onSubmit}
+  //         style={buttonStylesPrimary}
+  //         >{finalStep ? 'Submit' : 'Next'}</button>
+  //       <button
+  //         id="form-prev-btn"
+  //         className="ui right floated button"
+  //         onClick={() => onLast()}
+  //         style={buttonStylesSecondary}
+  //         >Previous</button>
+  //     </div>
+  //   )
+  // }
 
   render() {
     return (
@@ -201,7 +200,7 @@ export class SignUp extends Component {
 
         </form>
         <div className="ui clearing divider"></div>
-        {this.buttonGrp()}
+        <ButtonGroup onSubmit={this.onSubmit}/>
       </section>
     )
   }
