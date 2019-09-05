@@ -10,7 +10,7 @@ export const StandardTerms = ({onCancel, onLast, onNext, accountModel}) => {
         onLast={onLast}
         onCancel={onCancel}
         showAccept={true}
-        // hideOnNext={true}
+        // hideNext={true}
       />
       </div>
   )

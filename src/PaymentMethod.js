@@ -109,7 +109,7 @@ export default class PaymentMethod extends Component {
           <ButtonGroup
             onLast={onLast}
             onCancel={onCancel}
-            hideOnNext={true}
+            hideNext={true}
           />
         }
       </section>

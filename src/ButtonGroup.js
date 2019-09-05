@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { buttonStylesPrimary, buttonStylesSecondary, buttonStylesTertiary } from './SharedStyles'
 
-export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, showAccept, hideOnNext, creditCardSubmit, achSubmit, }) => {
+export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, showAccept, hideNext, hidePrevious }) => {
   // const { onLast, onCancel, finalStep } = this.props
   return (
     <div id="form-nav">
@@ -22,7 +22,7 @@ export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, sho
         >Accept
       </button>
     }
-    { hideOnNext !== true && showAccept !== true &&
+    { hideNext !== true && showAccept !== true &&
       <button
         id="form-next-btn"
         className="ui right floated button"
@@ -31,7 +31,7 @@ export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, sho
         >{finalStep ? 'Submit' : 'Next'}
       </button>
     }
-    {/* If there are no previous steps, this button should not appear */}
+    { hidePrevious !== true &&
       <button
         id="form-prev-btn"
         className="ui right floated button"
@@ -39,6 +39,7 @@ export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, sho
         style={buttonStylesSecondary}
         >Previous
       </button>
+    }
     </div>
   )
 }

@@ -158,32 +158,6 @@ export class SignUp extends Component {
       })
   }
 
-  // buttonGrp = () => {
-  //   const { onLast, onCancel, finalStep } = this.props
-  //   return (
-  //     <div id="form-nav">
-  //       <button
-  //         id="form-cancel-btn"
-  //         className="ui left floated button"
-  //         onClick={() => onCancel()}
-  //         style={buttonStylesTertiary}
-  //         >Cancel</button>
-  //       <button
-  //         id="form-next-btn"
-  //         className="ui right floated button"
-  //         onClick={this.onSubmit}
-  //         style={buttonStylesPrimary}
-  //         >{finalStep ? 'Submit' : 'Next'}</button>
-  //       <button
-  //         id="form-prev-btn"
-  //         className="ui right floated button"
-  //         onClick={() => onLast()}
-  //         style={buttonStylesSecondary}
-  //         >Previous</button>
-  //     </div>
-  //   )
-  // }
-
   render() {
     return (
       <section>
@@ -200,7 +174,10 @@ export class SignUp extends Component {
 
         </form>
         <div className="ui clearing divider"></div>
-        <ButtonGroup onSubmit={this.onSubmit}/>
+        <ButtonGroup
+          onSubmit={this.onSubmit}
+          hidePrevious={true}
+        />
       </section>
     )
   }
