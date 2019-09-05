@@ -53,6 +53,14 @@ a.pay-by-cc-link:hover {
   line-height: 2rem;
   margin-top: 1rem;
 }
+.ui.form .field>label {
+  font-weight: bold;
+  margin-top: 1rem;
+}
+#form-nav {
+  height: 7px;
+}
+
 
 
 /* Consistent Credit Card Styling */
