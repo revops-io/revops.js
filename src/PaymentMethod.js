@@ -39,22 +39,7 @@ export default class PaymentMethod extends Component {
     onError: PropTypes.func,
   }
 
-  // buttonGrp = () => {
-  //   const { onLast, onCancel } = this.props
-  //   return (
-  //     <div id="form-nav">
-  //       <button
-  //         className="ui left floated button"
-  //         onClick={() => onCancel()}>Cancel</button>
-  //       <button
-  //         className="ui right floated button"
-  //         onClick={() => onLast()}>Previous</button>
-  //     </div>
-  //   )
-  // }
-
   changePaymentMethod = (e) => {
-
     this.setState({ method: e.target.value })
   }
 
@@ -104,7 +89,7 @@ export default class PaymentMethod extends Component {
           </div>
         }
         {method === false && <div class="ui clearing divider"></div>}
-        {/* {method === false && this.buttonGrp()} */}
+
         {method === false &&
           <ButtonGroup
             onLast={onLast}
