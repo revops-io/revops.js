@@ -28,7 +28,6 @@ const addJS = (url, onload = () => {}) => {
 }
 
 
-
 export { default as StandardTerms } from './StandardTerms'
 export { default as CreditCardForm } from './CreditCardForm'
 export { default as SignupForm } from './SignupForm'
