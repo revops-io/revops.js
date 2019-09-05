@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
+import { inputStyles } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -69,7 +70,7 @@ export default class CreditCardForm extends Component {
         : "",
       placeholder: "Joe Business",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#cc-number .field-space", {
@@ -81,7 +82,7 @@ export default class CreditCardForm extends Component {
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
-      css: styles
+      css: inputStyles
     });
 
     form.field("#cc-cvc .field-space", {
@@ -93,7 +94,7 @@ export default class CreditCardForm extends Component {
         : "",
       validations: ["required", "validCardSecurityCode"],
       errorColor: "rgba(240, 0, 0)",
-      css: styles
+      css: inputStyles
     });
 
     form.field("#cc-exp .field-space", {
@@ -104,7 +105,7 @@ export default class CreditCardForm extends Component {
         ? accountModel.billingPreferences.cardExpdate
         : "",
       validations: ["required", "validCardExpirationDate"],
-      css: styles
+      css: inputStyles
     })
 
     this.form = form
@@ -162,7 +163,6 @@ export default class CreditCardForm extends Component {
           </form>
         </div>
         <div class="ui clearing divider"></div>
-        {/* {this.buttonGrp()} */}
         <ButtonGroup
           onSubmit={this.onSubmit}
           onLast={onLast}
