@@ -69,11 +69,15 @@ export class FormProgress extends React.Component {
   }
 
   render() {
-    const { companyName, steps } = this.props
+    const { companyName, steps, logo } = this.props
     const { activeStep, accountModel } = this.state
     return (
       <div>
-        <h1 className="ui center aligned header">{companyName}</h1>
+        { logo ?
+          <img src={logo} alt={companyName} width="165" style={{margin: '0 auto', display: 'block'}}/>
+          :
+          <h1 className="ui center aligned header">companyName</h1>
+        }
         <div className="ui grid">
           <div className="sixteen wide column">
             <div className="ui raised very padded container segment">

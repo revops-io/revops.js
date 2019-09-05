@@ -36,7 +36,7 @@ const CustomWelcomeMessage = () => {
 const steps = [
   {
     title: 'Sign Up for Services',
-    component: SignUp
+    component: SignUp,
   },
   {
     title: 'Terms',

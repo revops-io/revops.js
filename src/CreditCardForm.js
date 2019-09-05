@@ -2,13 +2,15 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { makeAccount } from './actions/AccountActions'
-import { ButtonGroup } from './ButtonGroup'
-import { inputStyles } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
+
+import { ButtonGroup } from './ButtonGroup'
+import { inputStyles } from './SharedStyles'
+import './styles.css'
 
 const defaultStyles = {
   border: 'none',
@@ -134,21 +136,31 @@ export default class CreditCardForm extends Component {
   }
 
   render() {
-    const { onLast, onCancel, form, } = this.props
+   const { onLast, onCancel, form, } = this.props
     return (
       <section>
         <div className="form-container">
 
           <form id="cc-form">
+            <div id="cc-holder" className="cardholder-container">
+              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+              <span className="field-space"></span>
+            </div>
+
             <div id="cc-number" className="card-number-container">
               <label htmlFor="cc-number" className="hidden"> Card Number </label>
               <span className="field-space">  </span>
             </div>
 
-            <div id="cc-holder" className="cardholder-container">
-              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+            {/* <div id="cc-exp" className="exp-container">
+              <label htmlFor="cc-exp" className="hidden"> Expiration </label>
               <span className="field-space"></span>
             </div>
+
+            <div id="cc-cvc" className="cvc-container">
+              <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
+              <span className="field-space"></span>
+            </div> */}
 
             <div id="cc-exp" className="exp-container">
               <label htmlFor="cc-exp" className="hidden"> Expiration </label>
@@ -163,12 +175,13 @@ export default class CreditCardForm extends Component {
           </form>
         </div>
         <div class="ui clearing divider"></div>
+        {/* {this.buttonGrp()} */}
         <ButtonGroup
-          onSubmit={this.onSubmit}
-          onLast={onLast}
-          onCancel={onCancel}
-          finalStep={true}
-        />
+         onSubmit={this.onSubmit}
+         onLast={onLast}
+         onCancel={onCancel}
+         finalStep={true}
+       />
       </section>
     )
   }

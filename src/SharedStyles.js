@@ -58,7 +58,13 @@ export const buttonStylesTertiary = {
     padding: '.6875em 1.1875em',
     transition: 'all .15s ease-in-out 0s',
     borderRadius: '4px',
-  color: '#4c4a57',
+  color: '#4f34c7',
   border: 'none',
-  background: 'none'
+  background: 'none',
+  '&:hover': {
+    textDecoration: 'underline',
+  },
+}
+export const backgroundColor = {
+  background: 'black',
 }

@@ -66,7 +66,7 @@ export class SignUp extends Component {
       defaultValue: !!accountModel.email === true
         ? accountModel.email
         : "",
-      placeholder: "johndoe@example.com",
+      placeholder: "you@example.com",
       validations: ["required"],
       css: inputStyles
     });
@@ -74,7 +74,7 @@ export class SignUp extends Component {
     form.field("#signup-password .field-space", {
       type: "password",
       name: "password",
-      placeholder: "**********",
+      placeholder: "Enter password",
       validations: ["required"],
       css: inputStyles
     });
@@ -96,8 +96,9 @@ export class SignUp extends Component {
   }
 
   render() {
+    const { cardWidth } = this.props
     return (
-      <section>
+      <section width={cardWidth}>
         <form id="contact-form" className="ui form">
           <div id="signup-email" className="field">
             <label>Email</label>

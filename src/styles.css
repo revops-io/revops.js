@@ -1,0 +1,23 @@
+.term-value {
+  position: relative;
+}
+.float-above{
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  width: 450px; /* Should be ea variable? or calculated */
+}
+
+
+/* Consistent Credit Card Styling */
+#cc-exp.exp-container {
+  float: left !important;
+}
+#cc-cvc.cvc-container {
+  float: right !important;
+}
+#cc-exp.exp-container,
+#cc-cvc.cvc-container {
+  width: 47% !important;
+  display: inline-block !important;
+}
