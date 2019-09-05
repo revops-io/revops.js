@@ -3,16 +3,8 @@ import PropTypes from 'prop-types'
 import { buttonStylesPrimary, buttonStylesSecondary, buttonStylesTertiary } from './SharedStyles'
 
 export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, showAccept, hideNext, hidePrevious }) => {
-  // const { onLast, onCancel, finalStep } = this.props
   return (
     <div id="form-nav">
-      <button
-        id="form-cancel-btn"
-        className="ui left floated button"
-        onClick={() => onCancel()}
-        style={buttonStylesTertiary}
-        >Cancel
-      </button>
     { showAccept &&
       <button
         id="form-next-btn"

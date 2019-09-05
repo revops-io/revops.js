@@ -150,6 +150,8 @@ export default class AchForm extends Component {
     const { onLast, onCancel, form, } = this.props
     return (
       <section>
+        <label className="h3">Paying by ACH</label>
+        <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
         <form id="contact-form" className="ui form">
           <div id="bank-name" className="field">
             <label>Bank Name</label>

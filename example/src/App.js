@@ -24,6 +24,7 @@ const backgroundStyles = {
 }
 const cardWidth = {
   width: '550px',
+  overflow: 'hidden',
 }
 
 export default class App extends Component {
