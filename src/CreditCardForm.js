@@ -10,7 +10,6 @@ import {
 
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles } from './SharedStyles'
-import './styles.css'
 
 const defaultStyles = {
   border: 'none',

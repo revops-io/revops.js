@@ -5,8 +5,6 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
-
 const defaultStyles = {
   border: 'none',
   background: 'rgba(215, 224, 235, 0.18);',
@@ -58,15 +56,15 @@ export default class ContactInformation extends Component {
     const { accountModel } = this.props
     let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
-    
+
     form.field("#customer-first-name .field-space", {
       type: "text",
       name: "billingContact.firstName",
-      defaultValue: !!accountModel.billingContact.firstName === true 
-        ? accountModel.billingContact.firstName 
+      defaultValue: !!accountModel.billingContact.firstName === true
+        ? accountModel.billingContact.firstName
         : "",
-      placeholder: !!accountModel.billingContact.firstName === true 
-        ? accountModel.billingContact.firstName 
+      placeholder: !!accountModel.billingContact.firstName === true
+        ? accountModel.billingContact.firstName
         : "Pat",
       validations: ["required"],
       css: styles
@@ -75,8 +73,8 @@ export default class ContactInformation extends Component {
     form.field("#customer-last-name .field-space", {
       type: "text",
       name: "billingContact.lastName",
-      defaultValue: !!accountModel.billingContact.lastName === true 
-        ? accountModel.billingContact.lastName 
+      defaultValue: !!accountModel.billingContact.lastName === true
+        ? accountModel.billingContact.lastName
         : "",
       placeholder: "Smith",
       validations: ["required"],
@@ -86,19 +84,19 @@ export default class ContactInformation extends Component {
     form.field("#customer-email .field-space", {
       type: "text",
       name: "billingContact.email",
-      defaultValue: !!accountModel.billingContact.email === true 
-        ? accountModel.billingContact.email 
+      defaultValue: !!accountModel.billingContact.email === true
+        ? accountModel.billingContact.email
         : "",
       placeholder: "patsmith@example.com",
       validations: ["required"],
       css: styles
     });
-    
+
     form.field("#customer-phone .field-space", {
       type: "text",
       name: "billingContact.phone",
-      defaultValue: !!accountModel.billingContact.phone === true 
-        ? accountModel.billingContact.phone 
+      defaultValue: !!accountModel.billingContact.phone === true
+        ? accountModel.billingContact.phone
         : "",
       placeholder: "800-555-5555",
       validations: ["required"],

@@ -1,8 +1,6 @@
-import "./styles.css"
-
 const styleDependencies = [
-  "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css",
-  "https://use.fontawesome.com/releases/v5.7.2/css/all.css",
+  // "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css",
+  // "https://use.fontawesome.com/releases/v5.7.2/css/all.css",
 ]
 
 const jsDependencies = [

@@ -5,7 +5,6 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
 
 const defaultStyles = {
   background: "#FFFFFF",
@@ -88,7 +87,7 @@ export default class EmailInvoice extends Component {
         onNext
       })
   }
-  
+
   buttonGrp = () => {
     const { onLast, onCancel, finalStep } = this.props
     return (

@@ -2,8 +2,6 @@ import React from 'react'
 
 import { makeAccount } from './actions/AccountActions'
 
-import './styles.css'
-
 export class FormProgress extends React.Component {
   constructor(props) {
     super(props)
@@ -74,9 +72,9 @@ export class FormProgress extends React.Component {
     return (
       <div>
         { logo ?
-          <img src={logo} alt={companyName} width="165" style={{margin: '0 auto', display: 'block'}}/>
+          <img src={ logo } alt={ companyName } width="165" className="logo"/>
           :
-          <h1 className="ui center aligned header">companyName</h1>
+          <h1 className="ui center aligned header">{ companyName }</h1>
         }
         <div className="ui grid">
           <div className="sixteen wide column">

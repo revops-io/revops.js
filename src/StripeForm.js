@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import './styles.css'
-
 const defaultStyles = {
   background: "#FFFFFF",
   border: "1px solid #CED7E6",

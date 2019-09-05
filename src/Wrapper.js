@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 
-import './styles.css'
-
 export default class Wrapper extends Component {
 
   buttonGrp = () => {
@@ -34,4 +32,3 @@ export default class Wrapper extends Component {
     )
   }
 }
-
