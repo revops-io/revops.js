@@ -25,6 +25,27 @@ img.logo {
   border-radius: 6px;
 }
 
+label.h3 {
+  font-size: 1.28571429rem;
+  line-height: 1.28571429em;
+  margin: calc(2rem - .14285714em) 0 1rem;
+  font-weight: 700;
+  padding: 0;
+}
+label.h3:first-child {
+  margin-top: 0;
+}
+a.pay-by-ach-link,
+a.pay-by-cc-link {
+  /* Needs to be a variable of the chosen link colors */
+  color: #4f34c7;
+  float: right;
+}
+a.pay-by-ach-link:hover,
+a.pay-by-cc-link:hover {
+  cursor: pointer;
+
+}
 /* Consistent Credit Card Styling */
 #cc-cvc.cvc-container {
   float: right;

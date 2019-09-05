@@ -15,13 +15,6 @@ export const ButtonGroup = ({
 }) => {
   return (
     <div id="form-nav">
-      <button
-        id="form-cancel-btn"
-        className="ui left floated button"
-        onClick={() => onCancel()}
-        style={buttonStylesTertiary}
-        >Cancel
-      </button>
     { showAccept &&
       <button
         id="form-next-btn"

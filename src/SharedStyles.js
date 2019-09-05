@@ -16,8 +16,6 @@ export const inputStyles = {
   },
 }
 export const buttonStylesPrimary = {
-  // Styling for primary button
-  // is there a way to get shared styling across all the buttons?
   // shared
     padding: '.6875em 1.1875em',
     transition: 'all .15s ease-in-out 0s',
@@ -33,7 +31,6 @@ export const buttonStylesPrimary = {
   },
 }
 export const buttonStylesSecondary = {
-  // Styling for secondary button
   // shared
     padding: '.6875em 1.1875em',
     transition: 'all .15s ease-in-out 0s',
@@ -58,6 +55,7 @@ export const buttonStylesTertiary = {
     padding: '.6875em 1.1875em',
     transition: 'all .15s ease-in-out 0s',
     borderRadius: '4px',
+  // end of shared
   color: '#4f34c7',
   border: 'none',
   background: 'none',

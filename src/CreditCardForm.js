@@ -172,8 +172,9 @@ export default class CreditCardForm extends Component {
 
     return (
       <section>
+        <label className="h3">Paying by credit card</label>
+        <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
         <div className="form-container">
-
           <form id="cc-form">
             <div id="cc-holder" className={
               getClassName(
@@ -226,7 +227,6 @@ export default class CreditCardForm extends Component {
           </form>
         </div>
         <div class="ui clearing divider"></div>
-        {/* {this.buttonGrp()} */}
         <ButtonGroup
          onSubmit={this.onSubmit}
          onLast={onLast}
