@@ -5,7 +5,8 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
+import { ButtonGroup } from './ButtonGroup'
+import { inputStyles } from './SharedStyles'
 
 const defaultStyles = {
   border: 'none',
@@ -58,24 +59,24 @@ export class SignUp extends Component {
     const { accountModel } = this.props
     let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
-    
+
     form.field("#signup-email .field-space", {
       type: "text",
       name: "email",
-      defaultValue: !!accountModel.email === true 
+      defaultValue: !!accountModel.email === true
         ? accountModel.email
         : "",
-      placeholder: "johndoe@example.com",
+      placeholder: "you@example.com",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#signup-password .field-space", {
       type: "password",
       name: "password",
-      placeholder: "**********",
+      placeholder: "Enter password",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     this.form = form
@@ -94,29 +95,10 @@ export class SignUp extends Component {
       })
   }
 
-  buttonGrp = () => {
-    const { onLast, onCancel, finalStep } = this.props
-    return (
-      <div id="form-nav">
-        <button
-          id="form-cancel-btn"
-          className="ui left floated button secondary basic"
-          onClick={() => onCancel()}>Cancel</button>
-        <button
-          id="form-next-btn"
-          className="ui right floated button positive"
-          onClick={this.onSubmit}>{finalStep ? 'Submit' : 'Next'}</button>
-        <button
-          id="form-prev-btn"
-          className="ui right floated button positive basic"
-          onClick={() => onLast()}>Previous</button>
-      </div>
-    )
-  }
-
   render() {
+    const { cardWidth } = this.props
     return (
-      <section>
+      <section width={cardWidth}>
         <form id="contact-form" className="ui form">
           <div id="signup-email" className="field">
             <label>Email</label>
@@ -129,8 +111,11 @@ export class SignUp extends Component {
           </div>
 
         </form>
-        <div class="ui clearing divider"></div>
-        {this.buttonGrp()}
+        <div className="ui clearing divider"></div>
+        <ButtonGroup
+          onSubmit={this.onSubmit}
+          hidePrevious={true}
+        />
       </section>
     )
   }

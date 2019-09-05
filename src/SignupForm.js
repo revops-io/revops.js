@@ -6,7 +6,7 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
+import { ButtonGroup } from './ButtonGroup'
 
 const defaultStyles = {
   border: "none",
@@ -25,6 +25,21 @@ const defaultStyles = {
     opacity: ".5"
   }
 };
+
+const inputStyles = {
+  background: 'hsla(0,0%,74%,.13)',
+  borderRadius: '4px',
+  padding: '8px',
+  fontSize: '18px',
+  lineHeight: '20px',
+  outline: 'none',
+  boxSizing: 'border-box',
+  transition: 'all .15s ease-in-out 0s',
+  '&:focus': {
+    background: 'white',
+    border: '2px solid #c550ff'
+  },
+}
 
 export default class SignupForm extends Component {
   static propTypes = {
@@ -54,7 +69,8 @@ export default class SignupForm extends Component {
       name: "card.name",
       placeholder: "Joe Business",
       validations: ["required"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     form.field("#cc-number .field-space", {
@@ -62,7 +78,8 @@ export default class SignupForm extends Component {
       name: "card.number",
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     form.field("#cc-cvc .field-space", {
@@ -70,7 +87,8 @@ export default class SignupForm extends Component {
       name: "card.cvc",
       placeholder: "344",
       validations: ["required", "validCardSecurityCode"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     form.field("#cc-exp .field-space", {
@@ -78,40 +96,11 @@ export default class SignupForm extends Component {
       name: "card.expirationDate",
       placeholder: "01 / 2016",
       validations: ["required", "validCardExpirationDate"],
-      css: styles
+      // css: styles
+      css: inputStyles
     });
 
     this.form = form
-  }
-
-  onSubmit = () => {
-    const { form } = this
-    const { onNext, accountModel, onError, onComplete = false } = this.props
-
-    accountModel.saveWithSecureForm(
-      form,
-      {
-        onError,
-        onComplete,
-        onNext
-      })
-  }
-
-  buttonGrp = () => {
-    const { onLast, onCancel } = this.props
-    return (
-      <div>
-        <button
-          className="ui left floated button"
-          onClick={() => onCancel()}>Cancel</button>
-        <button
-          className="ui right floated button"
-          onClick={this.onSubmit}>Next</button>
-        <button
-          className="ui right floated button"
-          onClick={() => onLast()}>Previous</button>
-      </div>
-    )
   }
 
   render() {
@@ -153,7 +142,8 @@ export default class SignupForm extends Component {
             </div>
             <div className="card-back"><div className="card-stripe"></div></div>
           </div>
-          {this.buttonGrp()}
+          {/* {this.buttonGrp()} */}
+          <ButtonGroup onSubmit={this.onSubmit}/>
         </section>
     )
   }

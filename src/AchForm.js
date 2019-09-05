@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+
 import { makeAccount } from './actions/AccountActions'
+import { ButtonGroup } from './ButtonGroup'
+import { inputStyles } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
-
-
-import './styles.css'
 
 const defaultStyles = {
   background: "#FFFFFF",
@@ -62,7 +62,7 @@ export default class AchForm extends Component {
         : "",
       placeholder: "Chase Bank",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#bank-acct-country .field-space", {
@@ -77,7 +77,7 @@ export default class AchForm extends Component {
         { value: 'Canada', text: 'Canada' },
         { value: 'Mexico', text: 'Mexico' },
       ],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#bank-holder-name .field-space", {
@@ -88,7 +88,7 @@ export default class AchForm extends Component {
         : "",
       placeholder: "Pat Smalley",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#bank-acct-type .field-space", {
@@ -102,7 +102,7 @@ export default class AchForm extends Component {
         { value: 'company', text: 'Company' },
         { value: 'individual', text: 'Individual' },
       ],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#bank-acct-number .field-space", {
@@ -112,8 +112,9 @@ export default class AchForm extends Component {
         ? accountModel.billingPreferences.bankAccountNumber
         : "",
       placeholder: "XXXXXXXXXXXXX",
+      placeholder: "#############",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#bank-routing-number .field-space", {
@@ -122,9 +123,9 @@ export default class AchForm extends Component {
       defaultValue: !!accountModel.billingPreferences.bankRoutingNumber === true
         ? accountModel.billingPreferences.bankRoutingNumber
         : "",
-      placeholder: "XXXXXXXXXX",
+      placeholder: "##########",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     this.form = form
@@ -145,27 +146,8 @@ export default class AchForm extends Component {
       })
   }
 
-  buttonGrp = () => {
-    const { onLast, onCancel, finalStep } = this.props
-    return (
-      <div id="form-nav">
-        <button
-          id="form-cancel-btn"
-          className="ui left floated button secondary basic"
-          onClick={() => onCancel()}>Cancel</button>
-        <button
-          id="form-next-btn"
-          className="ui right floated button positive"
-          onClick={this.onSubmit}>{finalStep ? 'Submit' : 'Next'}</button>
-        <button
-          id="form-prev-btn"
-          className="ui right floated button positive basic"
-          onClick={() => onLast()}>Previous</button>
-      </div>
-    )
-  }
-
   render() {
+    const { onLast, onCancel, form, } = this.props
     return (
       <section>
         <form id="contact-form" className="ui form">
@@ -201,7 +183,13 @@ export default class AchForm extends Component {
 
         </form>
         <div class="ui clearing divider"></div>
-        {this.buttonGrp()}
+        {/* {this.buttonGrp()} */}
+        <ButtonGroup
+          onLast={onLast}
+          onCancel={onCancel}
+          finalStep={true}
+          onSubmit={this.onSubmit}
+        />
       </section>
     )
   }

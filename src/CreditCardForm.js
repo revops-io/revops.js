@@ -8,7 +8,8 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
+import { ButtonGroup } from './ButtonGroup'
+import { inputStyles } from './SharedStyles'
 
 const defaultStyles = {
   border: 'none',
@@ -70,7 +71,7 @@ export default class CreditCardForm extends Component {
         : "",
       placeholder: "Joe Business",
       validations: ["required"],
-      css: styles
+      css: inputStyles
     });
 
     form.field("#cc-number .field-space", {
@@ -82,7 +83,7 @@ export default class CreditCardForm extends Component {
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
-      css: styles
+      css: inputStyles
     });
 
     form.field("#cc-cvc .field-space", {
@@ -94,7 +95,7 @@ export default class CreditCardForm extends Component {
         : "",
       validations: ["required", "validCardSecurityCode"],
       errorColor: "rgba(240, 0, 0)",
-      css: styles
+      css: inputStyles
     });
 
     form.field("#cc-exp .field-space", {
@@ -105,7 +106,7 @@ export default class CreditCardForm extends Component {
         ? accountModel.billingPreferences.cardExpdate
         : "",
       validations: ["required", "validCardExpirationDate"],
-      css: styles
+      css: inputStyles
     })
 
     this.form = form
@@ -133,42 +134,32 @@ export default class CreditCardForm extends Component {
       })
   }
 
-  buttonGrp = () => {
-    const { onLast, onCancel, finalStep } = this.props
-    return (
-      <div id="form-nav">
-        <button
-          id="form-cancel-btn"
-          className="ui left floated button secondary basic"
-          onClick={() => onCancel()}>Cancel</button>
-        <button
-          id="form-next-btn"
-          className="ui right floated button positive"
-          onClick={this.onSubmit}>{finalStep ? 'Submit' : 'Next'}</button>
-        <button
-          id="form-prev-btn"
-          className="ui right floated button positive basic"
-          onClick={() => onLast()}>Previous</button>
-      </div>
-    )
-  }
-
   render() {
-
+   const { onLast, onCancel, form, } = this.props
     return (
       <section>
         <div className="form-container">
 
           <form id="cc-form">
+            <div id="cc-holder" className="cardholder-container">
+              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+              <span className="field-space"></span>
+            </div>
+
             <div id="cc-number" className="card-number-container">
               <label htmlFor="cc-number" className="hidden"> Card Number </label>
               <span className="field-space">  </span>
             </div>
 
-            <div id="cc-holder" className="cardholder-container">
-              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+            {/* <div id="cc-exp" className="exp-container">
+              <label htmlFor="cc-exp" className="hidden"> Expiration </label>
               <span className="field-space"></span>
             </div>
+
+            <div id="cc-cvc" className="cvc-container">
+              <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
+              <span className="field-space"></span>
+            </div> */}
 
             <div id="cc-exp" className="exp-container">
               <label htmlFor="cc-exp" className="hidden"> Expiration </label>
@@ -183,7 +174,13 @@ export default class CreditCardForm extends Component {
           </form>
         </div>
         <div class="ui clearing divider"></div>
-        {this.buttonGrp()}
+        {/* {this.buttonGrp()} */}
+        <ButtonGroup
+         onSubmit={this.onSubmit}
+         onLast={onLast}
+         onCancel={onCancel}
+         finalStep={true}
+       />
       </section>
     )
   }

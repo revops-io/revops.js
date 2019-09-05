@@ -5,8 +5,6 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
-import './styles.css'
-
 const defaultStyles = {
   background: "#FFFFFF",
   border: "1px solid #CED7E6",
@@ -125,7 +123,7 @@ export class AddressForm extends Component {
     this.form = form
 
   }
-  
+
   onSubmit = () => {
     const { form } = this
     const { onNext, accountModel, onError, onComplete = false } = this.props
@@ -202,7 +200,7 @@ export class AddressForm extends Component {
             <label htmlFor="zip">Zip Code</label>
             <span id="zip" className="field-space"></span>
           </div>
-          
+
         </form>
         {this.buttonGrp()}
       </section>
