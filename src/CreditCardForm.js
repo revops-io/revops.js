@@ -103,8 +103,16 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       placeholder: "01 / 2022",
       defaultValue: !!accountModel.billingPreferences.cardExpdate === true
-        ? accountModel.billingPreferences.cardExpdate
+        ? accountModel.billingPreferences.cardExpdate.month
+          + '/' +
+          accountModel.billingPreferences.cardExpdate.year
         : "",
+      serializers: [
+        form.SERIALIZERS.separate({
+          monthName: 'month',
+          yearName: 'year',
+        })
+      ],
       validations: ["required", "validCardExpirationDate"],
       css: inputStyles
     })
@@ -119,6 +127,7 @@ export default class CreditCardForm extends Component {
 
     accountModel = makeAccount({
       ...accountModel,
+      status: 'activating', // trigger activating state.
       billingPreferences: {
         ...accountModel.billingPreferences,
         paymentMethod: "credit-card"
