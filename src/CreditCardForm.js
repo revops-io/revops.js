@@ -102,7 +102,6 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardCvv",
       placeholder: "311",
       validations: ["required", "validCardSecurityCode"],
-      errorColor: "rgba(240, 0, 0)",
       css: inputStyles
     });
 
@@ -111,7 +110,7 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       errorColor: styles.errorColor,
       placeholder: "01 / 2022",
-      defaultValue: !!accountModel.billingPreferences.cardExpdate === true
+      defaultValue: !!accountModel.billingPreferences.cardExpdate.month || !!accountModel.billingPreferences.cardExpdate.year === true
         ? accountModel.billingPreferences.cardExpdate.month
           + '/' +
           accountModel.billingPreferences.cardExpdate.year
@@ -226,7 +225,7 @@ export default class CreditCardForm extends Component {
 
           </form>
         </div>
-        <div class="ui clearing divider"></div>
+        <div className="ui clearing divider"></div>
         <ButtonGroup
          onSubmit={this.onSubmit}
          onLast={onLast}

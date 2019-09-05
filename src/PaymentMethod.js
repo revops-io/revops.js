@@ -96,7 +96,7 @@ export default class PaymentMethod extends Component {
               {...this.props} />
           </div>
         }
-        {method === false && <div class="ui clearing divider"></div>}
+        {method === false && <div className="ui clearing divider"></div>}
         {method === false &&
           <ButtonGroup
             onLast={onLast}
