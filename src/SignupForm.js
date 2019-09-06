@@ -142,7 +142,6 @@ export default class SignupForm extends Component {
             </div>
             <div className="card-back"><div className="card-stripe"></div></div>
           </div>
-          {/* {this.buttonGrp()} */}
           <ButtonGroup onSubmit={this.onSubmit}/>
         </section>
     )

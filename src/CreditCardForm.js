@@ -2,7 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import { makeAccount } from './actions/AccountActions'
-import { getErrorText, getClassName} from './FormHelpers'
+import {
+  getErrorText,
+  getClassName,
+  convertAPIError,
+} from './FormHelpers'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -33,6 +37,8 @@ const defaultStyles = {
 export default class CreditCardForm extends Component {
   state = {
     errors: false,
+    status: false,
+    response: false,
   }
 
   constructor(props) {
@@ -128,10 +134,16 @@ export default class CreditCardForm extends Component {
     this.form = form
   }
 
-  onError = ({errors}) => {
+  onError = ({status, errors, response}) => {
     const { onError } = this.props
+    debugger
     this.setState({
-      errors
+      errors: {
+        ...errors,
+        ...convertAPIError(status, response),
+      },
+      status,
+      response,
     })
 
     if(onError !== false && typeof(onError) === 'function') {
@@ -153,7 +165,13 @@ export default class CreditCardForm extends Component {
       }
     })
 
-    this.setState({ errors: false, loading: true })
+    // Clear state
+    this.setState({
+      errors: false,
+      loading: true,
+      status: false,
+      response: false,
+    })
 
     const onError = this.onError
     accountModel.saveWithSecureForm(
@@ -226,6 +244,7 @@ export default class CreditCardForm extends Component {
           </form>
         </div>
         <div className="ui clearing divider"></div>
+        <span>{getErrorText('', 'networkError', errors)}</span>
         <ButtonGroup
          onSubmit={this.onSubmit}
          onLast={onLast}
