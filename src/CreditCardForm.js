@@ -136,7 +136,6 @@ export default class CreditCardForm extends Component {
 
   onError = ({status, errors, response}) => {
     const { onError } = this.props
-    debugger
     this.setState({
       errors: {
         ...errors,
