@@ -2,8 +2,17 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { buttonStylesPrimary, buttonStylesSecondary, buttonStylesTertiary } from './SharedStyles'
 
-export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, showAccept, hideNext, hidePrevious }) => {
-  // const { onLast, onCancel, finalStep } = this.props
+export const ButtonGroup = ({
+  loading = false,
+  onNext,
+  onLast,
+  onCancel,
+  finalStep,
+  onSubmit,
+  showAccept,
+  hideNext,
+  hidePrevious,
+}) => {
   return (
     <div id="form-nav">
       <button
@@ -28,7 +37,21 @@ export const ButtonGroup = ({ onNext, onLast, onCancel, finalStep, onSubmit, sho
         className="ui right floated button"
         onClick={onSubmit}
         style={buttonStylesPrimary}
-        >{finalStep ? 'Submit' : 'Next'}
+        >
+        {loading === false ?
+          (finalStep ?
+            'Submit'
+            :
+            'Next'
+          ) : null
+        }
+        {loading === true ?
+          (finalStep ?
+            'Creating...'
+            :
+            'Loading...'
+          ) : null
+        }
       </button>
     }
     { hidePrevious !== true &&
