@@ -27,6 +27,10 @@ const defaultStyles = {
 };
 
 export class SignUp extends Component {
+  state = {
+    loading: false,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -82,9 +86,44 @@ export class SignUp extends Component {
     this.form = form
   }
 
+  onNext = () => {
+    if (!!this.props.onNext === true && typeof(this.props.onNext) === 'function') {
+      this.props.onNext()
+      this.setState({
+        loading: false,
+      })
+    }
+  }
+
+  onError = (errors) => {
+    if (!!this.props.onError === true && typeof(this.props.onError) === 'function') {
+      this.props.onError(errors)
+      this.setState({
+        loading: false,
+      })
+    }
+  }
+
   onSubmit = () => {
     const { form } = this
-    const { onNext, accountModel, onError, onComplete = false } = this.props
+
+    const {
+      accountModel,
+      onComplete = false,
+    } = this.props
+
+    // Handlers
+    const {
+      onError,
+      onNext,
+    } = this
+
+    onError.bind(this)
+    onNext.bind(this)
+
+    this.setState({
+      loading: true,
+    })
 
     accountModel.saveWithSecureForm(
       form,
@@ -113,6 +152,7 @@ export class SignUp extends Component {
         </form>
         <div className="ui clearing divider"></div>
         <ButtonGroup
+          loading={this.state.loading}
           onSubmit={this.onSubmit}
           hidePrevious={true}
         />
