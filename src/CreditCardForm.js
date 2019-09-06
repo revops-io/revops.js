@@ -143,6 +143,7 @@ export default class CreditCardForm extends Component {
       },
       status,
       response,
+      loading: false,
     })
 
     if(onError !== false && typeof(onError) === 'function') {
@@ -245,11 +246,12 @@ export default class CreditCardForm extends Component {
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
         <ButtonGroup
-         onSubmit={this.onSubmit}
-         onLast={onLast}
-         onCancel={onCancel}
-         finalStep={true}
-       />
+          loading={this.state.loading}
+          onSubmit={this.onSubmit}
+          onLast={onLast}
+          onCancel={onCancel}
+          finalStep={true}
+        />
       </section>
     )
   }

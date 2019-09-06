@@ -5,6 +5,11 @@ import {
   REVOPS_VAULT_ID,
 } from './client/VaultConfig'
 
+import {
+  getErrorText,
+  convertAPIError,
+} from './FormHelpers'
+
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, cardWidth } from './SharedStyles'
 
@@ -95,10 +100,16 @@ export class SignUp extends Component {
     }
   }
 
-  onError = (errors) => {
+  onError = ({status, errors, response}) => {
     if (!!this.props.onError === true && typeof(this.props.onError) === 'function') {
       this.props.onError(errors)
       this.setState({
+        errors: {
+          ...errors,
+          ...convertAPIError(status, response),
+        },
+        status,
+        response,
         loading: false,
       })
     }
@@ -135,21 +146,25 @@ export class SignUp extends Component {
   }
 
   render() {
+    const { errors } = this.state
     return (
       <section style={cardWidth}>
         <form id="contact-form" className="ui form">
           <div id="signup-email" className="field">
             <label>Email</label>
             <span className="field-space"></span>
+            <span>{getErrorText('Email', 'email', errors)}</span>
           </div>
 
           <div id="signup-password" className="field">
             <label>Password</label>
             <span className="field-space"></span>
+            <span>{getErrorText('Password', 'password', errors)}</span>
           </div>
 
         </form>
         <div className="ui clearing divider"></div>
+        <span>{getErrorText('', 'networkError', errors)}</span>
         <ButtonGroup
           loading={this.state.loading}
           onSubmit={this.onSubmit}
