@@ -65,6 +65,32 @@ a.pay-by-cc-link:hover {
   font-weight: bold;
   margin-top: 1rem;
 }
+#form-nav {
+  height: 7px;
+}
+
+
+
+/* Consistent Credit Card Styling */
+#cc-cvc.cvc-container {
+  float: right;
+}
+a.pay-by-ach-link:hover,
+a.pay-by-cc-link:hover {
+  cursor: pointer;
+
+}
+/* Form Styling */
+.form-container label {
+  font-weight: bold;
+  display: inline-block;
+  line-height: 2rem;
+  margin-top: 1rem;
+}
+.ui.form .field>label {
+  font-weight: bold;
+  margin-top: 1rem;
+}
 #standard-terms {
   max-width: 768px;
   margin: 0 auto;
@@ -133,6 +159,18 @@ h1 {
 .ui.form .field > label {
   color: #777582
 }
+
+/* Error Messaging */
+.validation-error .field-space + span {
+  color: red;
+  margin-top: 3px;
+  display: inline-block;
+}
+.validation-error .field-space {
+  border: 2px solid red;
+  border-radius: 4px;
+}
+
 
 /* Media Query Reset */
 @media only screen and (max-width: 992px) {
