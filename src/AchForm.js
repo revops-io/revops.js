@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import { getErrorText, getClassName} from './FormHelpers'
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles } from './SharedStyles'
+import { inputStyles, cardWidth } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -172,7 +172,7 @@ export default class AchForm extends Component {
     const { errors, } = this.state
     const { onLast, onCancel, form, } = this.props
     return (
-      <section>
+      <section style={cardWidth}>
         <label className="h3">Paying by ACH</label>
         <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
         <form id="contact-form" className="ui form">

@@ -10,7 +10,7 @@ import {
 } from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles } from './SharedStyles'
+import { inputStyles, cardWidth } from './SharedStyles'
 
 const defaultStyles = {
   border: 'none',
@@ -170,7 +170,7 @@ export default class CreditCardForm extends Component {
     const { onLast, onCancel, form, } = this.props
 
     return (
-      <section>
+      <section style={cardWidth}>
         <label className="h3">Paying by credit card</label>
         <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
         <div className="form-container">
