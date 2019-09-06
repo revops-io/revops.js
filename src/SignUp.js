@@ -6,7 +6,7 @@ import {
 } from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles } from './SharedStyles'
+import { inputStyles, cardWidth } from './SharedStyles'
 
 const defaultStyles = {
   border: 'none',
@@ -135,9 +135,8 @@ export class SignUp extends Component {
   }
 
   render() {
-    const { cardWidth } = this.props
     return (
-      <section width={cardWidth}>
+      <section style={cardWidth}>
         <form id="contact-form" className="ui form">
           <div id="signup-email" className="field">
             <label>Email</label>

@@ -10,7 +10,7 @@ import {
 } from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles } from './SharedStyles'
+import { inputStyles, cardWidth } from './SharedStyles'
 
 const defaultStyles = {
   border: 'none',
@@ -102,7 +102,6 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardCvv",
       placeholder: "311",
       validations: ["required", "validCardSecurityCode"],
-      errorColor: "rgba(240, 0, 0)",
       css: inputStyles
     });
 
@@ -111,7 +110,7 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       errorColor: styles.errorColor,
       placeholder: "01 / 2022",
-      defaultValue: !!accountModel.billingPreferences.cardExpdate === true
+      defaultValue: !!accountModel.billingPreferences.cardExpdate.month || !!accountModel.billingPreferences.cardExpdate.year === true
         ? accountModel.billingPreferences.cardExpdate.month
           + '/' +
           accountModel.billingPreferences.cardExpdate.year
@@ -171,9 +170,10 @@ export default class CreditCardForm extends Component {
     const { onLast, onCancel, form, } = this.props
 
     return (
-      <section>
+      <section style={cardWidth}>
+        <label className="h3">Paying by credit card</label>
+        <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
         <div className="form-container">
-
           <form id="cc-form">
             <div id="cc-holder" className={
               getClassName(
@@ -225,8 +225,7 @@ export default class CreditCardForm extends Component {
 
           </form>
         </div>
-        <div class="ui clearing divider"></div>
-        {/* {this.buttonGrp()} */}
+        <div className="ui clearing divider"></div>
         <ButtonGroup
          onSubmit={this.onSubmit}
          onLast={onLast}

@@ -15,22 +15,19 @@ const backgroundStyles = {
   // should be true for every instance
   display: 'flex',
   justifyContent: 'center',
-  alignItems: 'center',
+  alignItems: 'top',
   width: '100vw',
   minHeight: '100vh',
   maxHeight: '100%',
   // end
-  backgroundColor: 'black',
-}
-const cardWidth = {
-  width: '550px',
+  background: 'url("../example_logos/memsql_banner.svg") repeat-x top left white',
 }
 
 export default class App extends Component {
   render() {
     return (
       <div className="ui container" style={backgroundStyles}>
-        <div style={cardWidth}>
+        <div>
           <PaymentPortal
             account={{
               accountId: "ACmy58bitaccountid",

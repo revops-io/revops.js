@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { getErrorText, getClassName} from './FormHelpers'
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles } from './SharedStyles'
+import { inputStyles, cardWidth } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -20,6 +21,9 @@ const defaultStyles = {
 };
 
 export default class AchForm extends Component {
+  state = {
+    errors: false,
+  }
   constructor(props) {
     super(props)
     this.state = {
@@ -56,6 +60,7 @@ export default class AchForm extends Component {
 
     form.field("#bank-name .field-space", {
       type: "text",
+      errorColor: styles.errorColor,
       name: "billingPreferences.bankName",
       defaultValue: !!accountModel.billingPreferences.bankName === true
         ? accountModel.billingPreferences.bankName
@@ -67,6 +72,7 @@ export default class AchForm extends Component {
 
     form.field("#bank-acct-country .field-space", {
       type: "dropdown",
+      errorColor: styles.errorColor,
       name: "billingPreferences.bankCountry",
       validations: ["required"],
       defaultValue: !!accountModel.billingPreferences.bankCountry === true
@@ -82,6 +88,7 @@ export default class AchForm extends Component {
 
     form.field("#bank-holder-name .field-space", {
       type: "text",
+      errorColor: styles.errorColor,
       name: "billingPreferences.bankAccountHolderName",
       defaultValue: !!accountModel.billingPreferences.bankAccountHolderName === true
         ? accountModel.billingPreferences.bankAccountHolderName
@@ -93,6 +100,7 @@ export default class AchForm extends Component {
 
     form.field("#bank-acct-type .field-space", {
       type: "dropdown",
+      errorColor: styles.errorColor,
       name: "billingPreferences.bankAccountHolderType",
       defaultValue: !!accountModel.billingPreferences.bankAccountHolderType === true
         ? accountModel.billingPreferences.bankAccountHolderType
@@ -107,12 +115,13 @@ export default class AchForm extends Component {
 
     form.field("#bank-acct-number .field-space", {
       type: "text",
+      errorColor: styles.errorColor,
       name: "billingPreferences.bankAccountNumber",
       defaultValue: !!accountModel.billingPreferences.bankAccountNumber === true
         ? accountModel.billingPreferences.bankAccountNumber
         : "",
       placeholder: "XXXXXXXXXXXXX",
-      placeholder: "#############",
+      placeholder: "Enter bank account number",
       validations: ["required"],
       css: inputStyles
     });
@@ -123,7 +132,7 @@ export default class AchForm extends Component {
       defaultValue: !!accountModel.billingPreferences.bankRoutingNumber === true
         ? accountModel.billingPreferences.bankRoutingNumber
         : "",
-      placeholder: "##########",
+      placeholder: "Enter bank routing number",
       validations: ["required"],
       css: inputStyles
     });
@@ -132,11 +141,24 @@ export default class AchForm extends Component {
 
   }
 
+  onError = ({errors}) => {
+    const { onError } = this.props
+    this.setState({
+      errors
+    })
+
+    if(onError !== false && typeof(onError) === 'function') {
+      onError(errors)
+    }
+  }
+
   onSubmit = () => {
     const { form } = this
-    const { onNext, onError, onComplete = false } = this.props
+    const { onNext, onComplete = false } = this.props
     let { accountModel } = this.props
 
+    this.setState({ errors: false, loading: true })
+    const onError = this.onError
     accountModel.saveWithSecureForm(
       form,
       {
@@ -147,43 +169,78 @@ export default class AchForm extends Component {
   }
 
   render() {
+    const { errors, } = this.state
     const { onLast, onCancel, form, } = this.props
     return (
-      <section>
+      <section style={cardWidth}>
+        <label className="h3">Paying by ACH</label>
+        <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
         <form id="contact-form" className="ui form">
-          <div id="bank-name" className="field">
+          <div id="bank-name"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankName",
+               errors
+             )
+           }>
             <label>Bank Name</label>
             <span className="field-space"></span>
+            <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
           </div>
 
-          <div id="bank-holder-name" className="field">
+          <div id="bank-holder-name"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankAccountHolderName",
+               errors
+             )
+           }>
             <label >Account Holder Name</label>
             <span className="field-space"></span>
+            <span>{getErrorText('Name', 'billingPreferences.bankAccountHolderName', errors)}</span>
           </div>
 
-          <div id="bank-acct-country" className="field">
+          <div id="bank-acct-country"
+            className="field">
             <label >Bank Country</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="bank-acct-type" className="field">
+          <div id="bank-acct-type"
+          className="field">
             <label >Account Type</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="bank-routing-number" className="field">
+          <div id="bank-routing-number"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankRoutingNumber",
+               errors
+             )
+          }>
             <label >Routing Number</label>
             <span className="field-space"></span>
+            <span>{getErrorText('Routing number', 'billingPreferences.bankRoutingNumber', errors)}</span>
           </div>
-
-          <div id="bank-acct-number" className="field">
+          <div id="bank-acct-number"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankAccountNumber",
+               errors
+             )
+          }>
             <label>Account Number</label>
             <span className="field-space"></span>
+            <span>{getErrorText('Account number', 'billingPreferences.bankAccountNumber', errors)}</span>
           </div>
 
         </form>
-        <div class="ui clearing divider"></div>
-        {/* {this.buttonGrp()} */}
+        <div className="ui clearing divider"></div>
         <ButtonGroup
           onLast={onLast}
           onCancel={onCancel}

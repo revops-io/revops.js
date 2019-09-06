@@ -25,7 +25,7 @@ export default class PaymentMethod extends Component {
     super(props)
     this.state = {
       errors: false,
-      method: false,
+      method: 'CC',
     }
     this.form = null
   }
@@ -39,8 +39,15 @@ export default class PaymentMethod extends Component {
     onError: PropTypes.func,
   }
 
-  changePaymentMethod = (e) => {
-    this.setState({ method: e.target.value })
+  // changePaymentMethod = (e) => {
+  //   this.setState({ method: e.target.value })
+  // }
+
+  changePaymentMethodACH = () => {
+    this.setState({ method: 'ACH' })
+  }
+  changePaymentMethodCC = () => {
+    this.setState({ method: 'CC' })
   }
 
   render() {
@@ -67,7 +74,7 @@ export default class PaymentMethod extends Component {
         {
           method === 'CC' &&
           <div id="cc-info">
-            <CreditCardForm {...this.props} />
+            <CreditCardForm changePaymentMethod={this.changePaymentMethodACH.bind(this)} {...this.props} />
           </div>
         }
         {
@@ -85,11 +92,11 @@ export default class PaymentMethod extends Component {
         {
           method === 'ACH' &&
           <div id="bank-info">
-            <AchForm {...this.props} />
+            <AchForm changePaymentMethod={this.changePaymentMethodCC.bind(this)}
+              {...this.props} />
           </div>
         }
-        {method === false && <div class="ui clearing divider"></div>}
-
+        {method === false && <div className="ui clearing divider"></div>}
         {method === false &&
           <ButtonGroup
             onLast={onLast}

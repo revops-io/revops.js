@@ -19,9 +19,8 @@ const CustomThankYouMessage = () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>Thank You!</h1>
-      <p>You can <a href="example.com">view the contract</a> or <a href="">download the PDF</a> for your references. Otherwise you can get started!</p>
-      <button className="ui button primary" style={buttonStylesPrimary}>Get started</button>
-      {/* <a href="example.com">View your contract</a> or <a href="">get started.</a> */}
+      <p>You can <a href="example.com">view the contract</a> or <a href="">download the PDF</a> for your references. <br />Otherwise you can get started.</p>
+      <button className="ui button huge primary" style={buttonStylesPrimary}>Start building</button>
     </div>
   )
 }
