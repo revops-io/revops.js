@@ -71,3 +71,8 @@ export const cardWidth = {
   width: '404px',
   margin: '0 auto',
 }
+export const linkStyling = {
+  color: '#4f34c7',
+  display: 'block',
+  margin: '1rem 0 2rem',
+}

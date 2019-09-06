@@ -9,7 +9,7 @@ import {
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, cardWidth } from './SharedStyles'
+import { inputStyles, buttonStylesPrimary, buttonStylesTertiary, linkStyling, cardWidth } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -247,7 +247,10 @@ export default class AchForm extends Component {
         <label className="h3">Paying by ACH</label>
         <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
 
-        <button onClick={() => this.openPlaid()}>Sync your Bank account</button>
+        <button
+          className="ui button big centered single"
+          style={buttonStylesPrimary}
+          onClick={() => this.openPlaid()}>Sync your bank account</button>
         {!!this.state.plaidMetadata !== false &&
             <form id="content-form" className="ui form">
               <div id="bank-name"
@@ -262,12 +265,17 @@ export default class AchForm extends Component {
                 <span className="field-space"></span>
                 <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
               </div>
-              <span>Account Name: {this.state.plaidMetadata.account.name} ({this.state.plaidMetadata.account.mask})</span>
-              <span>{this.state.plaidMetadata.account.subtype}</span>
-              <span>{this.state.plaidMetadata.account.type}</span>
+              <div className="ui info message">
+                <div className="content">
+                  <i aria-hidden="true" class="university icon"></i>
+                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX- ({this.state.plaidMetadata.account.mask})</span>&nbsp;
+                  <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
+                  {/* <span>{this.state.plaidMetadata.account.type}</span> */}
+                </div>
+              </div>
             </form>
         }
-        <a className="manual-link" onClick={() => this.togglePlaid()}>Manually enter bank account details</a>
+        <a className="manual-link single centered" style={linkStyling} onClick={() => this.togglePlaid()}>or manually enter bank account details</a>
 
         {this.state.disablePlaid === true &&
           <form id="contact-form" className="ui form">
