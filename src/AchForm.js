@@ -109,9 +109,10 @@ export default class AchForm extends Component {
     let defaultBankName = !!accountModel.billingPreferences.bankName === true
       ? accountModel.billingPreferences.bankName
       : ""
+
     if(!!this.state.plaidMetadata !== false &&
-      !!this.state.plaidMetadata.account !== false) {
-      defaultBankName = this.state.plaidMetadata.account.name
+      !!this.state.plaidMetadata.institution !== false) {
+        defaultBankName = this.state.plaidMetadata.institution.name
     }
 
     form.field("#bank-name .field-space", {
