@@ -31,6 +31,7 @@ export default class AchForm extends Component {
     plaidLinkPublicToken: false,
     plaidAccountId: false,
     disablePlaid: false,
+    loaded: false,
   }
 
   constructor(props) {
@@ -38,7 +39,7 @@ export default class AchForm extends Component {
     this.state = {
       errors: false,
     }
-    this.form = {};
+    this.form = null
   }
 
   static propTypes = {
@@ -65,7 +66,7 @@ export default class AchForm extends Component {
           plaidAccountId: metadata.account_id,
           plaidMetadata: metadata,
         })
-        this.initialize()
+        this.initialize(this.state.disablePlaid)
       }
 
       this.plaidLink = window.Plaid.create({
@@ -94,17 +95,38 @@ export default class AchForm extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.disablePlaid === false &&
-      prevState.disablePlaid !== this.state.disablePlaid) {
-      this.initialize()
+    if (prevState.disablePlaid !== this.state.disablePlaid) {
+      this.initialize(this.state.disablePlaid)
+    }
+  }
+
+  isFormFieldCreated(field) {
+    return (!!this.form === true &&
+      !!this.form.state === true &&
+      !!this.form.state[field] === true
+    )
+  }
+
+  createFormField(fieldSelector, field, defaultValue, options = {}) {
+    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
+
+    if(this.isFormFieldCreated(field) === false) {
+      this.form.field(fieldSelector, {
+        name: field,
+        defaultValue: defaultValue,
+        css: inputStyles,
+        errorColor: styles.errorColor,
+        ...options,
+      })
     }
   }
 
   initialize = (disablePlaid = false) => {
     const { accountModel } = this.props
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+    if(!!this.form === false) {
+      this.form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+    }
 
     let defaultBankName = !!accountModel.billingPreferences.bankName === true
       ? accountModel.billingPreferences.bankName
@@ -115,88 +137,103 @@ export default class AchForm extends Component {
         defaultBankName = this.state.plaidMetadata.institution.name
     }
 
-    form.field("#bank-name .field-space", {
-      type: "text",
-      readOnly: disablePlaid === false? 'readOnly': null,
-      errorColor: styles.errorColor,
-      name: "billingPreferences.bankName",
-      defaultValue: defaultBankName,
-      placeholder: "Chase Bank",
-      validations: ["required"],
-      css: inputStyles
-    });
+    this.createFormField(
+      "#bank-name .field-space",
+      'billingPreferences.bankName',
+      defaultBankName,
+      {
+        type: "text",
+        readOnly: disablePlaid === false? 'readOnly': null,
+        placeholder: "Chase Bank",
+        validations: ["required"],
+      }
+    )
+
+    this.createFormField(
+      "#bank-name .field-space",
+      'billingPreferences.bankName',
+      defaultBankName,
+      {
+        type: "text",
+        readOnly: disablePlaid === false? 'readOnly': null,
+        placeholder: "Chase Bank",
+        validations: ["required"],
+      }
+    )
 
     if (disablePlaid === true) {
-      form.field("#bank-acct-country .field-space", {
-        type: "dropdown",
-        errorColor: styles.errorColor,
-        name: "billingPreferences.bankCountry",
-        validations: ["required"],
-        defaultValue: !!accountModel.billingPreferences.bankCountry === true
+      this.createFormField(
+        "#bank-acct-country .field-space",
+        'billingPreferences.bankCountry',
+        !!accountModel.billingPreferences.bankCountry === true
           ? accountModel.billingPreferences.bankCountry
           : "USA",
-        options: [
-          { value: 'USA', text: 'United States of America' },
-          { value: 'Canada', text: 'Canada' },
-          { value: 'Mexico', text: 'Mexico' },
-        ],
-        css: inputStyles
-      });
+        {
+          type: "dropdown",
+          validations: ["required"],
+          options: [
+            { value: 'USA', text: 'United States of America' },
+            { value: 'Canada', text: 'Canada' },
+            { value: 'Mexico', text: 'Mexico' },
+          ],
+        })
 
-      form.field("#bank-holder-name .field-space", {
-        type: "text",
-        errorColor: styles.errorColor,
-        name: "billingPreferences.bankAccountHolderName",
-        defaultValue: !!accountModel.billingPreferences.bankAccountHolderName === true
+      this.createFormField(
+        "#bank-holder-name .field-space",
+        "billingPreferences.bankAccountHolderName",
+        !!accountModel.billingPreferences.bankAccountHolderName === true
           ? accountModel.billingPreferences.bankAccountHolderName
           : "",
-        placeholder: "Pat Smalley",
-        validations: ["required"],
-        css: inputStyles
-      });
+        {
+          type: "text",
+          placeholder: "Pat Smalley",
+          validations: ["required"],
+        }
+      )
 
-      form.field("#bank-acct-type .field-space", {
-        type: "dropdown",
-        errorColor: styles.errorColor,
-        name: "billingPreferences.bankAccountHolderType",
-        defaultValue: !!accountModel.billingPreferences.bankAccountHolderType === true
+      this.createFormField(
+        "#bank-acct-type .field-space",
+        "billingPreferences.bankAccountHolderType",
+        !!accountModel.billingPreferences.bankAccountHolderType === true
           ? accountModel.billingPreferences.bankAccountHolderType
           : "company",
-        validations: ["required"],
-        options: [
-          { value: 'company', text: 'Company' },
-          { value: 'individual', text: 'Individual' },
-        ],
-        css: inputStyles
-      });
+        {
+          type: "dropdown",
+          validations: ["required"],
+          options: [
+            { value: 'company', text: 'Company' },
+            { value: 'individual', text: 'Individual' },
+          ],
+        }
+      )
 
-      form.field("#bank-acct-number .field-space", {
-        type: "text",
-        errorColor: styles.errorColor,
-        name: "billingPreferences.bankAccountNumber",
-        defaultValue: !!accountModel.billingPreferences.bankAccountNumber === true
+      this.createFormField(
+        "#bank-acct-number .field-space",
+        "billingPreferences.bankAccountNumber",
+        !!accountModel.billingPreferences.bankAccountNumber === true
           ? accountModel.billingPreferences.bankAccountNumber
           : "",
-        placeholder: "XXXXXXXXXXXXX",
-        placeholder: "Enter bank account number",
-        validations: ["required"],
-        css: inputStyles
-      });
+        {
+          type: "text",
+          placeholder: "XXXXXXXXXXXXX",
+          placeholder: "Enter bank account number",
+          validations: ["required"],
+        }
+      )
 
-      form.field("#bank-routing-number .field-space", {
-        type: "text",
-        name: "billingPreferences.bankRoutingNumber",
-        defaultValue: !!accountModel.billingPreferences.bankRoutingNumber === true
+      this.createFormField(
+        "#bank-routing-number .field-space",
+        "billingPreferences.bankRoutingNumber",
+        !!accountModel.billingPreferences.bankRoutingNumber === true
           ? accountModel.billingPreferences.bankRoutingNumber
           : "",
-        placeholder: "Enter bank routing number",
-        validations: ["required"],
-        css: inputStyles
-      });
+        {
+          type: "text",
+          placeholder: "Enter bank routing number",
+          validations: ["required"],
+        }
+      )
     }
-
-    this.form = form
-
   }
 
   onError = ({errors}) => {
@@ -247,10 +284,14 @@ export default class AchForm extends Component {
         <label className="h3">Paying by ACH</label>
         <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
 
-        <button
-          className="ui button big centered single"
-          style={buttonStylesPrimary}
-          onClick={() => this.openPlaid()}>Sync your bank account</button>
+        {this.state.disablePlaid !== true &&
+          <button
+            className="ui button big centered single"
+            style={buttonStylesPrimary}
+            onClick={() => this.openPlaid()}>
+            Sync your bank account
+          </button>
+        }
         {!!this.state.plaidMetadata !== false &&
             <form id="content-form" className="ui form">
               <div id="bank-name"
@@ -265,17 +306,24 @@ export default class AchForm extends Component {
                 <span className="field-space"></span>
                 <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
               </div>
+
               <div className="ui info message">
                 <div className="content">
                   <i aria-hidden="true" class="university icon"></i>
                   <span>{this.state.plaidMetadata.account.name} XXXXXXXXX- ({this.state.plaidMetadata.account.mask})</span>&nbsp;
                   <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
-                  {/* <span>{this.state.plaidMetadata.account.type}</span> */}
                 </div>
               </div>
             </form>
         }
-        <a className="manual-link single centered" style={linkStyling} onClick={() => this.togglePlaid()}>or manually enter bank account details</a>
+        <a className="manual-link single centered" style={linkStyling} onClick={() => this.togglePlaid()}>
+          {
+            this.state.disablePlaid !== true ?
+              'or manually enter bank account details'
+              :
+              'or connect your bank instantly with Plaid'
+          }
+        </a>
 
         {this.state.disablePlaid === true &&
           <form id="contact-form" className="ui form">

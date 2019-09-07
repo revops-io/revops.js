@@ -43,10 +43,10 @@ export default class PaymentMethod extends Component {
   //   this.setState({ method: e.target.value })
   // }
 
-  changePaymentMethodACH = () => {
+  changePaymentMethodACH() {
     this.setState({ method: 'ACH' })
   }
-  changePaymentMethodCC = () => {
+  changePaymentMethodCC() {
     this.setState({ method: 'CC' })
   }
 
@@ -55,45 +55,23 @@ export default class PaymentMethod extends Component {
     const { onLast, onCancel } = this.props
     return (
       <section className="">
-        {method === false &&
-          <React.Fragment>
-            <label>Select Payment Method</label>
-            <select
-              style={{ width: '100%' }}
-              className="ui dropdown"
-              onChange={(e) => this.changePaymentMethod(e)} >
-              {
-                PaymentMethods.map(method => {
-                  return <option key={method.value} value={method.value}>{method.text}</option>
-                })
-              }
-            </select>
-          </React.Fragment>
-        }
         <br />
         {
           method === 'CC' &&
           <div id="cc-info">
-            <CreditCardForm changePaymentMethod={this.changePaymentMethodACH.bind(this)} {...this.props} />
-          </div>
-        }
-        {
-          method === 'Stripe' &&
-          <div id="stripe-info">
-            <StripeForm {...this.props} />
-          </div>
-        }
-        {
-          method === 'EMAIL' &&
-          <div id="email-info">
-            <EmailInvoice {...this.props} />
+            <CreditCardForm
+              changePaymentMethod={() => this.changePaymentMethodACH()}
+              {...this.props}
+            />
           </div>
         }
         {
           method === 'ACH' &&
           <div id="bank-info">
-            <AchForm changePaymentMethod={this.changePaymentMethodCC.bind(this)}
-              {...this.props} />
+            <AchForm
+              changePaymentMethod={() => this.changePaymentMethodCC()}
+              {...this.props}
+            />
           </div>
         }
         {method === false && <div className="ui clearing divider"></div>}
