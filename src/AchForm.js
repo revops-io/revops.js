@@ -9,7 +9,7 @@ import {
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, buttonStylesPrimary, buttonStylesTertiary, linkStyling, cardWidth } from './SharedStyles'
+import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -248,7 +248,7 @@ export default class AchForm extends Component {
         <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
 
         <button
-          className="ui button big centered single"
+          className="ui button big centered single btn-primary"
           style={buttonStylesPrimary}
           onClick={() => this.openPlaid()}>Sync your bank account</button>
         {!!this.state.plaidMetadata !== false &&
@@ -268,7 +268,7 @@ export default class AchForm extends Component {
               <div className="ui info message">
                 <div className="content">
                   <i aria-hidden="true" class="university icon"></i>
-                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX- ({this.state.plaidMetadata.account.mask})</span>&nbsp;
+                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
                   <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
                   {/* <span>{this.state.plaidMetadata.account.type}</span> */}
                 </div>
