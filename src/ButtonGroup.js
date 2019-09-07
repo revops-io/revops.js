@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { buttonStylesPrimary, buttonStylesSecondary, buttonStylesTertiary } from './SharedStyles'
+import { buttonStylesPrimary, buttonStylesSecondary } from './SharedStyles'
 
 export const ButtonGroup = ({
   loading = false,
@@ -18,7 +18,7 @@ export const ButtonGroup = ({
     { showAccept &&
       <button
         id="form-next-btn"
-        className="ui right floated button big"
+        className="ui right floated button big btn-primary"
         onClick={onNext}
         style={buttonStylesPrimary}
         >Accept
@@ -27,7 +27,7 @@ export const ButtonGroup = ({
     { hideNext !== true && showAccept !== true &&
       <button
         id="form-next-btn"
-        className="ui right floated button big"
+        className="ui right floated button big btn-primary"
         onClick={onSubmit}
         style={buttonStylesPrimary}
         >
@@ -50,7 +50,7 @@ export const ButtonGroup = ({
     { hidePrevious !== true &&
       <button
         id="form-prev-btn"
-        className="ui right floated button big"
+        className="ui right floated button big btn-secondary"
         onClick={() => onLast()}
         style={buttonStylesSecondary}
         >Previous

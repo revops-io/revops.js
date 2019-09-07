@@ -9,7 +9,7 @@ import {
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, buttonStylesPrimary, buttonStylesTertiary, linkStyling, cardWidth } from './SharedStyles'
+import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
 
 import {
   REVOPS_VAULT_COLLECT,
@@ -310,7 +310,7 @@ export default class AchForm extends Component {
               <div className="ui info message">
                 <div className="content">
                   <i aria-hidden="true" class="university icon"></i>
-                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX- ({this.state.plaidMetadata.account.mask})</span>&nbsp;
+                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
                   <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
                 </div>
               </div>

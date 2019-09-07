@@ -10,59 +10,39 @@ export const inputStyles = {
   outline: 'none',
   boxSizing: 'border-box',
   transition: 'all .15s ease-in-out 0s',
+  border: '2px solid #F6F6F6',
   '&:focus': {
     background: 'white',
     border: '2px solid #c550ff'
   },
 }
+
 export const buttonStylesPrimary = {
-  // shared
-    padding: '.6875em 1.1875em',
-    transition: 'all .15s ease-in-out 0s',
-    borderRadius: '4px',
-  // end of shared
-  background: '#80c',
-  border: '1px solid #80c',
-  color: '#fff',
-  '&:hover': {
-    background: '#a0f',
-    border: '1px solid #a0f',
-    transform: 'translateY(-1px)'
-  },
+  padding: '.6875em 1.1875em',
+  transition: 'all .15s ease-in-out 0s',
+  borderRadius: '4px',
+  background: '#8800cc',
+  color: '#ffffff',
+  border: '1px solid #8800cc',
 }
+
 export const buttonStylesSecondary = {
-  // shared
-    padding: '.6875em 1.1875em',
-    transition: 'all .15s ease-in-out 0s',
-    borderRadius: '4px',
-  // end of shared
   color: '#4c4a57',
   background: '#fff',
   border: '.0625em solid #c2c1c7',
-  '&:hover': {
-    boxShadow: '0 1px 4px rgba(27,26,33,.25)',
-    transform: 'translateY(-1px)',
-    filter: 'brightness(1.1)'
-  },
-  '&:focus': {
-    boxShadow: '0 1px 4px rgba(27,26,33,.25)',
-    transform: 'translateY(-1px)',
-    filter: 'brightness(1.1)'
-  },
+  padding: '.6875em 1.1875em',
+  transition: 'all .15s ease-in-out 0s',
+  borderRadius: '4px',
 }
 export const buttonStylesTertiary = {
-  // shared
-    padding: '.6875em 1.1875em',
-    transition: 'all .15s ease-in-out 0s',
-    borderRadius: '4px',
-  // end of shared
+  padding: '.6875em 1.1875em',
+  transition: 'all .15s ease-in-out 0s',
+  borderRadius: '4px',
   color: '#4f34c7',
   border: 'none',
   background: 'none',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
 }
+
 export const backgroundColor = {
   background: 'black',
 }
