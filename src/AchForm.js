@@ -148,19 +148,7 @@ export default class AchForm extends Component {
         validations: ["required"],
       }
     )
-
-    this.createFormField(
-      "#bank-name .field-space",
-      'billingPreferences.bankName',
-      defaultBankName,
-      {
-        type: "text",
-        readOnly: disablePlaid === false? 'readOnly': null,
-        placeholder: "Chase Bank",
-        validations: ["required"],
-      }
-    )
-
+    
     if (disablePlaid === true) {
       this.createFormField(
         "#bank-acct-country .field-space",
