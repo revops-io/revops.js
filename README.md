@@ -19,7 +19,7 @@ import React from 'react'
 
 import { PaymentPortal } from 'revops-js'
 
-const YourPaymentPortal = ({ publicKey = 'your-public-api-key' }) => (
+const YourPaymentPortal = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
   <PaymentPortal
     publicKey={publicKey}
     account={{
