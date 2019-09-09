@@ -67,9 +67,9 @@ export default class AchForm extends Component {
       }
 
       this.plaidLink = window.Plaid.create({
-        env: 'development',
-        clientName: 'Stripe/Plaid Test',
-        key: 'c648203cbd9ce4b7ea39f26c61f115',
+        env: config.plaidEnvironment,
+        clientName: 'RevOps.js',
+        key: config.plaidKey,
         product: ['auth'],
         selectAccount: true,
         onSuccess: handleOnSuccess,
