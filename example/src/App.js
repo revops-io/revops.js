@@ -30,7 +30,7 @@ export default class App extends Component {
         <div>
           <PaymentPortal
             account={{
-              accountId: "ACmy58bitaccountid",
+              accountId: "revops-io",
             }}
             logo="../example_logos/memsql.png"
             companyName="memSQL"

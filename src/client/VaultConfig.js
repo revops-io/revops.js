@@ -1,6 +1,55 @@
-export const REVOPS_VAULT_COLLECT = 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js'
-//export const REVOPS_VAULT_COLLECT = 'https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js' // local testing
-//export const REVOPS_VAULT_COLLECT = 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js' // staging testing
-export const REVOPS_VAULT_ID = 'tnt2w1xznia'
-//export const REVOPS_VAULT_ID = 'tnt6ryfiprp' // local testing
-//export const REVOPS_VAULT_ID = 'tnttz8hit8p' // staging testing
+const production = {
+  name: 'production',
+  vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
+  revopsBaseUrl: 'https://vault.revops.io',
+  plaidUrl: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
+  vaultId: 'tnt2w1xznia',
+  baseUrl: `https://${document.location.host}`,
+  serviceName: 'revops-js-production',
+}
+
+const staging = {
+  name: 'staging',
+  vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
+  revopsBaseUrl: 'https://vault.revops.io',
+  plaidUrl: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
+  vaultId: 'tnttz8hit8p',
+  baseUrl: `https://${document.location.host}`,
+  serviceName: 'revops-js-staging',
+}
+
+const local = {
+  name: "local",
+  vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js',
+  revopsBaseUrl: 'https://vault.revops.io',
+  plaidUrl: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
+  vaultId: 'tnt6ryfiprp',
+  baseUrl: `https://${document.location.host}`,
+  serviceName: 'revops-js-local',
+}
+
+const configurations = {
+  "production": production,
+  "staging": staging,
+  "localhost": local
+}
+
+const selectConfiguration = () => {
+
+  // For testing
+  if(!!document !== true || !!document.domain !== true) {
+    return configurations['localhost']
+  }
+
+  if(document.domain.endsWith('staging.bill.sh')) {
+    return configurations['staging']
+  } else if (document.domain.endsWith('localhost')) {
+    return configurations['localhost']
+  }
+
+  return configurations['production']
+}
+
+const config = selectConfiguration()
+
+export default config

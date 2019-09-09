@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {
-  REVOPS_VAULT_COLLECT,
-  REVOPS_VAULT_ID,
-} from './client/VaultConfig'
+import config from './client/VaultConfig'
 
 const defaultStyles = {
   background: "#FFFFFF",
@@ -37,7 +34,7 @@ export class AddressForm extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = REVOPS_VAULT_COLLECT
+    script.src = config.vaultCollectUrl
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -50,7 +47,7 @@ export class AddressForm extends Component {
 
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+    const form = VGSCollect.create(config.vaultId, function (state) { });
 
     form.field('#first-name', {
       type: 'text',

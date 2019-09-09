@@ -11,10 +11,7 @@ import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
 
-import {
-  REVOPS_VAULT_COLLECT,
-  REVOPS_VAULT_ID,
-} from './client/VaultConfig'
+import config from './client/VaultConfig'
 
 const defaultStyles = {
   background: "#FFFFFF",
@@ -54,8 +51,8 @@ export default class AchForm extends Component {
   componentDidMount() {
     const vault = document.createElement("script")
     const plaid = document.createElement("script")
-    vault.src = REVOPS_VAULT_COLLECT
-    plaid.src = 'https://cdn.plaid.com/link/v2/stable/link-initialize.js'
+    vault.src = config.vaultCollectUrl
+    plaid.src = config.plaidUrl
     vault.async = true
     plaid.async = true
     plaid.onload = () => {
@@ -70,14 +67,14 @@ export default class AchForm extends Component {
       }
 
       this.plaidLink = window.Plaid.create({
-        env: 'sandbox',
+        env: 'development',
         clientName: 'Stripe/Plaid Test',
         key: 'c648203cbd9ce4b7ea39f26c61f115',
         product: ['auth'],
         selectAccount: true,
         onSuccess: handleOnSuccess,
         onExit: function(err, metadata) {
-          // The user exited the Link flow.
+          // The user exited th Link flow.
           if (err != null) {
             // The user encountered a Plaid API error prior to exiting.
           }
@@ -125,7 +122,7 @@ export default class AchForm extends Component {
     const { accountModel } = this.props
 
     if(!!this.form === false) {
-      this.form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+      this.form = VGSCollect.create(config.vaultId, function (state) { });
     }
 
     let defaultBankName = !!accountModel.billingPreferences.bankName === true
@@ -148,7 +145,7 @@ export default class AchForm extends Component {
         validations: ["required"],
       }
     )
-    
+
     if (disablePlaid === true) {
       this.createFormField(
         "#bank-acct-country .field-space",

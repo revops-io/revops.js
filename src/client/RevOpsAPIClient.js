@@ -1,21 +1,20 @@
 import axios from 'axios'
 
-const REVOPS_HTTP_URL = 'https://vault.revops.io'
-const AUTH_TOKEN = 'slujibu'
+import config from './VaultConfig'
 
 export class RevOpsAPIClient {
-  url = REVOPS_HTTP_URL
+  url = config.revopsBaseUrl
 
   constructor(url = false) {
     if(url && url.length > 0) {
       this.url = url
     }
-
+    
     this.request = axios.create({
-      baseURL: REVOPS_HTTP_URL
+      baseURL: this.url
     })
     this.request.defaults.timeout = 100
-    this.request.defaults.headers.common['Authorization'] = AUTH_TOKEN
+    this.request.defaults.headers.common['Authorization'] = ''
     this.request.defaults.headers.post['Content-Type'] = 'application/json'
     this.request.defaults.headers.get['Content-Type'] = 'application/json'
   }

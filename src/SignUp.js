@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import {
-  REVOPS_VAULT_COLLECT,
-  REVOPS_VAULT_ID,
-} from './client/VaultConfig'
+
+import config from './client/VaultConfig'
 
 import {
   getErrorText,
@@ -56,7 +54,7 @@ export class SignUp extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = REVOPS_VAULT_COLLECT
+    script.src = config.vaultCollectUrl
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -66,7 +64,7 @@ export class SignUp extends Component {
 
   initialize = () => {
     const { accountModel } = this.props
-    let form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+    let form = VGSCollect.create(config.vaultId, function (state) { });
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     form.field("#signup-email .field-space", {

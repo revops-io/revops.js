@@ -39,7 +39,7 @@ export default class StripeForm extends Component {
   initialize = () => {
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create("tnt6ryfiprp", function (state) { });
+    const form = VGSCollect.create(config.vaultId, function (state) { });
     form.field("#customer-name .field-space", {
       type: "text",
       name: "name",

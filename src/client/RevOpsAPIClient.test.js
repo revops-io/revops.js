@@ -1,8 +1,20 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import RevOpsAPIClient from './RevOpsAPIClient'
+import config from './VaultConfig'
 
 var mockAxios = new MockAdapter(axios)
+jest.mock('./VaultConfig', ()=> {
+  return {
+    name: "local",
+    vaultCollectUrl: 'vaultCollectUrl',
+    revopsBaseUrl: 'https://vault.revops.io',
+    plaidUrl: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
+    vaultId: 'tnt6ryfiprp',
+    baseUrl: `https://localhost`,
+    serviceName: 'revops-js-local',
+  }
+})
 
 describe('RevOpsAPIClient', () => {
   afterEach(() => {

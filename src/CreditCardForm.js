@@ -8,10 +8,7 @@ import {
   convertAPIError,
 } from './FormHelpers'
 
-import {
-  REVOPS_VAULT_COLLECT,
-  REVOPS_VAULT_ID,
-} from './client/VaultConfig'
+import config from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, cardWidth } from './SharedStyles'
@@ -61,7 +58,7 @@ export default class CreditCardForm extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = REVOPS_VAULT_COLLECT
+    script.src = config.vaultCollectUrl
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -75,7 +72,7 @@ export default class CreditCardForm extends Component {
       ...this.props.styles,
     }
     const { accountModel } = this.props
-    const form = VGSCollect.create(REVOPS_VAULT_ID, function (state) { });
+    const form = VGSCollect.create(config.vaultId, function (state) { });
 
     form.field("#cc-holder .field-space", {
       type: "text",
