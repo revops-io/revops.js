@@ -19,7 +19,7 @@ import React from 'react'
 
 import { PaymentPortal } from 'revops-js'
 
-const YourPaymentPortal = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
+export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
   <PaymentPortal
     publicKey={publicKey}
     account={{
@@ -30,6 +30,8 @@ const YourPaymentPortal = ({ accountId, defaultStyles = {}, publicKey = 'your-pu
     styles={defaultStyles}
   />
 )
+
+export default App
 ```
 
 ## Props for `<PaymentPortal />`
