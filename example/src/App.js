@@ -25,12 +25,18 @@ const backgroundStyles = {
 
 export default class App extends Component {
   render() {
+    let hash = document.location.hash.replace('#', '')
+    let accountId = ''
+    if (hash !== '') {
+      accountId = hash
+    }
+
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
           <PaymentPortal
             account={{
-              accountId: "revops-io",
+              accountId: accountId,
             }}
             logo="../example_logos/memsql.png"
             companyName="memSQL"
