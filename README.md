@@ -34,6 +34,9 @@ export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-ap
 export default App
 ```
 
+### Example launches an application below:
+<img alt="Pigeon Example Signup" src="https://bill.sh/example-screens/pigeon-screen.png" width="350">
+
 ## Props for `<PaymentPortal />`
 
 | Prop     |      type      |  Description |
