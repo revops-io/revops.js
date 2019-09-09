@@ -32,6 +32,25 @@ const YourPaymentPortal = ({ publicKey = 'your-public-api-key' }) => (
 )
 ```
 
+## Props for `<PaymentPortal />`
+
+| Prop     |      type      |  Description |
+|----------|:--------------:|-------------:|
+| publicKey |  PropTypes.string.isRequired | RevOps API Public Key. |
+| account |    PropTypes.object   |  Initial account object to. |
+| logo | PropTypes.string | URL to your company logo |
+
+
+## Account Object `<PaymentPortal account={{ ... }} />`
+
+The following table describes all the properties on the account object that are used
+to initial new accounts.
+
+| Prop     |      type      |  Description |
+|----------|:--------------:|-------------:|
+| accountId |    PropTypes.string   |  Your accountId to connect with a RevOps Account. |
+
+
 ## License
 
 MIT © [RevOps, Inc.](https://revops.io)
