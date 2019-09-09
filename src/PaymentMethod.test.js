@@ -2,11 +2,10 @@ import React from 'react';
 
 import PaymentMethod from './PaymentMethod'
 
-describe('The ContactInformation Component', () => {
+describe('The PaymentMethod Component', () => {
   const generateMockProps = (props) => {
     return {
       id: "test123",
-      onCancel: jest.fn(),
       onLast: jest.fn(),
       onNext: jest.fn(),
       ...props,
@@ -14,17 +13,19 @@ describe('The ContactInformation Component', () => {
   it('PaymentMethod should render without crashing', () => {
     const mockProps = generateMockProps({})
     const wrapper = shallow(<PaymentMethod  {...mockProps} />)
+    wrapper.setState({ method: false })
 
     expect(wrapper.length).to.equal(1)
     expect(wrapper.find('section').length).to.equal(1)
-    expect(wrapper.find('button').length).to.equal(2)
+    expect(wrapper.find('ButtonGroup').length).to.equal(1)
   })
 
   it('PaymentMethod should render without crashing', () => {
     const mockProps = generateMockProps({})
     const wrapper = shallow(<PaymentMethod  {...mockProps} />)
-
-    wrapper.find('.ui.dropdown').simulate('change', {target: {value: 'CC'}})
+    wrapper.setState({ method: 'ACH' })
+    expect( wrapper.find('AchForm').length).to.equal(1)
+    wrapper.setState({ method: 'CC' })
     expect( wrapper.find('CreditCardForm').length).to.equal(1)
   })
 })

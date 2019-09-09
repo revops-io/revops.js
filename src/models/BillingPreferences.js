@@ -3,6 +3,7 @@ import {
 } from './index'
 
 export class BillingPreferences extends EntityModel {
+  plaidLinkPublicToken: string
   bankAccountHolderName: string
   bankAccountHolderType: string
   bankAccountNumber: string
@@ -24,5 +25,3 @@ export class BillingPreferences extends EntityModel {
     )
   }
 }
-
-

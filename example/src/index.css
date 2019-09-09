@@ -1,4 +1,3 @@
-
 p {
   font-size: 17px;
 }
@@ -50,10 +49,38 @@ a.pay-by-cc-link {
   float: right;
 }
 a.pay-by-ach-link:hover,
-a.pay-by-cc-link:hover {
+a.pay-by-cc-link:hover,
+.manual-link:hover {
   cursor: pointer;
-
+  text-decoration: underline;
 }
+
+/* Button Styling */
+.btn-primary.ui.button:hover {
+  background: #aa00ff !important;
+  transform: translateY(-1px);
+  border-color: #aa00ff !important;
+}
+.btn-secondary.ui.button:hover {
+  box-shadow: 0 1px 4px rgba(27,26,33,.25);
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+.btn-secondary.ui.button:focus {
+  box-shadow: 0 1px 4px rgba(27,26,33,.25);
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+.centered.single.ui.button {
+  text-align: center;
+  display: block;
+  margin: 1.7rem auto 0;
+}
+.centered.single {
+  display: block;
+  text-align: center;
+}
+
 /* Form Styling */
 .form-container label {
   font-weight: bold;
@@ -76,7 +103,8 @@ a.pay-by-cc-link:hover {
   float: right;
 }
 a.pay-by-ach-link:hover,
-a.pay-by-cc-link:hover {
+a.pay-by-cc-link:hover,
+a.manual-link {
   cursor: pointer;
 
 }

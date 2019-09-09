@@ -7,7 +7,6 @@ describe('', () => {
   const generateMockProps = (props) => {
     return {
       id: "test123",
-      onCancel: jest.fn(),
       onLast: jest.fn(),
       onNext: jest.fn(),
       onError: jest.fn(),
@@ -21,14 +20,6 @@ describe('', () => {
     expect(wrapper.length).to.equal(1)
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('button').length).to.equal(3)
-  })
-
-  it('calls onCancel() when clicked', () => {
-    const mockProps = generateMockProps({})
-    const wrapper = shallow(<Wrapper  {...mockProps} />)
-
-    wrapper.find('#form-cancel-btn').simulate('click')
-    expect(mockProps.onCancel.call.length).to.equal(1)
   })
 
   it('calls onlast() when "Previous" clicked', () => {

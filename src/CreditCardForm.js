@@ -99,6 +99,7 @@ export default class CreditCardForm extends Component {
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
+      autoComplete: 'cc-number',
       css: inputStyles
     });
 
