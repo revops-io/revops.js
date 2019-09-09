@@ -12,20 +12,26 @@ npm install --save revops-js
 
 ## Usage
 
+### Create a payment portal to create and manage new customers with a few lines of code.
+
 ```jsx
-import React, { Component } from 'react'
+import React from 'react'
 
-import MyComponent from 'revops-js'
+import { PaymentPortal } from 'revops-js'
 
-class Example extends Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
+const YourPaymentPortal = ({ publicKey = 'your-public-api-key' }) => (
+  <PaymentPortal
+    publicKey={publicKey}
+    account={{
+      accountId: accountId,
+    }}
+    logo="https://bill.sh/example_logos/pigeon.png"
+    companyName="pigeonDelivery , Inc."
+    styles={defaultStyles}
+  />
+)
 ```
 
 ## License
 
-MIT © [minddog](https://github.com/minddog)
+MIT © [RevOps, Inc.](https://revops.io)
