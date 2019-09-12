@@ -6,13 +6,6 @@ import {
 } from './index'
 
 export class Account extends EntityModel {
-  id: string
-  externalId: string
-  name: string
-  billingContact: BillingContact
-  shippingContact: ShippingContact
-  billingPreferences: BillingPreferences
-
   constructor(params = {}) {
     super(params)
     Object.keys(params).map(attrName =>

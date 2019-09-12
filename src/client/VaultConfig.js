@@ -1,4 +1,4 @@
-const production = {
+const getProduction = () => ({
   name: 'production',
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
   revopsBaseUrl: 'https://vault.revops.io',
@@ -8,9 +8,9 @@ const production = {
   vaultId: 'tnt2w1xznia',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-production',
-}
+})
 
-const staging = {
+const getStaging = () => ({
   name: 'staging',
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
   revopsBaseUrl: 'https://vault.revops.io',
@@ -20,9 +20,9 @@ const staging = {
   vaultId: 'tnttz8hit8p',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-staging',
-}
+})
 
-const local = {
+const getLocal = () => ({
   name: "local",
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js',
   revopsBaseUrl: 'https://vault.revops.io',
@@ -32,30 +32,30 @@ const local = {
   vaultId: 'tnt6ryfiprp',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-local',
-}
+})
 
-const configurations = {
-  "production": production,
-  "staging": staging,
-  "localhost": local
-}
+const getConfigurations = () => ({
+  "production": getProduction(),
+  "staging": getStaging(),
+  "localhost": getLocal(),
+})
 
 const selectConfiguration = () => {
 
   // For testing
   if(!!document !== true || !!document.domain !== true) {
-    return configurations['localhost']
+    return getConfigurations['localhost']
   }
 
   if(document.domain.endsWith('staging.bill.sh')) {
-    return configurations['staging']
+    return getConfigurations['staging']
   } else if (document.domain.endsWith('localhost')) {
-    return configurations['localhost']
+    return getConfigurations['localhost']
   }
 
-  return configurations['production']
+  return getConfigurations['production']
 }
 
-const config = selectConfiguration()
+const getConfig = selectConfiguration
 
-export default config
+export default getConfig;

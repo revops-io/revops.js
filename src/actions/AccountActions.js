@@ -32,7 +32,7 @@ export function makeAccount(props = {
  * returns { request, source }
  */
 export function createAccount(
-  account: Account,
+  account,
   onSuccess,
   onError,
   onCancel,

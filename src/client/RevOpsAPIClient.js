@@ -1,15 +1,14 @@
 import axios from 'axios'
 
-import config from './VaultConfig'
+import getConfig from './VaultConfig'
 
 export class RevOpsAPIClient {
-  url = config.revopsBaseUrl
-
   constructor(url = false) {
+    url = getConfig().revopsBaseUrl
     if(url && url.length > 0) {
       this.url = url
     }
-    
+
     this.request = axios.create({
       baseURL: this.url
     })
