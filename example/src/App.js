@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import {
-  PaymentPortal,
+  PaymentMethod,
 } from 'revops-js'
 
 
@@ -34,7 +34,8 @@ export default class App extends Component {
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
-          <PaymentPortal
+          <PaymentMethod
+            env={"production"}
             account={{
               accountId: accountId,
             }}
