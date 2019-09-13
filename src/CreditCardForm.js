@@ -8,10 +8,18 @@ import {
   convertAPIError,
 } from './FormHelpers'
 
-import config from './client/VaultConfig'
+import configure from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, cardWidth } from './SharedStyles'
+
+import {
+  styleDependencies,
+  jsDependencies,
+  addJS,
+  addStylesheet,
+  configureVault,
+} from './index'
 
 const defaultStyles = {
   border: 'none',
@@ -30,6 +38,27 @@ const defaultStyles = {
     opacity: '.5',
   },
 };
+
+const getDefaultValue = (accountModel, billingProp, defaultValue) => {
+  !!accountModel === true
+    && !!accountModel.billingPreferences === true
+    && !!accountModel.billingPreferences[billingProp] === true
+    ? accountModel.billingPreferences[billingProp]
+    : defaultValue
+}
+
+const getDefaultCardExpDate = (accountModel) => {
+  if (!!accountModel === false || !!accountModel.billingPreferences === false) {
+    return ""
+  }
+
+  return !!accountModel.billingPreferences.cardExpdate.month
+  || !!accountModel.billingPreferences.cardExpdate.year === true
+  ? accountModel.billingPreferences.cardExpdate.month
+    + '/' +
+    accountModel.billingPreferences.cardExpdate.year
+  : ""
+}
 
 export default class CreditCardForm extends Component {
   state = {
@@ -56,14 +85,12 @@ export default class CreditCardForm extends Component {
   }
 
   componentDidMount() {
-    const script = document.createElement("script")
-
-    script.src = config.vaultCollectUrl
-    script.async = true
-    script.onload = () => {
-      this.initialize()
-    }
-    document.body.appendChild(script);
+    styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
+    jsDependencies.forEach(js => addJS(js))
+    configureVault(
+      this.props.env,
+      this.initialize,
+    )
   }
 
   initialize = () => {
@@ -72,15 +99,13 @@ export default class CreditCardForm extends Component {
       ...this.props.styles,
     }
     const { accountModel } = this.props
-    const form = VGSCollect.create(config.vaultId, function (state) { });
+    const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
     form.field("#cc-holder .field-space", {
       type: "text",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardName",
-      defaultValue: !!accountModel.billingPreferences.cardName === true
-        ? accountModel.billingPreferences.cardName
-        : "",
+      defaultValue: getDefaultValue(accountModel, 'cardName', ''),
       placeholder: "Joe Business",
       validations: ["required"],
       css: inputStyles
@@ -90,9 +115,7 @@ export default class CreditCardForm extends Component {
       type: "card-number",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardNumber",
-      defaultValue: !!accountModel.billingPreferences.cardNumber === true
-        ? accountModel.billingPreferences.cardNumber
-        : "",
+      defaultValue: getDefaultValue(accountModel, 'cardNumber', ''),
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
@@ -114,11 +137,7 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       errorColor: styles.errorColor,
       placeholder: "01 / 2022",
-      defaultValue: !!accountModel.billingPreferences.cardExpdate.month || !!accountModel.billingPreferences.cardExpdate.year === true
-        ? accountModel.billingPreferences.cardExpdate.month
-          + '/' +
-          accountModel.billingPreferences.cardExpdate.year
-        : "",
+      defaultValue: getDefaultCardExpDate(accountModel, ''),
       serializers: [
         form.SERIALIZERS.separate({
           monthName: 'month',

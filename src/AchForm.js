@@ -11,7 +11,7 @@ import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
 
-import config from './client/VaultConfig'
+import configure from './client/VaultConfig'
 
 const defaultStyles = {
   background: "#FFFFFF",
@@ -49,40 +49,40 @@ export default class AchForm extends Component {
   }
 
   componentDidMount() {
+    styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
+    jsDependencies.forEach(js => addJS(js))
+
+    configureVault(
+      this.props.env,
+      this.initialize(),
+    )
+
+    configurePlaid(
+      this.props.env,
+      (plaidLink) => this.onPlaidLoad(plaidLink),
+      this.onPlaidSelect,
+    )
+  }
+
+  componentDidMount() {
     const vault = document.createElement("script")
-    const plaid = document.createElement("script")
-    vault.src = config.vaultCollectUrl
-    plaid.src = config.plaidUrl
+    vault.src = configure(this.props.env).vaultCollectUrl
     vault.async = true
-    plaid.async = true
-    plaid.onload = () => {
 
-      const handleOnSuccess = (public_token, metadata) => {
-        this.setState({
-          plaidLinkPublicToken: public_token,
-          plaidAccountId: metadata.account_id,
-          plaidMetadata: metadata,
-        })
-        this.initialize(this.state.disablePlaid)
-      }
-
-      this.plaidLink = window.Plaid.create({
-        env: config.plaidEnvironment,
-        clientName: 'RevOps.js',
-        key: config.plaidKey,
-        product: ['auth'],
-        selectAccount: true,
-        onSuccess: handleOnSuccess,
-        onExit: function(err, metadata) {
-          // The user exited th Link flow.
-          if (err != null) {
-            // The user encountered a Plaid API error prior to exiting.
-          }
-        },
-      })
-    }
     document.body.appendChild(vault);
-    document.body.appendChild(plaid);
+  }
+
+  onPlaidLoad(plaidLink) {
+    this.plaidLink = plaidLink
+  }
+
+  onPlaidSelect(publicToken, metadata) {
+    this.setState({
+      plaidLinkPublicToken: publicToken,
+      plaidAccountId: metadata.account_id,
+      plaidMetadata: metadata,
+    })
+    this.initializePlaid(this.state.disablePlaid)
   }
 
   togglePlaid = () => {
@@ -122,7 +122,7 @@ export default class AchForm extends Component {
     const { accountModel } = this.props
 
     if(!!this.form === false) {
-      this.form = VGSCollect.create(config.vaultId, function (state) { });
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     }
 
     let defaultBankName = !!accountModel.billingPreferences.bankName === true

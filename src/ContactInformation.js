@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import config from './client/VaultConfig'
+import configure from './client/VaultConfig'
 
 const defaultStyles = {
   border: 'none',
@@ -41,7 +41,7 @@ export default class ContactInformation extends Component {
   componentDidMount() {
     const script = document.createElement("script")
 
-    script.src = config.vaultCollectUrl
+    script.src = configure(this.props.env).vaultCollectUrl
     script.async = true
     script.onload = () => {
       this.initialize()
@@ -51,7 +51,7 @@ export default class ContactInformation extends Component {
 
   initialize = () => {
     const { accountModel } = this.props
-    let form = VGSCollect.create(config.vaultId, function (state) { });
+    let form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     form.field("#customer-first-name .field-space", {

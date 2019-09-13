@@ -1,4 +1,4 @@
-const production = {
+const production = () => ({
   name: 'production',
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
   revopsBaseUrl: 'https://vault.revops.io',
@@ -8,9 +8,9 @@ const production = {
   vaultId: 'tnt2w1xznia',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-production',
-}
+})
 
-const staging = {
+const staging = () => ({
   name: 'staging',
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
   revopsBaseUrl: 'https://vault.revops.io',
@@ -20,9 +20,9 @@ const staging = {
   vaultId: 'tnttz8hit8p',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-staging',
-}
+})
 
-const local = {
+const local = () => ({
   name: "local",
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACkcn4HYv7o2XoRa7idWwVEX.js',
   revopsBaseUrl: 'https://vault.revops.io',
@@ -32,30 +32,36 @@ const local = {
   vaultId: 'tnt6ryfiprp',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-local',
-}
+})
 
-const configurations = {
-  "production": production,
-  "staging": staging,
-  "localhost": local
-}
+const configurations = () => ({
+  "production": production(),
+  "staging": staging(),
+  "localhost": local(),
+})
 
-const selectConfiguration = () => {
+export const configure = (env = false) => {
+  let environments = configurations()
+  if (env !== false) {
+    if (!!environments[env] === false) {
+      throw new Error("Unable to locate environment selected: ", env)
+    }
+
+    return environments[env]
+  }
 
   // For testing
   if(!!document !== true || !!document.domain !== true) {
-    return configurations['localhost']
+    return environments['localhost']
   }
 
-  if(document.domain.endsWith('staging.bill.sh')) {
-    return configurations['staging']
+  if(!!document !== false && document.domain.endsWith('staging.bill.sh')) {
+    return environments['staging']
   } else if (document.domain.endsWith('localhost')) {
-    return configurations['localhost']
+    return environments['localhost']
   }
 
-  return configurations['production']
+  return environments['production']
 }
 
-const config = selectConfiguration()
-
-export default config
+export default configure
