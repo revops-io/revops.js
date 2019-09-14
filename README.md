@@ -29,28 +29,61 @@ import { PaymentMethod } from 'revops-js'
 Next, let's add a credit card payment method to the form below. We set `defaultMethod='card'` on `<PaymentMethod />` to prompt the customer to fill in credit card information first. Alternatively, you can try `defaultMethod='ach'` or `defaultMethod='plaid'` if you have either of those in your supported `methods`.
 
 ```jsx
+import React, { Component } from 'react'
 import { PaymentMethod } from 'revops-js'
 
-export const SignupForm = ({accountId = 'this-account-id', email }) => (
-  <div>
-	 <form>
-		<label>Email
-		  <input type="email" name="email" value={email} />
-		</label>
-		<label>Password
-			<input type="password" name="password" />
-		</label>
-		<PaymentMethod
-			account={{
-				accountId: accountId,
-				email: email
-			}}
-			defaultMethod="card"
-		/>
-		<input type="submit" />
-	</form>
-  </div>
-)
+class SignupForm extends Component {
+	constructor(props) {
+		super(props)
+		this.saveRef = React.createRef()
+	}
+
+	submitSecure = (e) => {
+		e.preventDefault()
+
+		// Tell RevOps to create the account.
+	    if (!!this.saveRef === true) {
+	      this.saveRef.current.onSubmit()
+	    }
+	}
+
+	render() {
+		const {
+			/* RevOps API Sandbox Key */
+			publicKey = 'pk_test_1234567543',
+
+			/* Your Customer's Account ID,
+			 * can be a string up to 255 characters long. */
+			accountId = 'this-account-id',
+
+			/* Your Customer's email address. */
+			email,
+		} = this.props
+
+		return (
+		  <div>
+			 <form>
+				<label>Email
+				  <input type="email" name="email" value={email} />
+				</label>
+				<label>Password
+					<input type="password" name="password" />
+				</label>
+				<PaymentMethod
+					publicKey={publicKey}
+					account={{
+						accountId: accountId,
+						email: email
+					}}
+					defaultMethod="card"
+					saveRef={this.saveRef}
+				/>
+				<input type="submit" onClick={this.submitSecure} />
+			</form>
+		  </div>
+		)
+	}
+}
 ```
 
 ## Usage
@@ -76,9 +109,6 @@ export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-ap
 
 export default App
 ```
-
-### Example launches an application below:
-<img alt="Pigeon Example Signup" src="https://bill.sh/example-screens/pigeon-screen.png" width="350">
 
 ## Props for `<PaymentPortal />`
 
