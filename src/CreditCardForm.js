@@ -39,24 +39,24 @@ const defaultStyles = {
   },
 };
 
-const getDefaultValue = (accountModel, billingProp, defaultValue) => {
-  !!accountModel === true
-    && !!accountModel.billingPreferences === true
-    && !!accountModel.billingPreferences[billingProp] === true
-    ? accountModel.billingPreferences[billingProp]
+const getDefaultValue = (account, billingProp, defaultValue) => {
+  return !!account === true
+    && !!account.billingPreferences === true
+    && !!account.billingPreferences[billingProp] === true
+    ? account.billingPreferences[billingProp]
     : defaultValue
 }
 
-const getDefaultCardExpDate = (accountModel) => {
-  if (!!accountModel === false || !!accountModel.billingPreferences === false) {
+const getDefaultCardExpDate = (account) => {
+  if (!!account === false || !!account.billingPreferences === false) {
     return ""
   }
 
-  return !!accountModel.billingPreferences.cardExpdate.month
-  || !!accountModel.billingPreferences.cardExpdate.year === true
-  ? accountModel.billingPreferences.cardExpdate.month
+  return !!account.billingPreferences.cardExpdate.month
+  || !!account.billingPreferences.cardExpdate.year === true
+  ? account.billingPreferences.cardExpdate.month
     + '/' +
-    accountModel.billingPreferences.cardExpdate.year
+    account.billingPreferences.cardExpdate.year
   : ""
 }
 
@@ -87,6 +87,7 @@ export default class CreditCardForm extends Component {
   componentDidMount() {
     styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
     jsDependencies.forEach(js => addJS(js))
+
     configureVault(
       this.props.env,
       this.initialize,
@@ -98,14 +99,14 @@ export default class CreditCardForm extends Component {
       ...defaultStyles,
       ...this.props.styles,
     }
-    const { accountModel } = this.props
+    const { account } = this.props
     const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
     form.field("#cc-holder .field-space", {
       type: "text",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardName",
-      defaultValue: getDefaultValue(accountModel, 'cardName', ''),
+      defaultValue: getDefaultValue(account, 'cardName', ''),
       placeholder: "Joe Business",
       validations: ["required"],
       css: inputStyles
@@ -115,7 +116,7 @@ export default class CreditCardForm extends Component {
       type: "card-number",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardNumber",
-      defaultValue: getDefaultValue(accountModel, 'cardNumber', ''),
+      defaultValue: getDefaultValue(account, 'cardNumber', ''),
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
@@ -137,7 +138,7 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       errorColor: styles.errorColor,
       placeholder: "01 / 2022",
-      defaultValue: getDefaultCardExpDate(accountModel, ''),
+      defaultValue: getDefaultCardExpDate(account, ''),
       serializers: [
         form.SERIALIZERS.separate({
           monthName: 'month',
@@ -171,13 +172,13 @@ export default class CreditCardForm extends Component {
   onSubmit = () => {
     const { form } = this
     const { onNext, onComplete = false } = this.props
-    let { accountModel } = this.props
+    let { account } = this.props
 
-    accountModel = makeAccount({
-      ...accountModel,
+    account = makeAccount({
+      ...account,
       status: 'activating', // trigger activating state.
       billingPreferences: {
-        ...accountModel.billingPreferences,
+        ...account.billingPreferences,
         paymentMethod: "credit-card"
       }
     })
@@ -191,7 +192,7 @@ export default class CreditCardForm extends Component {
     })
 
     const onError = this.onError
-    accountModel.saveWithSecureForm(
+    account.saveWithSecureForm(
       form,
       {
         onError,
