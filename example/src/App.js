@@ -20,28 +20,26 @@ const backgroundStyles = {
   minHeight: '100vh',
   maxHeight: '100%',
   // end
-  background: 'url("../example_logos/memsql_banner.svg") repeat-x top left white',
 }
 
 export default class App extends Component {
   render() {
-    let hash = document.location.hash.replace('#', '')
-    let accountId = ''
-    if (hash !== '') {
-      accountId = hash
-    }
-
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
           <PaymentMethod
             env={"staging"}
             account={{
-              accountId: accountId,
+              accountId: "my-account-id",
             }}
             logo="../example_logos/memsql.png"
             companyName="memSQL"
             styles={defaultStyles}
+            methods={[
+              "card",
+              "ach",
+            ]}
+            defaultMethod="card"
           />
         </div>
       </div>
