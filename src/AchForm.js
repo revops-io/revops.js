@@ -313,12 +313,14 @@ export default class AchForm extends Component {
             toggleHandler={this.props.togglePlaidHandler}
           />
         }
-        <ButtonGroup
-          onLast={onLast}
-          onCancel={onCancel}
-          finalStep={true}
-          onSubmit={this.onSubmit}
-        />
+        {!!this.props.saveRef === false &&
+          <ButtonGroup
+            onLast={onLast}
+            onCancel={onCancel}
+            finalStep={true}
+            onSubmit={this.onSubmit}
+          />
+        }
       </section>
     )
   }

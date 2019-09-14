@@ -245,13 +245,15 @@ export default class CreditCardForm extends Component {
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
-        <ButtonGroup
-          loading={this.state.loading}
-          onSubmit={this.onSubmit}
-          onLast={onLast}
-          onCancel={onCancel}
-          finalStep={true}
-        />
+        {!!this.props.saveRef === false &&
+          <ButtonGroup
+            loading={this.state.loading}
+            onSubmit={this.onSubmit}
+            onLast={onLast}
+            onCancel={onCancel}
+            finalStep={true}
+          />
+        }
       </section>
     )
   }

@@ -53,6 +53,9 @@ export default class PaymentMethod extends Component {
 
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
+
+    /** Optional reference to allow your own save buttons */
+    saveRef: PropTypes.shape({ current: PropTypes.any }),
   }
 
 
@@ -133,6 +136,7 @@ export default class PaymentMethod extends Component {
           method === PaymentMethods.METHOD_CARD &&
           <div id="cc-info">
             <CreditCardForm
+              ref={this.props.saveRef}
               account={this.state.accountModel}
               setAccount={(accountProperty, field, value) =>
                 this.setAccount(accountProperty, field, value)
@@ -146,6 +150,7 @@ export default class PaymentMethod extends Component {
           method === PaymentMethods.METHOD_ACH &&
           <div id="bank-info">
             <AchForm
+              ref={this.props.saveRef}
               hideTogglePlaid={this.isPlaidEnabled() === true?
                 false: true
               }
@@ -163,6 +168,7 @@ export default class PaymentMethod extends Component {
           method === PaymentMethods.METHOD_PLAID &&
           <div id="bank-info">
             <PlaidForm
+              ref={this.props.saveRef}
               account={this.state.accountModel}
               setAccount={(accountProperty, field, value) =>
                 this.setAccount(accountProperty, field, value)

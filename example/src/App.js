@@ -23,6 +23,20 @@ const backgroundStyles = {
 }
 
 export default class App extends Component {
+  constructor(props) {
+    super(props)
+    this.saveRef = React.createRef()
+  }
+
+  submitSecure = (e) => {
+    e.preventDefault()
+
+    // tell the revops form to submit itself
+    if (!!this.saveRef === true) {
+      this.saveRef.current.onSubmit()
+    }
+  }
+
   render() {
     return (
       <div className="ui container" style={backgroundStyles}>
@@ -32,15 +46,18 @@ export default class App extends Component {
             account={{
               accountId: "my-account-id",
             }}
-            logo="../example_logos/memsql.png"
-            companyName="memSQL"
+            companyName="myDatabaseService, Inc."
             styles={defaultStyles}
             methods={[
               "card",
               "ach",
             ]}
             defaultMethod="card"
+            saveRef={this.saveRef}
           />
+          <div className="ui button" onClick={(e) => this.submitSecure(e)} tabIndex="0">
+            Submit Order
+          </div>
         </div>
       </div>
     )

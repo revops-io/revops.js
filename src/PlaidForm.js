@@ -235,19 +235,22 @@ export default class AchForm extends Component {
             </div>
           </form>
         }
-        
+
         <TogglePlaid
           style={linkStyling}
           toggleHandler={this.props.togglePlaidHandler}
         />
 
         <div className="ui clearing divider"></div>
-        <ButtonGroup
-          onLast={onLast}
-          onCancel={onCancel}
-          finalStep={true}
-          onSubmit={this.onSubmit}
-        />
+        {!!this.props.saveRef === false &&
+          <ButtonGroup
+            loading={this.state.loading}
+            onSubmit={this.onSubmit}
+            onLast={onLast}
+            onCancel={onCancel}
+            finalStep={true}
+          />
+        }
       </section>
     )
   }
