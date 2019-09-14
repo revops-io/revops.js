@@ -311,7 +311,7 @@ export default class AchForm extends Component {
         </a>
 
         {this.state.disablePlaid === true &&
-          <form id="contact-form" className="ui form">
+          <div id="contact-form" className="ui form">
 
               <div id="bank-name"
                 className={
@@ -375,7 +375,7 @@ export default class AchForm extends Component {
               <span className="field-space"></span>
               <span>{getErrorText('Account number', 'billingPreferences.bankAccountNumber', errors)}</span>
             </div>
-          </form>
+          </div>
         }
         <div className="ui clearing divider"></div>
         <ButtonGroup
