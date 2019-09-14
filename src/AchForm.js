@@ -230,11 +230,6 @@ export default class AchForm extends Component {
         <label className="h3">Paying by ACH</label>
         <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
 
-        <TogglePlaid
-          style={linkStyling}
-          toggleHandler={this.props.togglePlaidHandler}
-        />
-
         <form id="contact-form" className="ui form">
 
             <div id="bank-name"
@@ -301,6 +296,11 @@ export default class AchForm extends Component {
           </div>
         </form>
         <div className="ui clearing divider"></div>
+
+        <TogglePlaid
+          style={linkStyling}
+          toggleHandler={this.props.togglePlaidHandler}
+        />
         <ButtonGroup
           onLast={onLast}
           onCancel={onCancel}

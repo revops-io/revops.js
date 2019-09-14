@@ -56,7 +56,7 @@ export default class PaymentMethod extends Component {
     super(props)
     this.state = {
       errors: false,
-      method: 'CC',
+      method: PaymentMethods.METHOD_CARD,
     }
     this.form = null
   }
