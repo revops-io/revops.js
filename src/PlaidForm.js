@@ -31,7 +31,7 @@ const defaultStyles = {
   padding: "0 16px"
 };
 
-export default class AchForm extends Component {
+export default class PlaidForm extends Component {
   static propTypes = {
     /** An AchForm can have custom styles */
     styles: PropTypes.object,
