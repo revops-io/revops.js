@@ -202,17 +202,23 @@ export default class AchForm extends Component {
     const { onNext, onComplete = false } = this.props
     let { account } = this.props
 
+    account = makeAccount({
+      ...account,
+      status: 'activating', // trigger activating state.
+      billingPreferences: {
+        ...account.billingPreferences,
+        paymentMethod: "ach"
+      }
+    })
+
     this.setState({
       errors: false,
       loading: true,
+      status: false,
+      response: false,
     })
 
     const onError = this.onError
-
-    // Attach plaid state to model on submit.
-    account.billingPreferences.plaidLinkPublicToken = this.state.plaidLinkPublicToken
-    account.billingPreferences.plaidAccountId = this.state.plaidAccountId
-
     account.saveWithSecureForm(
       form,
       {
