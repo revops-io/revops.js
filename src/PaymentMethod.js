@@ -15,15 +15,43 @@ import {
 
 import { ButtonGroup } from './ButtonGroup'
 
-
-const PaymentMethods = [
-  { value: '', text: '' },
-  { value: 'ACH', text: 'Pay by Check' },
-  { value: 'CC', text: 'Credit Card' },
-]
-
+export const PaymentMethods = {
+  METHOD_ACH: 'ach',
+  METHOD_CARD: 'card',
+  METHOD_PLAID: 'plaid',
+}
 
 export default class PaymentMethod extends Component {
+  static propTypes = {
+    /** PaymentMethod can have custom styles,
+     ** these styles are passed onto children components */
+    styles: PropTypes.object,
+
+    /** An enumerated list of supported payment method types
+     * that the developer can enable for their customers.
+     */
+    methods: PropTypes.arrayOf(
+       PropTypes.oneOf(Object.values(PaymentMethods))),
+
+    /** A callable function to fire when form is complete */
+    onComplete: PropTypes.func,
+
+    /** A callable function to fire when next event occurs */
+    onNext: PropTypes.func,
+
+    /** A callable function to fire when cancel event occurs */
+    onCancel: PropTypes.func,
+
+    /** A callable function to fire when last event occurs */
+    onLast: PropTypes.func,
+
+    /** A callable function to fire when an error occurs on the form. */
+    onError: PropTypes.func,
+
+    /** Toggle for showing/hiding plaid info */
+    togglePlaidHandler: PropTypes.func,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -33,14 +61,6 @@ export default class PaymentMethod extends Component {
     this.form = null
   }
 
-  static propTypes = {
-    styles: PropTypes.object,
-    onComplete: PropTypes.func,
-    onNext: PropTypes.func,
-    onCancel: PropTypes.func,
-    onLast: PropTypes.func,
-    onError: PropTypes.func,
-  }
 
   componentDidMount() {
     jsDependencies.forEach(js => addJS(js))
@@ -69,17 +89,17 @@ export default class PaymentMethod extends Component {
   }
 
   changePaymentMethodACH() {
-    this.setState({ method: 'ACH' })
+    this.setState({ method: PaymentMethods.METHOD_ACH })
   }
 
   changePaymentMethodCC() {
-    this.setState({ method: 'CC' })
+    this.setState({ method: PaymentMethods.METHOD_CARD })
   }
 
   togglePlaidHandler = () => {
     this.setState({
-      method: this.state.method === 'ACH'?
-        'PLAID' : 'ACH'
+      method: this.state.method === PaymentMethods.METHOD_ACH?
+        PaymentMethods.METHOD_PLAID : PaymentMethods.METHOD_ACH
     })
   }
 
@@ -90,7 +110,7 @@ export default class PaymentMethod extends Component {
       <section className="">
         <br />
         {
-          method === 'CC' &&
+          method === PaymentMethods.METHOD_CARD &&
           <div id="cc-info">
             <CreditCardForm
               account={this.state.accountModel}
@@ -103,7 +123,7 @@ export default class PaymentMethod extends Component {
           </div>
         }
         {
-          method === 'ACH' &&
+          method === PaymentMethods.METHOD_ACH &&
           <div id="bank-info">
             <AchForm
               account={this.state.accountModel}
@@ -117,7 +137,7 @@ export default class PaymentMethod extends Component {
           </div>
         }
         {
-          method === 'PLAID' &&
+          method === PaymentMethods.METHOD_PLAID &&
           <div id="bank-info">
             <PlaidForm
               account={this.state.accountModel}
