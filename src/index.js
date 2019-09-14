@@ -71,7 +71,7 @@ export const configurePlaid = (
     const handleOnSuccess = (publicToken, metadata) => {
       onSelect(publicToken, metadata)
     }
-    
+
     const plaidLink = window.Plaid.create({
       env: configure(env).plaidEnvironment,
       clientName: 'RevOps.js',
@@ -92,7 +92,7 @@ export const configurePlaid = (
   document.body.appendChild(plaid);
 }
 
-
+export { default as TogglePlaid } from './TogglePlaid'
 export { default as StandardTerms } from './StandardTerms'
 export { default as CreditCardForm } from './CreditCardForm'
 export { default as SignupForm } from './SignupForm'
@@ -102,6 +102,7 @@ export { default as ContactInformation } from './ContactInformation'
 export { default as FormProgress } from './FormProgress'
 export { default as PaymentMethod } from './PaymentMethod'
 export { default as PaymentPortal } from './PaymentPortal'
+export { default as PlaidForm } from './PlaidForm'
 export { default as AchForm } from './AchForm'
 export { default as EmailInvoice } from './EmailInvoice'
 export { default as StripeForm } from './StripeForm'

@@ -89,7 +89,7 @@ export default class CreditCardForm extends Component {
       errorColor: styles.errorColor,
       name: "billingPreferences.cardName",
       defaultValue: getDefaultValue(account, 'cardName', ''),
-      placeholder: "Joe Business",
+      placeholder: "Florence Izote",
       validations: ["required"],
       css: inputStyles
     });

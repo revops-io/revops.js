@@ -5,6 +5,7 @@ import { makeAccount } from './actions/AccountActions'
 
 import {
   CreditCardForm,
+  PlaidForm,
   AchForm,
   EmailInvoice,
   StripeForm,
@@ -70,8 +71,16 @@ export default class PaymentMethod extends Component {
   changePaymentMethodACH() {
     this.setState({ method: 'ACH' })
   }
+
   changePaymentMethodCC() {
     this.setState({ method: 'CC' })
+  }
+
+  togglePlaidHandler = () => {
+    this.setState({
+      method: this.state.method === 'ACH'?
+        'PLAID' : 'ACH'
+    })
   }
 
   render() {
@@ -102,6 +111,21 @@ export default class PaymentMethod extends Component {
                 this.setAccount(accountProperty, field, value)
               }
               changePaymentMethod={() => this.changePaymentMethodCC()}
+              togglePlaidHandler={this.togglePlaidHandler}
+              {...this.props}
+            />
+          </div>
+        }
+        {
+          method === 'PLAID' &&
+          <div id="bank-info">
+            <PlaidForm
+              account={this.state.accountModel}
+              setAccount={(accountProperty, field, value) =>
+                this.setAccount(accountProperty, field, value)
+              }
+              changePaymentMethod={() => this.changePaymentMethodCC()}
+              togglePlaidHandler={this.togglePlaidHandler}
               {...this.props}
             />
           </div>
