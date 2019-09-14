@@ -1,13 +1,56 @@
+
 # revops-js
 
 > Official RevOps Javascript Component Library
 
 [![NPM](https://img.shields.io/npm/v/revops-js.svg)](https://www.npmjs.com/package/revops-js) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+RevOps helps software businesses setup their usage-based pricing and billing. Request an account at https://www.revops.io to start automate your pricing today.
+
 ## Install
 
+### Step 0.
+Sign-up for an account with RevOps: https://www.revops.io
+
+### Step 1.
 ```bash
 npm install --save revops-js
+```
+
+### Step 2.
+
+Import the `<PaymentMethod />` component into your Signup Form.
+```jsx
+import { PaymentMethod } from 'revops-js'
+```
+
+### Step 3.
+
+Next, let's add a credit card payment method to the form below. We set `defaultMethod='card'` on `<PaymentMethod />` to prompt the customer to fill in credit card information first. Alternatively, you can try `defaultMethod='ach'` or `defaultMethod='plaid'` if you have either of those in your supported `methods`.
+
+```jsx
+import { PaymentMethod } from 'revops-js'
+
+export const SignupForm = ({accountId = 'this-account-id', email }) => (
+  <div>
+	 <form>
+		<label>Email
+		  <input type="email" name="email" value={email} />
+		</label>
+		<label>Password
+			<input type="password" name="password" />
+		</label>
+		<PaymentMethod
+			account={{
+				accountId: accountId,
+				email: email
+			}}
+			defaultMethod="card"
+		/>
+		<input type="submit" />
+	</form>
+  </div>
+)
 ```
 
 ## Usage
@@ -44,6 +87,11 @@ export default App
 | publicKey |  PropTypes.string.isRequired | RevOps API Public Key. |
 | account |    PropTypes.object   |  Initial account object to. |
 | logo | PropTypes.string | URL to your company logo |
+| methods | PropTypes.arrayOf(PropTypes.oneOf(['ach', 'card', 'plaid'])) | List of supported payment methods.
+| defaultMethod | PropTypes.oneOf(['ach', 'card', 'plaid']) | The payment method shown first.
+| saveRef | PropTypes.shape({ current: PropTypes.any }) | Assign a ref to add an external save button. If assigned, it will hide built-in buttons.
+| styles | PropTypes.object | Inelin CSS Style definition to customize the form.
+
 
 
 ## Account Object `<PaymentPortal account={{ ... }} />`
@@ -53,7 +101,8 @@ to initial new accounts.
 
 | Prop     |      type      |  Description |
 |----------|:--------------:|-------------:|
-| accountId |    PropTypes.string   |  Your accountId to connect with a RevOps Account. |
+| accountId |    PropTypes.string   |  The customer `accountId` to connect with a RevOps Account. |
+| email | PropTypes.string | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
 
 
 ## License
