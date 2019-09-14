@@ -5,11 +5,19 @@ import {
   getErrorText,
   getClassName,
   convertAPIError,
+  getDefaultValue,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
+
+import {
+  configureVault,
+  configurePlaid,
+  jsDependencies,
+  addJS,
+} from './index'
 
 import configure from './client/VaultConfig'
 
@@ -23,6 +31,30 @@ const defaultStyles = {
 };
 
 export default class AchForm extends Component {
+  static propTypes = {
+    /** An AchForm can have custom styles */
+    styles: PropTypes.object,
+
+    /** A callable function to fire when form is complete */
+    onComplete: PropTypes.func,
+
+    /** A callable function to fire when next event occurs */
+    onNext: PropTypes.func,
+
+    /** A callable function to fire when cancel event occurs */
+    onCancel: PropTypes.func,
+
+    /** A callable function to fire when last event occurs */
+    onLast: PropTypes.func,
+
+    /** A callable function to fire when an error occurs on the form. */
+    onError: PropTypes.func,
+  }
+
+  static defaultProps = {
+    styles: {},
+  }
+
   state = {
     errors: false,
     plaidLinkPublicToken: false,
@@ -39,40 +71,26 @@ export default class AchForm extends Component {
     this.form = null
   }
 
-  static propTypes = {
-    styles: PropTypes.object,
-    onComplete: PropTypes.func,
-    onNext: PropTypes.func,
-    onCancel: PropTypes.func,
-    onLast: PropTypes.func,
-    onError: PropTypes.func,
-  }
-
   componentDidMount() {
-    styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
+    alert('test')
     jsDependencies.forEach(js => addJS(js))
-
     configureVault(
       this.props.env,
-      this.initialize(),
+      this.initialize,
     )
 
     configurePlaid(
       this.props.env,
-      (plaidLink) => this.onPlaidLoad(plaidLink),
+      (plaidLink) => {
+        alert('test')
+        this.onPlaidLoad(plaidLink)
+      },
       this.onPlaidSelect,
     )
   }
 
-  componentDidMount() {
-    const vault = document.createElement("script")
-    vault.src = configure(this.props.env).vaultCollectUrl
-    vault.async = true
 
-    document.body.appendChild(vault);
-  }
-
-  onPlaidLoad(plaidLink) {
+  onPlaidLoad = (plaidLink) => {
     this.plaidLink = plaidLink
   }
 
@@ -118,26 +136,30 @@ export default class AchForm extends Component {
     }
   }
 
-  initialize = (disablePlaid = false) => {
-    const { accountModel } = this.props
+  getBankName = () => {
+    const { account } = this.props
 
-    if(!!this.form === false) {
-      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
-    }
-
-    let defaultBankName = !!accountModel.billingPreferences.bankName === true
-      ? accountModel.billingPreferences.bankName
-      : ""
+    let defaultBankName = getDefaultValue(account, 'bankName', '')
 
     if(!!this.state.plaidMetadata !== false &&
       !!this.state.plaidMetadata.institution !== false) {
         defaultBankName = this.state.plaidMetadata.institution.name
     }
 
+    return defaultBankName
+  }
+
+  initialize = (disablePlaid = false) => {
+    const { account } = this.props
+
+    if(!!this.form === false) {
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
+    }
+
     this.createFormField(
       "#bank-name .field-space",
       'billingPreferences.bankName',
-      defaultBankName,
+      this.getBankName(),
       {
         type: "text",
         readOnly: disablePlaid === false? 'readOnly': null,
@@ -150,9 +172,7 @@ export default class AchForm extends Component {
       this.createFormField(
         "#bank-acct-country .field-space",
         'billingPreferences.bankCountry',
-        !!accountModel.billingPreferences.bankCountry === true
-          ? accountModel.billingPreferences.bankCountry
-          : "USA",
+        getDefaultValue(account, 'bankCountry', 'USA'),
         {
           type: "dropdown",
           validations: ["required"],
@@ -166,9 +186,7 @@ export default class AchForm extends Component {
       this.createFormField(
         "#bank-holder-name .field-space",
         "billingPreferences.bankAccountHolderName",
-        !!accountModel.billingPreferences.bankAccountHolderName === true
-          ? accountModel.billingPreferences.bankAccountHolderName
-          : "",
+        getDefaultValue(account, 'bankAccountHolderName', ''),
         {
           type: "text",
           placeholder: "Pat Smalley",
@@ -179,9 +197,7 @@ export default class AchForm extends Component {
       this.createFormField(
         "#bank-acct-type .field-space",
         "billingPreferences.bankAccountHolderType",
-        !!accountModel.billingPreferences.bankAccountHolderType === true
-          ? accountModel.billingPreferences.bankAccountHolderType
-          : "company",
+        getDefaultValue(account, 'bankAccountHolderType', 'company'),
         {
           type: "dropdown",
           validations: ["required"],
@@ -195,9 +211,7 @@ export default class AchForm extends Component {
       this.createFormField(
         "#bank-acct-number .field-space",
         "billingPreferences.bankAccountNumber",
-        !!accountModel.billingPreferences.bankAccountNumber === true
-          ? accountModel.billingPreferences.bankAccountNumber
-          : "",
+        getDefaultValue(account, 'bankAccountNumber', ''),
         {
           type: "text",
           placeholder: "XXXXXXXXXXXXX",
@@ -209,9 +223,7 @@ export default class AchForm extends Component {
       this.createFormField(
         "#bank-routing-number .field-space",
         "billingPreferences.bankRoutingNumber",
-        !!accountModel.billingPreferences.bankRoutingNumber === true
-          ? accountModel.billingPreferences.bankRoutingNumber
-          : "",
+        getDefaultValue(account, 'bankRoutingNumber', ''),
         {
           type: "text",
           placeholder: "Enter bank routing number",
@@ -235,7 +247,7 @@ export default class AchForm extends Component {
   onSubmit = () => {
     const { form } = this
     const { onNext, onComplete = false } = this.props
-    let { accountModel } = this.props
+    let { account } = this.props
 
     this.setState({
       errors: false,
@@ -245,10 +257,10 @@ export default class AchForm extends Component {
     const onError = this.onError
 
     // Attach plaid state to model on submit.
-    accountModel.billingPreferences.plaidLinkPublicToken = this.state.plaidLinkPublicToken
-    accountModel.billingPreferences.plaidAccountId = this.state.plaidAccountId
+    account.billingPreferences.plaidLinkPublicToken = this.state.plaidLinkPublicToken
+    account.billingPreferences.plaidAccountId = this.state.plaidAccountId
 
-    accountModel.saveWithSecureForm(
+    account.saveWithSecureForm(
       form,
       {
         onError,

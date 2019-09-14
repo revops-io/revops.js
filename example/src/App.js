@@ -35,7 +35,7 @@ export default class App extends Component {
       <div className="ui container" style={backgroundStyles}>
         <div>
           <PaymentMethod
-            env={"production"}
+            env={"staging"}
             account={{
               accountId: accountId,
             }}

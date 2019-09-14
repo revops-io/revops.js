@@ -54,3 +54,29 @@ export const convertAPIError = (httpStatus, httpResponse) => {
     return null
   }
 }
+
+/*
+ * `getDefaultValue`
+ * Retrieve existing or default value from account.billingPreferences object
+ *
+ */
+export const getDefaultValue = (account, billingProp, defaultValue) => {
+  return !!account === true
+    && !!account.billingPreferences === true
+    && !!account.billingPreferences[billingProp] === true
+    ? account.billingPreferences[billingProp]
+    : defaultValue
+}
+
+export const getDefaultCardExpDate = (account) => {
+  if (!!account === false || !!account.billingPreferences === false) {
+    return ""
+  }
+
+  return !!account.billingPreferences.cardExpdate.month
+  || !!account.billingPreferences.cardExpdate.year === true
+  ? account.billingPreferences.cardExpdate.month
+    + '/' +
+    account.billingPreferences.cardExpdate.year
+  : ""
+}

@@ -6,17 +6,26 @@ import {
 } from './index'
 
 export class Account extends EntityModel {
-  id: string
-  externalId: string
-  name: string
-  billingContact: BillingContact
-  shippingContact: ShippingContact
-  billingPreferences: BillingPreferences
+  id = ""
+  externalId = ""
+  name = ""
+  billingContact = new BillingContact()
+  shippingContact = new ShippingContact()
+  billingPreferences = new BillingPreferences()
 
   constructor(params = {}) {
     super(params)
     Object.keys(params).map(attrName =>
       this._setAttr(attrName, params[attrName])
+    )
+    this.billingContact = new BillingContact(
+      !!params === true ? params.billingContact : {}
+    )
+    this.shippingContact = new ShippingContact(
+      !!params === true ? params.shippingContact : {}
+    )
+    this.billingPreferences = new BillingPreferences(
+      !!params === true ? params.billingPreferences : {}
     )
   }
 

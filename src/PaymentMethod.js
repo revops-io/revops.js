@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { makeAccount } from './actions/AccountActions'
+
 import {
   CreditCardForm,
   AchForm,
   EmailInvoice,
   StripeForm,
+  jsDependencies,
+  addJS,
 } from './index'
 
 import { ButtonGroup } from './ButtonGroup'
@@ -13,10 +17,8 @@ import { ButtonGroup } from './ButtonGroup'
 
 const PaymentMethods = [
   { value: '', text: '' },
-  // { value: 'Stripe', text: 'Stripe' },
   { value: 'ACH', text: 'Pay by Check' },
   { value: 'CC', text: 'Credit Card' },
-  // { value: 'EMAIL', text: 'Email the bill' },
 ]
 
 
@@ -39,9 +41,31 @@ export default class PaymentMethod extends Component {
     onError: PropTypes.func,
   }
 
-  // changePaymentMethod = (e) => {
-  //   this.setState({ method: e.target.value })
-  // }
+  componentDidMount() {
+    jsDependencies.forEach(js => addJS(js))
+    this.initializeAccount()
+  }
+
+  initializeAccount() {
+    const { account } = this.props
+    this.setState({
+      accountModel: makeAccount({
+        ...account,
+      })
+    })
+  }
+
+  setAccount(accountProperty, field, value) {
+    this.setState({
+      accountModel: {
+        ...this.state.accountModel,
+        [accountProperty]: {
+          ...this.state.accountModel[accountProperty],
+          value,
+        }
+      }
+    })
+  }
 
   changePaymentMethodACH() {
     this.setState({ method: 'ACH' })
@@ -60,6 +84,10 @@ export default class PaymentMethod extends Component {
           method === 'CC' &&
           <div id="cc-info">
             <CreditCardForm
+              account={this.state.accountModel}
+              setAccount={(accountProperty, field, value) =>
+                this.setAccount(accountProperty, field, value)
+              }
               changePaymentMethod={() => this.changePaymentMethodACH()}
               {...this.props}
             />
@@ -69,6 +97,10 @@ export default class PaymentMethod extends Component {
           method === 'ACH' &&
           <div id="bank-info">
             <AchForm
+              account={this.state.accountModel}
+              setAccount={(accountProperty, field, value) =>
+                this.setAccount(accountProperty, field, value)
+              }
               changePaymentMethod={() => this.changePaymentMethodCC()}
               {...this.props}
             />

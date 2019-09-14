@@ -6,6 +6,8 @@ import {
   getErrorText,
   getClassName,
   convertAPIError,
+  getDefaultValue,
+  getDefaultCardExpDate,
 } from './FormHelpers'
 
 import configure from './client/VaultConfig'
@@ -39,26 +41,7 @@ const defaultStyles = {
   },
 };
 
-const getDefaultValue = (account, billingProp, defaultValue) => {
-  return !!account === true
-    && !!account.billingPreferences === true
-    && !!account.billingPreferences[billingProp] === true
-    ? account.billingPreferences[billingProp]
-    : defaultValue
-}
 
-const getDefaultCardExpDate = (account) => {
-  if (!!account === false || !!account.billingPreferences === false) {
-    return ""
-  }
-
-  return !!account.billingPreferences.cardExpdate.month
-  || !!account.billingPreferences.cardExpdate.year === true
-  ? account.billingPreferences.cardExpdate.month
-    + '/' +
-    account.billingPreferences.cardExpdate.year
-  : ""
-}
 
 export default class CreditCardForm extends Component {
   state = {
@@ -85,7 +68,6 @@ export default class CreditCardForm extends Component {
   }
 
   componentDidMount() {
-    styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
     jsDependencies.forEach(js => addJS(js))
 
     configureVault(
