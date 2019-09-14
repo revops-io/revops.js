@@ -59,8 +59,7 @@ export const configurePlaid = (
   onLoad = false,
   onSelect = false,
 ) => {
-  alert('hello?')
-  
+
   if (!!window !== true && !!document !== true) {
     throw new Error("Illegal call. `configurePlaid` is being executed outside browser context.")
   }
@@ -72,7 +71,7 @@ export const configurePlaid = (
     const handleOnSuccess = (publicToken, metadata) => {
       onSelect(publicToken, metadata)
     }
-    alert('test')
+    
     const plaidLink = window.Plaid.create({
       env: configure(env).plaidEnvironment,
       clientName: 'RevOps.js',

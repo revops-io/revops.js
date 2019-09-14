@@ -72,7 +72,6 @@ export default class AchForm extends Component {
   }
 
   componentDidMount() {
-    alert('test')
     jsDependencies.forEach(js => addJS(js))
     configureVault(
       this.props.env,
@@ -82,7 +81,6 @@ export default class AchForm extends Component {
     configurePlaid(
       this.props.env,
       (plaidLink) => {
-        alert('test')
         this.onPlaidLoad(plaidLink)
       },
       this.onPlaidSelect,
