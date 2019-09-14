@@ -4,7 +4,6 @@ import {
   PaymentPortal,
 } from 'revops-js'
 
-import RefExample from './RefExample'
 
 const defaultStyles = {
   primaryColor: "blue",
@@ -25,15 +24,7 @@ const backgroundStyles = {
 }
 
 export default class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      exampleIndex: 0
-    }
-  }
-
   render() {
-    const { exampleIndex } = this.state
     let hash = document.location.hash.replace('#', '')
     let accountId = ''
     if (hash !== '') {
@@ -43,26 +34,14 @@ export default class App extends Component {
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
-          {
-            exampleIndex === 0 &&
-            <PaymentPortal
-              account={{
-                accountId: accountId,
-              }}
-              logo="../example_logos/memsql.png"
-              companyName="memSQL"
-              styles={defaultStyles}
-            />
-          }
-          {
-            exampleIndex === 1 &&
-            <RefExample  styles={defaultStyles} />
-          }
-        <button
-          className="ui button"
-          onClick={() => this.setState({ exampleIndex: (exampleIndex + 1) % 2 })}>
-          Next Example
-        </button>
+          <PaymentPortal
+            account={{
+              accountId: accountId,
+            }}
+            logo="../example_logos/memsql.png"
+            companyName="memSQL"
+            styles={defaultStyles}
+          />
         </div>
       </div>
     )
