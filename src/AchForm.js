@@ -278,7 +278,7 @@ export default class AchForm extends Component {
           </button>
         }
         {!!this.state.plaidMetadata !== false &&
-            <form id="content-form" className="ui form">
+            <div id="content-form" className="ui form">
               <div id="bank-name"
                 className={
                  getClassName(
@@ -299,7 +299,7 @@ export default class AchForm extends Component {
                   <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
                 </div>
               </div>
-            </form>
+            </div>
         }
         <a className="manual-link single centered" style={linkStyling} onClick={() => this.togglePlaid()}>
           {
