@@ -53,10 +53,14 @@ export default class AchForm extends Component {
 
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
+
+    /** A boolean to hide the plaid toggler, it defaults to hidden. */
+    hideTogglePlaid: PropTypes.bool,
   }
 
   static defaultProps = {
     styles: {},
+    hideTogglePlaid: true,
   }
 
   state = {
@@ -297,10 +301,12 @@ export default class AchForm extends Component {
         </form>
         <div className="ui clearing divider"></div>
 
-        <TogglePlaid
-          style={linkStyling}
-          toggleHandler={this.props.togglePlaidHandler}
-        />
+        {this.props.hideTogglePlaid === false &&
+          <TogglePlaid
+            style={linkStyling}
+            toggleHandler={this.props.togglePlaidHandler}
+          />
+        }
         <ButtonGroup
           onLast={onLast}
           onCancel={onCancel}

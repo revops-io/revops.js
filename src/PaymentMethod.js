@@ -33,6 +33,9 @@ export default class PaymentMethod extends Component {
     methods: PropTypes.arrayOf(
        PropTypes.oneOf(Object.values(PaymentMethods))),
 
+    /** Default payment method property */
+    defaultMethod: PropTypes.oneOf(Object.values(PaymentMethods)),
+
     /** A callable function to fire when form is complete */
     onComplete: PropTypes.func,
 
@@ -50,6 +53,16 @@ export default class PaymentMethod extends Component {
 
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
+  }
+
+
+  static defaultProps = {
+    styles: {},
+    methods: [
+      PaymentMethods.METHOD_CARD,
+      PaymentMethods.METHOD_ACH,
+    ],
+    defaultMethod: PaymentMethod.METHOD_CARD,
   }
 
   constructor(props) {
@@ -103,6 +116,13 @@ export default class PaymentMethod extends Component {
     })
   }
 
+  isPlaidEnabled = () => {
+    let plaidMethod = this.props.methods.find(
+      m => m === PaymentMethods.METHOD_PLAID
+    )
+    return !!plaidMethod
+  }
+
   render() {
     const { method } = this.state
     const { onLast, onCancel } = this.props
@@ -126,6 +146,9 @@ export default class PaymentMethod extends Component {
           method === PaymentMethods.METHOD_ACH &&
           <div id="bank-info">
             <AchForm
+              hideTogglePlaid={this.isPlaidEnabled() === true?
+                false: true
+              }
               account={this.state.accountModel}
               setAccount={(accountProperty, field, value) =>
                 this.setAccount(accountProperty, field, value)
