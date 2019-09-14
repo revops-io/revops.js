@@ -56,11 +56,15 @@ export default class AchForm extends Component {
 
     /** A boolean to hide the plaid toggler, it defaults to hidden. */
     hideTogglePlaid: PropTypes.bool,
+
+    /** A boolean to show/hide change to credit card link. */
+    showCardLink: PropTypes.bool,
   }
 
   static defaultProps = {
     styles: {},
     hideTogglePlaid: true,
+    showCardLink: false,
   }
 
   state = {
@@ -238,7 +242,13 @@ export default class AchForm extends Component {
     return (
       <section style={cardWidth}>
         <label className="h3">Paying by ACH</label>
-        <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
+        {this.props.showCardLink === true &&
+          <a
+            className="pay-by-cc-link"
+            onClick={this.props.changePaymentMethod}>
+            Pay by credit card instead
+          </a>
+        }
 
         <form id="contact-form" className="ui form">
 

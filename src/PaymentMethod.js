@@ -70,13 +70,26 @@ export default class PaymentMethod extends Component {
 
   constructor(props) {
     super(props)
+
+    this.validateMethods(props)
+
     this.state = {
       errors: false,
-      method: PaymentMethods.METHOD_CARD,
+      method: this.props.defaultMethod,
     }
     this.form = null
   }
 
+  validateMethods(props) {
+    let method = props.methods.find(
+      m => m === props.defaultMethod
+    )
+
+    if (!method) {
+      throw new Error('[PaymentMethod.props.defaultMethod missing from `PaymentMethod.props.methods`]')
+    }
+
+  }
 
   componentDidMount() {
     jsDependencies.forEach(js => addJS(js))
@@ -126,6 +139,20 @@ export default class PaymentMethod extends Component {
     return !!plaidMethod
   }
 
+  isACHEnabled = () => {
+    let achMethod = this.props.methods.find(
+      m => m === PaymentMethods.METHOD_ACH
+    )
+    return !!achMethod
+  }
+
+  isCardEnabled = () => {
+    let cardMethod = this.props.methods.find(
+      m => m === PaymentMethods.METHOD_CARD
+    )
+    return !!cardMethod
+  }
+
   render() {
     const { method } = this.state
     const { onLast, onCancel } = this.props
@@ -141,6 +168,7 @@ export default class PaymentMethod extends Component {
               setAccount={(accountProperty, field, value) =>
                 this.setAccount(accountProperty, field, value)
               }
+              showACHLink={this.isACHEnabled()}
               changePaymentMethod={() => this.changePaymentMethodACH()}
               {...this.props}
             />
@@ -159,6 +187,7 @@ export default class PaymentMethod extends Component {
                 this.setAccount(accountProperty, field, value)
               }
               changePaymentMethod={() => this.changePaymentMethodCC()}
+              showCardLink={this.isCardEnabled()}
               togglePlaidHandler={this.togglePlaidHandler}
               {...this.props}
             />

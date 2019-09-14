@@ -44,6 +44,39 @@ const defaultStyles = {
 
 
 export default class CreditCardForm extends Component {
+  static propTypes = {
+
+    /** CreditCardForm can have custom styles,
+     ** these styles are passed onto children components */
+    styles: PropTypes.object,
+
+    /** Boolean prop for showing/hiding ACH Link */
+    showACHLink: PropTypes.bool,
+
+    /** A callable function to fire when form is complete */
+    onComplete: PropTypes.func,
+
+    /** A callable function to fire when next event occurs */
+    onNext: PropTypes.func,
+
+    /** A callable function to fire when cancel event occurs */
+    onCancel: PropTypes.func,
+
+    /** A callable function to fire when last event occurs */
+    onLast: PropTypes.func,
+
+    /** A callable function to fire when an error occurs on the form. */
+    onError: PropTypes.func,
+
+    /** Optional reference to allow your own save buttons */
+    saveRef: PropTypes.shape({ current: PropTypes.any }),
+  }
+
+  static defaultProps = {
+    styles: {},
+    showACHLink: false,
+  }
+
   state = {
     errors: false,
     status: false,
@@ -56,15 +89,6 @@ export default class CreditCardForm extends Component {
       errors: false,
     }
     this.form = {};
-  }
-
-  static propTypes = {
-    styles: PropTypes.object,
-    onComplete: PropTypes.func,
-    onNext: PropTypes.func,
-    onCancel: PropTypes.func,
-    onLast: PropTypes.func,
-    onError: PropTypes.func,
   }
 
   componentDidMount() {
@@ -189,8 +213,15 @@ export default class CreditCardForm extends Component {
 
     return (
       <section style={cardWidth}>
+
         <label className="h3">Paying by credit card</label>
-        <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
+        {this.props.showACHLink === true &&
+          <a
+            className="pay-by-ach-link"
+            onClick={this.props.changePaymentMethod}>
+            Pay by ACH instead
+          </a>
+        }
         <div className="form-container">
           <form id="cc-form">
             <div id="cc-holder" className={
