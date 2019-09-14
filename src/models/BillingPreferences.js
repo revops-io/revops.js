@@ -16,7 +16,7 @@ export class BillingPreferences extends EntityModel {
   cardName = ""
   cardNumber = ""
   cardToken = ""
-  paymentMethod: ""
+  paymentMethod = ""
 
   constructor(params = {}) {
     super(params)
