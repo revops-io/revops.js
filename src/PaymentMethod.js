@@ -38,7 +38,7 @@ export default class PaymentMethod extends Component {
 
   render() {
     const { method } = this.state
-    const { onLast, onCancel, childRef } = this.props
+    const { onLast, onCancel, saveRef } = this.props
     return (
       <section className="">
         <br />
@@ -46,7 +46,7 @@ export default class PaymentMethod extends Component {
           method === 'CC' &&
           <div id="cc-info">
             <CreditCardForm
-              ref={childRef}
+              ref={saveRef}
               changePaymentMethod={() => this.changePaymentMethodACH()}
               {...this.props}
             />
@@ -56,7 +56,7 @@ export default class PaymentMethod extends Component {
           method === 'ACH' &&
           <div id="bank-info">
             <AchForm
-              ref={childRef}
+              ref={saveRef}
               changePaymentMethod={() => this.changePaymentMethodCC()}
               {...this.props}
             />

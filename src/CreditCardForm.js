@@ -171,7 +171,7 @@ export default class CreditCardForm extends Component {
       response: false,
     })
 
-    // const onError = this.onError
+    const onError = this.onError
     accountModel.saveWithSecureForm(
       form,
       {
@@ -190,7 +190,7 @@ export default class CreditCardForm extends Component {
         <label className="h3">Paying by credit card</label>
         <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
         <div className="form-container">
-          <form id="cc-form">
+          <div id="cc-form">
             <div id="cc-holder" className={
               getClassName(
                 "cardholder-container",
@@ -239,7 +239,7 @@ export default class CreditCardForm extends Component {
               <span>{getErrorText('CVC/CVV', 'billingPreferences.cardCvv', errors)}</span>
             </div>
 
-          </form>
+          </div>
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
