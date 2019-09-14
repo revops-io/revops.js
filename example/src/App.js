@@ -4,6 +4,7 @@ import {
   PaymentPortal,
 } from 'revops-js'
 
+import RefExample from './RefExample'
 
 const defaultStyles = {
   primaryColor: "blue",
@@ -34,14 +35,15 @@ export default class App extends Component {
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
-          <PaymentPortal
+          <RefExample />
+          {/* <PaymentPortal
             account={{
               accountId: accountId,
             }}
             logo="../example_logos/memsql.png"
             companyName="memSQL"
             styles={defaultStyles}
-          />
+          /> */}
         </div>
       </div>
     )
