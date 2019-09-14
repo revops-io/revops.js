@@ -78,9 +78,9 @@ export default class CreditCardForm extends Component {
       type: "text",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardName",
-      defaultValue: !!accountModel.billingPreferences.cardName === true
-        ? accountModel.billingPreferences.cardName
-        : "",
+      // defaultValue: !!accountModel.billingPreferences.cardName === true
+      //   ? accountModel.billingPreferences.cardName
+      //   : "",
       placeholder: "Joe Business",
       validations: ["required"],
       css: inputStyles
@@ -90,9 +90,9 @@ export default class CreditCardForm extends Component {
       type: "card-number",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardNumber",
-      defaultValue: !!accountModel.billingPreferences.cardNumber === true
-        ? accountModel.billingPreferences.cardNumber
-        : "",
+      // defaultValue: !!accountModel.billingPreferences.cardNumber === true
+      //   ? accountModel.billingPreferences.cardNumber
+      //   : "",
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
@@ -114,11 +114,11 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       errorColor: styles.errorColor,
       placeholder: "01 / 2022",
-      defaultValue: !!accountModel.billingPreferences.cardExpdate.month || !!accountModel.billingPreferences.cardExpdate.year === true
-        ? accountModel.billingPreferences.cardExpdate.month
-          + '/' +
-          accountModel.billingPreferences.cardExpdate.year
-        : "",
+      // defaultValue: !!accountModel.billingPreferences.cardExpdate.month || !!accountModel.billingPreferences.cardExpdate.year === true
+      //   ? accountModel.billingPreferences.cardExpdate.month
+      //     + '/' +
+      //     accountModel.billingPreferences.cardExpdate.year
+      //   : "",
       serializers: [
         form.SERIALIZERS.separate({
           monthName: 'month',
@@ -131,7 +131,7 @@ export default class CreditCardForm extends Component {
 
     this.form = form
   }
-
+  
   onError = ({status, errors, response}) => {
     const { onError } = this.props
     this.setState({
@@ -190,7 +190,7 @@ export default class CreditCardForm extends Component {
         <label className="h3">Paying by credit card</label>
         <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
         <div className="form-container">
-          <form id="cc-form">
+          <div id="cc-form">
             <div id="cc-holder" className={
               getClassName(
                 "cardholder-container",
@@ -239,7 +239,7 @@ export default class CreditCardForm extends Component {
               <span>{getErrorText('CVC/CVV', 'billingPreferences.cardCvv', errors)}</span>
             </div>
 
-          </form>
+          </div>
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
