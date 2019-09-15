@@ -1,1 +1,1 @@
-export { VaultConfig } from './VaultConfig'
+export { default as VaultConfig } from './VaultConfig'
