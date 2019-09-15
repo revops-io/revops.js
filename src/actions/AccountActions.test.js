@@ -15,42 +15,15 @@ describe('AccountActions', () => {
     uuid.mockImplementation(() => 'test-uuid')
   })
 
-  it('makeAccount', () => {
-
-    let onError = sinon.spy()
-    let onSuccess = sinon.spy()
-    let onCancel = sinon.spy()
-
-    let account = actions.makeAccount({
-        billingContact: {
-          name: 'hello'
-        }
-      }
-    )
-
-    mockAxios.onAny(`https://vault.revops.io/accounts/${account.id}`).reply(200, {})
-
-    let { request, source }  = actions.createAccount(account,
-      onSuccess,
-      onError,
-      onCancel,
-    )
-
-    request.then((response) => {
-      expect(onSuccess.called).to.equal(true)
-      expect(onCancel.called).to.equal(false)
-      expect(onError.called).to.equal(false)
-    })
-  })
-
-  it('makeAccount w/ custom externalId', () => {
-    ['external-123', '', null, false].map(
-      (externalId) => {
+  it('makeAccount w/ custom accountId', () => {
+    ['accountId-123', '', null, false].map(
+      (accountId) => {
         let account = actions.makeAccount({
-          externalId: externalId
+          id: 'test-uuid',
+          accountId: accountId,
         })
         expect(account.id).to.equal('test-uuid')
-        expect(account.externalId).to.equal(externalId)
+        expect(account.accountId).to.equal(accountId)
     })
   })
 })

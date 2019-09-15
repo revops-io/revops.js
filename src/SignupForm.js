@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import config from './client/VaultConfig'
+import configure from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
 
@@ -45,21 +45,18 @@ export default class SignupForm extends Component {
   form = null
 
   componentDidMount() {
-    const script = document.createElement("script")
-
-    script.src = config.vaultCollectUrl
-    script.async = true
-    script.onload = () => {
-      this.initialize()
-    }
-
-    document.body.appendChild(script);
+    styleDependencies.forEach(stylesheet => addStylesheet(stylesheet))
+    jsDependencies.forEach(js => addJS(js))
+    configureVault(
+      this.props.env,
+      this.initialize(),
+    )
   }
 
   initialize() {
     const styles = this.props.styles === undefined? defaultStyles : this.props.styles
 
-    const form = VGSCollect.create(config.vaultId, function(state) {});
+    const form = VGSCollect.create(configure(this.props.env).vaultId, function(state) {});
 
     form.field("#cc-holder .field-space", {
       type: "text",

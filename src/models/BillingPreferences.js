@@ -3,20 +3,20 @@ import {
 } from './index'
 
 export class BillingPreferences extends EntityModel {
-  plaidLinkPublicToken: string
-  bankAccountHolderName: string
-  bankAccountHolderType: string
-  bankAccountNumber: string
-  bankCountry: string
-  bankName: string
-  bankRoutingNumber: string
-  cardCvv: string
-  cardExpdate: string
-  cardName: string
-  cardNumber: string
-  cardToken: string
-  id: string
-  paymentMethod: string
+  id = ""
+  plaidLinkPublicToken = ""
+  bankAccountHolderName = ""
+  bankAccountHolderType = ""
+  bankAccountNumber = ""
+  bankCountry = ""
+  bankName = ""
+  bankRoutingNumber = ""
+  cardCvv = ""
+  cardExpdate = ""
+  cardName = ""
+  cardNumber = ""
+  cardToken = ""
+  paymentMethod = ""
 
   constructor(params = {}) {
     super(params)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 
 import {
-  PaymentPortal,
+  PaymentMethod,
 } from 'revops-js'
 
 
@@ -20,28 +20,44 @@ const backgroundStyles = {
   minHeight: '100vh',
   maxHeight: '100%',
   // end
-  background: 'url("../example_logos/memsql_banner.svg") repeat-x top left white',
 }
 
 export default class App extends Component {
-  render() {
-    let hash = document.location.hash.replace('#', '')
-    let accountId = ''
-    if (hash !== '') {
-      accountId = hash
-    }
+  constructor(props) {
+    super(props)
+    this.saveRef = React.createRef()
+  }
 
+  submitSecure = (e) => {
+    e.preventDefault()
+
+    // tell the revops form to submit itself
+    if (!!this.saveRef === true) {
+      this.saveRef.current.onSubmit()
+    }
+  }
+
+  render() {
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
-          <PaymentPortal
+          <PaymentMethod
+            env={"staging"}
             account={{
-              accountId: accountId,
+              accountId: "my-account-id",
             }}
-            logo="../example_logos/memsql.png"
-            companyName="memSQL"
+            companyName="myDatabaseService, Inc."
             styles={defaultStyles}
+            methods={[
+              "card",
+              "ach",
+            ]}
+            defaultMethod="card"
+            saveRef={this.saveRef}
           />
+          <div className="ui button" onClick={(e) => this.submitSecure(e)} tabIndex="0">
+            Submit Order
+          </div>
         </div>
       </div>
     )

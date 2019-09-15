@@ -1,1 +1,1 @@
-export { RevOpsAPIClient } from './RevOpsAPIClient'
+export { default as VaultConfig } from './VaultConfig'

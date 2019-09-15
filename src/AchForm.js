@@ -5,13 +5,22 @@ import {
   getErrorText,
   getClassName,
   convertAPIError,
+  getDefaultValue,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
 
-import config from './client/VaultConfig'
+import {
+  TogglePlaid,
+  configureVault,
+  configurePlaid,
+  jsDependencies,
+  addJS,
+} from './index'
+
+import configure from './client/VaultConfig'
 
 const defaultStyles = {
   background: "#FFFFFF",
@@ -23,11 +32,43 @@ const defaultStyles = {
 };
 
 export default class AchForm extends Component {
+  static propTypes = {
+    /** An AchForm can have custom styles */
+    styles: PropTypes.object,
+
+    /** A callable function to fire when form is complete */
+    onComplete: PropTypes.func,
+
+    /** A callable function to fire when next event occurs */
+    onNext: PropTypes.func,
+
+    /** A callable function to fire when cancel event occurs */
+    onCancel: PropTypes.func,
+
+    /** A callable function to fire when last event occurs */
+    onLast: PropTypes.func,
+
+    /** A callable function to fire when an error occurs on the form. */
+    onError: PropTypes.func,
+
+    /** Toggle for showing/hiding plaid info */
+    togglePlaidHandler: PropTypes.func,
+
+    /** A boolean to hide the plaid toggler, it defaults to hidden. */
+    hideTogglePlaid: PropTypes.bool,
+
+    /** A boolean to show/hide change to credit card link. */
+    showCardLink: PropTypes.bool,
+  }
+
+  static defaultProps = {
+    styles: {},
+    hideTogglePlaid: true,
+    showCardLink: false,
+  }
+
   state = {
     errors: false,
-    plaidLinkPublicToken: false,
-    plaidAccountId: false,
-    disablePlaid: false,
     loaded: false,
   }
 
@@ -39,62 +80,12 @@ export default class AchForm extends Component {
     this.form = null
   }
 
-  static propTypes = {
-    styles: PropTypes.object,
-    onComplete: PropTypes.func,
-    onNext: PropTypes.func,
-    onCancel: PropTypes.func,
-    onLast: PropTypes.func,
-    onError: PropTypes.func,
-  }
-
   componentDidMount() {
-    const vault = document.createElement("script")
-    const plaid = document.createElement("script")
-    vault.src = config.vaultCollectUrl
-    plaid.src = config.plaidUrl
-    vault.async = true
-    plaid.async = true
-    plaid.onload = () => {
-
-      const handleOnSuccess = (public_token, metadata) => {
-        this.setState({
-          plaidLinkPublicToken: public_token,
-          plaidAccountId: metadata.account_id,
-          plaidMetadata: metadata,
-        })
-        this.initialize(this.state.disablePlaid)
-      }
-
-      this.plaidLink = window.Plaid.create({
-        env: config.plaidEnvironment,
-        clientName: 'RevOps.js',
-        key: config.plaidKey,
-        product: ['auth'],
-        selectAccount: true,
-        onSuccess: handleOnSuccess,
-        onExit: function(err, metadata) {
-          // The user exited th Link flow.
-          if (err != null) {
-            // The user encountered a Plaid API error prior to exiting.
-          }
-        },
-      })
-    }
-    document.body.appendChild(vault);
-    document.body.appendChild(plaid);
-  }
-
-  togglePlaid = () => {
-    this.setState({
-      disablePlaid: !this.state.disablePlaid
-    })
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.disablePlaid !== this.state.disablePlaid) {
-      this.initialize(this.state.disablePlaid)
-    }
+    jsDependencies.forEach(js => addJS(js))
+    configureVault(
+      this.props.env,
+      this.initialize,
+    )
   }
 
   isFormFieldCreated(field) {
@@ -118,107 +109,85 @@ export default class AchForm extends Component {
     }
   }
 
-  initialize = (disablePlaid = false) => {
-    const { accountModel } = this.props
+  initialize = () => {
+    const { account } = this.props
 
     if(!!this.form === false) {
-      this.form = VGSCollect.create(config.vaultId, function (state) { });
-    }
-
-    let defaultBankName = !!accountModel.billingPreferences.bankName === true
-      ? accountModel.billingPreferences.bankName
-      : ""
-
-    if(!!this.state.plaidMetadata !== false &&
-      !!this.state.plaidMetadata.institution !== false) {
-        defaultBankName = this.state.plaidMetadata.institution.name
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     }
 
     this.createFormField(
       "#bank-name .field-space",
       'billingPreferences.bankName',
-      defaultBankName,
+      getDefaultValue(account, 'bankName', ''),
       {
         type: "text",
-        readOnly: disablePlaid === false? 'readOnly': null,
-        placeholder: "Chase Bank",
+        placeholder: "Name of Bank Institution",
         validations: ["required"],
       }
     )
 
-    if (disablePlaid === true) {
-      this.createFormField(
-        "#bank-acct-country .field-space",
-        'billingPreferences.bankCountry',
-        !!accountModel.billingPreferences.bankCountry === true
-          ? accountModel.billingPreferences.bankCountry
-          : "USA",
-        {
-          type: "dropdown",
-          validations: ["required"],
-          options: [
-            { value: 'USA', text: 'United States of America' },
-            { value: 'Canada', text: 'Canada' },
-            { value: 'Mexico', text: 'Mexico' },
-          ],
-        })
+    this.createFormField(
+      "#bank-acct-country .field-space",
+      'billingPreferences.bankCountry',
+      getDefaultValue(account, 'bankCountry', 'USA'),
+      {
+        type: "dropdown",
+        validations: ["required"],
+        options: [
+          { value: 'USA', text: 'United States of America' },
+          { value: 'Canada', text: 'Canada' },
+          { value: 'Mexico', text: 'Mexico' },
+        ],
+      })
 
-      this.createFormField(
-        "#bank-holder-name .field-space",
-        "billingPreferences.bankAccountHolderName",
-        !!accountModel.billingPreferences.bankAccountHolderName === true
-          ? accountModel.billingPreferences.bankAccountHolderName
-          : "",
-        {
-          type: "text",
-          placeholder: "Pat Smalley",
-          validations: ["required"],
-        }
-      )
+    this.createFormField(
+      "#bank-holder-name .field-space",
+      "billingPreferences.bankAccountHolderName",
+      getDefaultValue(account, 'bankAccountHolderName', ''),
+      {
+        type: "text",
+        placeholder: "Name on the account",
+        validations: ["required"],
+      }
+    )
 
-      this.createFormField(
-        "#bank-acct-type .field-space",
-        "billingPreferences.bankAccountHolderType",
-        !!accountModel.billingPreferences.bankAccountHolderType === true
-          ? accountModel.billingPreferences.bankAccountHolderType
-          : "company",
-        {
-          type: "dropdown",
-          validations: ["required"],
-          options: [
-            { value: 'company', text: 'Company' },
-            { value: 'individual', text: 'Individual' },
-          ],
-        }
-      )
+    this.createFormField(
+      "#bank-acct-type .field-space",
+      "billingPreferences.bankAccountHolderType",
+      getDefaultValue(account, 'bankAccountHolderType', 'company'),
+      {
+        type: "dropdown",
+        validations: ["required"],
+        options: [
+          { value: 'company', text: 'Company' },
+          { value: 'individual', text: 'Individual' },
+        ],
+      }
+    )
 
-      this.createFormField(
-        "#bank-acct-number .field-space",
-        "billingPreferences.bankAccountNumber",
-        !!accountModel.billingPreferences.bankAccountNumber === true
-          ? accountModel.billingPreferences.bankAccountNumber
-          : "",
-        {
-          type: "text",
-          placeholder: "XXXXXXXXXXXXX",
-          placeholder: "Enter bank account number",
-          validations: ["required"],
-        }
-      )
+    this.createFormField(
+      "#bank-acct-number .field-space",
+      "billingPreferences.bankAccountNumber",
+      getDefaultValue(account, 'bankAccountNumber', ''),
+      {
+        type: "text",
+        placeholder: "XXXXXXXXXXXXX",
+        placeholder: "Enter bank account number",
+        validations: ["required"],
+      }
+    )
 
-      this.createFormField(
-        "#bank-routing-number .field-space",
-        "billingPreferences.bankRoutingNumber",
-        !!accountModel.billingPreferences.bankRoutingNumber === true
-          ? accountModel.billingPreferences.bankRoutingNumber
-          : "",
-        {
-          type: "text",
-          placeholder: "Enter bank routing number",
-          validations: ["required"],
-        }
-      )
-    }
+    this.createFormField(
+      "#bank-routing-number .field-space",
+      "billingPreferences.bankRoutingNumber",
+      getDefaultValue(account, 'bankRoutingNumber', ''),
+      {
+        type: "text",
+        placeholder: "Enter bank routing number",
+        validations: ["required"],
+      }
+    )
   }
 
   onError = ({errors}) => {
@@ -235,20 +204,26 @@ export default class AchForm extends Component {
   onSubmit = () => {
     const { form } = this
     const { onNext, onComplete = false } = this.props
-    let { accountModel } = this.props
+    let { account } = this.props
+
+    account = makeAccount({
+      ...account,
+      status: 'activating', // trigger activating state.
+      billingPreferences: {
+        ...account.billingPreferences,
+        paymentMethod: "ach"
+      }
+    })
 
     this.setState({
       errors: false,
       loading: true,
+      status: false,
+      response: false,
     })
 
     const onError = this.onError
-
-    // Attach plaid state to model on submit.
-    accountModel.billingPreferences.plaidLinkPublicToken = this.state.plaidLinkPublicToken
-    accountModel.billingPreferences.plaidAccountId = this.state.plaidAccountId
-
-    accountModel.saveWithSecureForm(
+    account.saveWithSecureForm(
       form,
       {
         onError,
@@ -267,123 +242,95 @@ export default class AchForm extends Component {
     return (
       <section style={cardWidth}>
         <label className="h3">Paying by ACH</label>
-        <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
-
-        {this.state.disablePlaid !== true &&
-          <button
-            className="ui button big centered single"
-            style={buttonStylesPrimary}
-            onClick={() => this.openPlaid()}>
-            Sync your bank account
-          </button>
+        {this.props.showCardLink === true &&
+          <a
+            className="pay-by-cc-link"
+            onClick={this.props.changePaymentMethod}>
+            Pay by credit card instead
+          </a>
         }
-        {!!this.state.plaidMetadata !== false &&
-            <form id="content-form" className="ui form">
-              <div id="bank-name"
-                className={
-                 getClassName(
-                   "field",
-                   "billingPreferences.bankName",
-                   errors
-                 )
-               }>
-                <label>Bank Name</label>
-                <span className="field-space"></span>
-                <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
-              </div>
 
-              <div className="ui info message">
-                <div className="content">
-                  <i aria-hidden="true" class="university icon"></i>
-                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
-                  <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
-                </div>
-              </div>
-            </form>
-        }
-        <a className="manual-link single centered" style={linkStyling} onClick={() => this.togglePlaid()}>
-          {
-            this.state.disablePlaid !== true ?
-              'or manually enter bank account details'
-              :
-              'or connect your bank instantly with Plaid'
-          }
-        </a>
+        <form id="contact-form" className="ui form">
 
-        {this.state.disablePlaid === true &&
-          <form id="contact-form" className="ui form">
-
-              <div id="bank-name"
-                className={
-                 getClassName(
-                   "field",
-                   "billingPreferences.bankName",
-                   errors
-                 )
-               }>
-                <label>Bank Name</label>
-                <span className="field-space"></span>
-                <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
-              </div>
-
-            <div id="bank-holder-name"
+            <div id="bank-name"
               className={
                getClassName(
                  "field",
-                 "billingPreferences.bankAccountHolderName",
+                 "billingPreferences.bankName",
                  errors
                )
              }>
-              <label >Account Holder Name</label>
+              <label>Bank Name</label>
               <span className="field-space"></span>
-              <span>{getErrorText('Name', 'billingPreferences.bankAccountHolderName', errors)}</span>
+              <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
             </div>
 
-            <div id="bank-acct-country"
-              className="field">
-              <label >Bank Country</label>
-              <span className="field-space"></span>
-            </div>
+          <div id="bank-holder-name"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankAccountHolderName",
+               errors
+             )
+           }>
+            <label >Account Holder Name</label>
+            <span className="field-space"></span>
+            <span>{getErrorText('Name', 'billingPreferences.bankAccountHolderName', errors)}</span>
+          </div>
 
-            <div id="bank-acct-type"
+          <div id="bank-acct-country"
             className="field">
-              <label >Account Type</label>
-              <span className="field-space"></span>
-            </div>
+            <label >Bank Country</label>
+            <span className="field-space"></span>
+          </div>
 
-            <div id="bank-routing-number"
-              className={
-               getClassName(
-                 "field",
-                 "billingPreferences.bankRoutingNumber",
-                 errors
-               )
-            }>
-              <label >Routing Number</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Routing number', 'billingPreferences.bankRoutingNumber', errors)}</span>
-            </div>
-            <div id="bank-acct-number"
-              className={
-               getClassName(
-                 "field",
-                 "billingPreferences.bankAccountNumber",
-                 errors
-               )
-            }>
-              <label>Account Number</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Account number', 'billingPreferences.bankAccountNumber', errors)}</span>
-            </div>
-          </form>
-        }
+          <div id="bank-acct-type"
+          className="field">
+            <label >Account Type</label>
+            <span className="field-space"></span>
+          </div>
+
+          <div id="bank-routing-number"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankRoutingNumber",
+               errors
+             )
+          }>
+            <label >Routing Number</label>
+            <span className="field-space"></span>
+            <span>{getErrorText('Routing number', 'billingPreferences.bankRoutingNumber', errors)}</span>
+          </div>
+          <div id="bank-acct-number"
+            className={
+             getClassName(
+               "field",
+               "billingPreferences.bankAccountNumber",
+               errors
+             )
+          }>
+            <label>Account Number</label>
+            <span className="field-space"></span>
+            <span>{getErrorText('Account number', 'billingPreferences.bankAccountNumber', errors)}</span>
+          </div>
+        </form>
         <div className="ui clearing divider"></div>
-        <ButtonGroup
-          onLast={onLast}
-          onCancel={onCancel}
-          finalStep={true}
-          onSubmit={this.onSubmit}
-        />
+
+        {this.props.hideTogglePlaid === false &&
+          <TogglePlaid
+            style={linkStyling}
+            toggleHandler={this.props.togglePlaidHandler}
+          />
+        }
+        {!!this.props.saveRef === false &&
+          <ButtonGroup
+            onLast={onLast}
+            onCancel={onCancel}
+            finalStep={true}
+            onSubmit={this.onSubmit}
+          />
+        }
       </section>
     )
   }

@@ -6,12 +6,22 @@ import {
   getErrorText,
   getClassName,
   convertAPIError,
+  getDefaultValue,
+  getDefaultCardExpDate,
 } from './FormHelpers'
 
-import config from './client/VaultConfig'
+import configure from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, cardWidth } from './SharedStyles'
+
+import {
+  styleDependencies,
+  jsDependencies,
+  addJS,
+  addStylesheet,
+  configureVault,
+} from './index'
 
 const defaultStyles = {
   border: 'none',
@@ -31,7 +41,42 @@ const defaultStyles = {
   },
 };
 
+
+
 export default class CreditCardForm extends Component {
+  static propTypes = {
+
+    /** CreditCardForm can have custom styles,
+     ** these styles are passed onto children components */
+    styles: PropTypes.object,
+
+    /** Boolean prop for showing/hiding ACH Link */
+    showACHLink: PropTypes.bool,
+
+    /** A callable function to fire when form is complete */
+    onComplete: PropTypes.func,
+
+    /** A callable function to fire when next event occurs */
+    onNext: PropTypes.func,
+
+    /** A callable function to fire when cancel event occurs */
+    onCancel: PropTypes.func,
+
+    /** A callable function to fire when last event occurs */
+    onLast: PropTypes.func,
+
+    /** A callable function to fire when an error occurs on the form. */
+    onError: PropTypes.func,
+
+    /** Optional reference to allow your own save buttons */
+    saveRef: PropTypes.shape({ current: PropTypes.any }),
+  }
+
+  static defaultProps = {
+    styles: {},
+    showACHLink: false,
+  }
+
   state = {
     errors: false,
     status: false,
@@ -46,24 +91,13 @@ export default class CreditCardForm extends Component {
     this.form = {};
   }
 
-  static propTypes = {
-    styles: PropTypes.object,
-    onComplete: PropTypes.func,
-    onNext: PropTypes.func,
-    onCancel: PropTypes.func,
-    onLast: PropTypes.func,
-    onError: PropTypes.func,
-  }
-
   componentDidMount() {
-    const script = document.createElement("script")
+    jsDependencies.forEach(js => addJS(js))
 
-    script.src = config.vaultCollectUrl
-    script.async = true
-    script.onload = () => {
-      this.initialize()
-    }
-    document.body.appendChild(script);
+    configureVault(
+      this.props.env,
+      this.initialize,
+    )
   }
 
   initialize = () => {
@@ -71,17 +105,15 @@ export default class CreditCardForm extends Component {
       ...defaultStyles,
       ...this.props.styles,
     }
-    const { accountModel } = this.props
-    const form = VGSCollect.create(config.vaultId, function (state) { });
+    const { account } = this.props
+    const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
     form.field("#cc-holder .field-space", {
       type: "text",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardName",
-      defaultValue: !!accountModel.billingPreferences.cardName === true
-        ? accountModel.billingPreferences.cardName
-        : "",
-      placeholder: "Joe Business",
+      defaultValue: getDefaultValue(account, 'cardName', ''),
+      placeholder: "Florence Izote",
       validations: ["required"],
       css: inputStyles
     });
@@ -90,9 +122,7 @@ export default class CreditCardForm extends Component {
       type: "card-number",
       errorColor: styles.errorColor,
       name: "billingPreferences.cardNumber",
-      defaultValue: !!accountModel.billingPreferences.cardNumber === true
-        ? accountModel.billingPreferences.cardNumber
-        : "",
+      defaultValue: getDefaultValue(account, 'cardNumber', ''),
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
@@ -114,11 +144,7 @@ export default class CreditCardForm extends Component {
       name: "billingPreferences.cardExpdate",
       errorColor: styles.errorColor,
       placeholder: "01 / 2022",
-      defaultValue: !!accountModel.billingPreferences.cardExpdate.month || !!accountModel.billingPreferences.cardExpdate.year === true
-        ? accountModel.billingPreferences.cardExpdate.month
-          + '/' +
-          accountModel.billingPreferences.cardExpdate.year
-        : "",
+      defaultValue: getDefaultCardExpDate(account, ''),
       serializers: [
         form.SERIALIZERS.separate({
           monthName: 'month',
@@ -152,13 +178,13 @@ export default class CreditCardForm extends Component {
   onSubmit = () => {
     const { form } = this
     const { onNext, onComplete = false } = this.props
-    let { accountModel } = this.props
+    let { account } = this.props
 
-    accountModel = makeAccount({
-      ...accountModel,
+    account = makeAccount({
+      ...account,
       status: 'activating', // trigger activating state.
       billingPreferences: {
-        ...accountModel.billingPreferences,
+        ...account.billingPreferences,
         paymentMethod: "credit-card"
       }
     })
@@ -172,7 +198,7 @@ export default class CreditCardForm extends Component {
     })
 
     const onError = this.onError
-    accountModel.saveWithSecureForm(
+    account.saveWithSecureForm(
       form,
       {
         onError,
@@ -187,8 +213,15 @@ export default class CreditCardForm extends Component {
 
     return (
       <section style={cardWidth}>
+
         <label className="h3">Paying by credit card</label>
-        <a className="pay-by-ach-link" onClick={this.props.changePaymentMethod}>Pay by ACH instead</a>
+        {this.props.showACHLink === true &&
+          <a
+            className="pay-by-ach-link"
+            onClick={this.props.changePaymentMethod}>
+            Pay by ACH instead
+          </a>
+        }
         <div className="form-container">
           <form id="cc-form">
             <div id="cc-holder" className={
@@ -243,13 +276,15 @@ export default class CreditCardForm extends Component {
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
-        <ButtonGroup
-          loading={this.state.loading}
-          onSubmit={this.onSubmit}
-          onLast={onLast}
-          onCancel={onCancel}
-          finalStep={true}
-        />
+        {!!this.props.saveRef === false &&
+          <ButtonGroup
+            loading={this.state.loading}
+            onSubmit={this.onSubmit}
+            onLast={onLast}
+            onCancel={onCancel}
+            finalStep={true}
+          />
+        }
       </section>
     )
   }
