@@ -129,4 +129,27 @@ describe('Account Model', () => {
     expect(account.billingContact.id).to.equal('30000000-0000-0000-0000-000000000000')
     expect(account.shippingContact.id).to.equal('40000000-0000-0000-0000-000000000000')
   })
+
+  it("AccountModel should saveWithSecureForm calls form.submit", () => {
+    let account = new Account()
+    let apiKey = 'pk_wonderful-security'
+    let form = {
+      submit: jest.fn()
+    }
+
+    account.saveWithSecureForm(apiKey, form, {})
+    expect(form.submit.mock.calls.length).to.equal(1)
+  })
+
+  it("AccountModel should raise Error w/ saveWithSecureForm with bad apiKey", () => {
+    let account = new Account()
+    let apiKey = ''
+    let form = {
+      submit: jest.fn()
+    }
+    expect(() => {
+      account.saveWithSecureForm(apiKey, form, {})
+    }).to.throw(Error)
+    expect(form.submit.mock.calls.length).to.equal(0)
+  })
 })

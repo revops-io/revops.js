@@ -45,6 +45,8 @@ const defaultStyles = {
 
 export default class CreditCardForm extends Component {
   static propTypes = {
+    /** Required RevOps API Public Key **/
+    publicKey: PropTypes.string.isRequired,
 
     /** CreditCardForm can have custom styles,
      ** these styles are passed onto children components */
@@ -70,6 +72,9 @@ export default class CreditCardForm extends Component {
 
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
+
+    /** Account object allows preconfigured account options to be set */
+    account: PropTypes.object,
   }
 
   static defaultProps = {
@@ -78,6 +83,7 @@ export default class CreditCardForm extends Component {
   }
 
   state = {
+    account: {},
     errors: false,
     status: false,
     response: false,
@@ -181,7 +187,8 @@ export default class CreditCardForm extends Component {
     let { account } = this.props
 
     account = makeAccount({
-      ...account,
+      ...account, // prop state
+      ...this.state.account, // current component state takes priority
       status: 'activating', // trigger activating state.
       billingPreferences: {
         ...account.billingPreferences,
@@ -191,6 +198,7 @@ export default class CreditCardForm extends Component {
 
     // Clear state
     this.setState({
+      account: account,
       errors: false,
       loading: true,
       status: false,
@@ -199,6 +207,7 @@ export default class CreditCardForm extends Component {
 
     const onError = this.onError
     account.saveWithSecureForm(
+      this.props.publicKey,
       form,
       {
         onError,

@@ -33,6 +33,9 @@ const defaultStyles = {
 
 export default class PlaidForm extends Component {
   static propTypes = {
+    /** Required RevOps API Public Key **/
+    publicKey: PropTypes.string.isRequired,
+
     /** An AchForm can have custom styles */
     styles: PropTypes.object,
 
@@ -60,6 +63,7 @@ export default class PlaidForm extends Component {
   }
 
   state = {
+    account: {},
     errors: false,
     plaidLinkPublicToken: false,
     plaidAccountId: false,
@@ -173,7 +177,20 @@ export default class PlaidForm extends Component {
     const { onNext, onComplete = false } = this.props
     let { account } = this.props
 
+    account = makeAccount({
+      ...account, // prop state
+      ...this.state.account, // current component state takes priority
+      status: 'activating', // trigger activating state.
+      billingPreferences: {
+        ...account.billingPreferences,
+        plaidLinkPublicToken: this.state.plaidLinkPublicToken,
+        plaidAccountId: this.state.plaidAccountId,
+        paymentMethod: "plaid",
+      }
+    })
+
     this.setState({
+      account: account,
       errors: false,
       loading: true,
     })
@@ -181,10 +198,10 @@ export default class PlaidForm extends Component {
     const onError = this.onError
 
     // Attach plaid state to model on submit.
-    account.billingPreferences.plaidLinkPublicToken = this.state.plaidLinkPublicToken
-    account.billingPreferences.plaidAccountId = this.state.plaidAccountId
+
 
     account.saveWithSecureForm(
+      this.props.publicKey,
       form,
       {
         onError,

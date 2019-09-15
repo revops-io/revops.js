@@ -9,6 +9,9 @@ enum PaymentMethods {
 
 export interface PaymentMethodProps {
   static propTypes = {
+    /** Required RevOps API Public Key **/
+    publicKey: string,
+
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
     styles?: object,

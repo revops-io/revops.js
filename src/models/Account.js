@@ -29,6 +29,7 @@ export class Account extends EntityModel {
   }
 
   saveWithSecureForm(
+    apiKey,
     form,
     {
       onError,
@@ -36,8 +37,17 @@ export class Account extends EntityModel {
       onNext,
     }
   ) {
+    debugger
+    if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
+      throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
+    }
     form.submit(`/v1/accounts/${this.id}`,
       {
+        headers: {
+          'X-RevOps-Client': 'RevOps-JS',
+          'X-RevOps-API-Version': '1.0.2',
+          'Authorization': `Bearer ${apiKey}`,
+        },
         serializer: 'deep',
         serialization: 'json',
         data: this,
@@ -45,6 +55,13 @@ export class Account extends EntityModel {
       },
       (status, response) => {
         if (status >= 400) {
+          if (status === 401) {
+            console.warn("[401] RevOps API access denied. Update your `publicKey`.")
+          } else if (status === 400) {
+            console.warn("[400]RevOps API bad request:", response)
+          } else {
+            console.error(`[${status}] RevOps API error:`, response)
+          }
           if (!!onError !== false && typeof (onError) === 'function') {
             onError({ status, response })
           }
