@@ -58,11 +58,19 @@ describe('Formhelper methods', () => {
           message: 'error message',
         }
       })
-      expect(error).to.have.deep.property('billingPreferences.cardExpdate', {"errorMessages": ["error message"]});
+      expect(error).to.have.deep.property(
+        'billingPreferences.cardExpdate', 
+        {
+          "errorMessages": ["error message"]
+        });
     })
     it('should return the correct http error', () => {
       const error = convertAPIError(400, false)
-      expect(error).to.have.deep.property('networkError', {"errorMessages": ["Please try again. If this persists, contact support."]});
+      expect(error).to.have.deep.property(
+        'networkError', 
+        {
+          "errorMessages": ["Please try again. If this persists, contact support."]
+        });
     })
       
   })
