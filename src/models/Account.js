@@ -33,7 +33,7 @@ export class Account extends EntityModel {
     form,
     {
       onError,
-      onSuccess,
+      onComplete,
       onNext,
     }
   ) {
@@ -59,8 +59,8 @@ export class Account extends EntityModel {
               ...response,
             })
           }
-          if(!!onSuccess !== false && typeof(onSuccess) === 'function') {
-            onSuccess(response)
+          if(!!onComplete !== false && typeof(onComplete) === 'function') {
+            onComplete(response)
           }
         }
       },
