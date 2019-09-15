@@ -3,8 +3,7 @@ import {
 } from './index'
 
 export class ShippingContact extends EntityModel {
-  id: string
-  friendlyName: string
+  friendlyName = ""
 
   constructor(params = {}) {
     super(params)

@@ -6,7 +6,6 @@ import {
 } from './index'
 
 export class Account extends EntityModel {
-  id = ""
   accountId = ""
   name = ""
   billingContact = new BillingContact()
