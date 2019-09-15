@@ -3,7 +3,7 @@ import React from 'react';
 import CreditCardForm from './CreditCardForm'
 
 
-describe('', () => {
+describe('The CreditCardForm Component', () => {
   const generateMockProps = (props) => {
     return {
       id: "test123",

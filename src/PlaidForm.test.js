@@ -2,7 +2,7 @@ import React from 'react';
 
 import PlaidForm from './PlaidForm'
 
-describe('The AddressForm Component', () => {
+describe('The PlaidForm Component', () => {
   const generateMockProps = (props) => {
     return {
       id: "test123",
@@ -69,10 +69,22 @@ describe('The AddressForm Component', () => {
       errors: null,
       loading: null,
     })
-    
+
     wrapper.instance().onSubmit()
     expect(wrapper.instance().state.errors).to.equal(false)
     expect(wrapper.instance().state.loading).to.equal(true)
     expect(mockProps.account.saveWithSecureForm.call.length).to.equal(1)
+  })
+
+  it('should should transition to the CC option', () => {
+    const mockProps = generateMockProps({
+      showCardLink: true,
+      changePaymentMethod: jest.fn(), 
+    })
+    const wrapper = shallow(<PlaidForm  {...mockProps} />)
+    const ccLink = wrapper.find('a.pay-by-cc-link')
+    expect(ccLink.length).to.equal(1)
+    ccLink.simulate('click')
+    expect(mockProps.changePaymentMethod.call.length).to.equal(1)
   })
 })
