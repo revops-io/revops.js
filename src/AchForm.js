@@ -72,6 +72,7 @@ export default class AchForm extends Component {
   }
 
   state = {
+    account: {},
     errors: false,
     loaded: false,
   }
@@ -211,7 +212,8 @@ export default class AchForm extends Component {
     let { account } = this.props
 
     account = makeAccount({
-      ...account,
+      ...account, // prop state
+      ...this.state.account, // current component state takes priority
       status: 'activating', // trigger activating state.
       billingPreferences: {
         ...account.billingPreferences,
@@ -220,6 +222,7 @@ export default class AchForm extends Component {
     })
 
     this.setState({
+      account: account,
       errors: false,
       loading: true,
       status: false,
