@@ -67,9 +67,9 @@ class SignupForm extends Component {
 		e.preventDefault()
 
 		// Tell RevOps to create the account.
-	    if (!!this.saveRef === true) {
-	      this.saveRef.current.onSubmit()
-	    }
+	  if (!!this.saveRef === true) {
+	    this.saveRef.current.onSubmit()
+	  }
 	}
 
 	render() {
@@ -104,13 +104,12 @@ class SignupForm extends Component {
 					saveRef={this.saveRef}
 				/>
 				<input type="submit" onClick={this.submitSecure} />
-			</form>
+			 </form>
 		  </div>
 		)
 	}
 }
 ```
-
 
 
 ## Props for `<PaymentMethod />`
