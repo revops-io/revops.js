@@ -75,5 +75,6 @@
     "ignore": [
       "build/*"
     ]
-  }
+  },
+  "typings": "./src/index.d.ts"
 }
