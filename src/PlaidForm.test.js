@@ -10,6 +10,7 @@ describe('The PlaidForm Component', () => {
       onNext: jest.fn(),
       onError: jest.fn(),
       togglePlaidHandler: jest.fn(),
+      publicKey: 'pk_test-1234',
       account: {
         id: "test",
         billingPreferences: {},
@@ -79,7 +80,7 @@ describe('The PlaidForm Component', () => {
   it('should should transition to the CC option', () => {
     const mockProps = generateMockProps({
       showCardLink: true,
-      changePaymentMethod: jest.fn(), 
+      changePaymentMethod: jest.fn(),
     })
     const wrapper = shallow(<PlaidForm  {...mockProps} />)
     const ccLink = wrapper.find('a.pay-by-cc-link')

@@ -8,6 +8,7 @@ describe('The PaymentMethod Component', () => {
       id: "test123",
       onLast: jest.fn(),
       onNext: jest.fn(),
+      publicKey: 'pk_test-1234',
       methods: [
         PaymentMethods.METHOD_CARD,
         PaymentMethods.METHOD_ACH,
@@ -133,7 +134,7 @@ describe('The PaymentMethod Component', () => {
         defaultMethod: PaymentMethods.METHOD_CARD,
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
-      
+
       expect(wrapper.instance().isPlaidEnabled()).to.equal(false)
     })
   })
