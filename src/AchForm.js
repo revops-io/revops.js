@@ -33,6 +33,10 @@ const defaultStyles = {
 
 export default class AchForm extends Component {
   static propTypes = {
+
+    /** Required RevOps API Public Key **/
+    publicKey: PropTypes.string.isRequired,
+
     /** An AchForm can have custom styles */
     styles: PropTypes.object,
 
@@ -224,6 +228,7 @@ export default class AchForm extends Component {
 
     const onError = this.onError
     account.saveWithSecureForm(
+      this.props.publicKey,
       form,
       {
         onError,

@@ -23,6 +23,9 @@ export const PaymentMethods = {
 
 export default class PaymentMethod extends Component {
   static propTypes = {
+    /** Required RevOps API Public Key **/
+    publicKey: PropTypes.string.isRequired,
+
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
     styles: PropTypes.object,

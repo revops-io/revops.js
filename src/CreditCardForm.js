@@ -45,6 +45,8 @@ const defaultStyles = {
 
 export default class CreditCardForm extends Component {
   static propTypes = {
+    /** Required RevOps API Public Key **/
+    publicKey: PropTypes.string.isRequired,
 
     /** CreditCardForm can have custom styles,
      ** these styles are passed onto children components */
@@ -199,6 +201,7 @@ export default class CreditCardForm extends Component {
 
     const onError = this.onError
     account.saveWithSecureForm(
+      this.props.publicKey,
       form,
       {
         onError,

@@ -33,6 +33,9 @@ const defaultStyles = {
 
 export default class PlaidForm extends Component {
   static propTypes = {
+    /** Required RevOps API Public Key **/
+    publicKey: PropTypes.string.isRequired,
+
     /** An AchForm can have custom styles */
     styles: PropTypes.object,
 
@@ -185,6 +188,7 @@ export default class PlaidForm extends Component {
     account.billingPreferences.plaidAccountId = this.state.plaidAccountId
 
     account.saveWithSecureForm(
+      this.props.publicKey,
       form,
       {
         onError,
