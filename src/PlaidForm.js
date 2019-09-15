@@ -245,7 +245,7 @@ export default class PlaidForm extends Component {
 
             <div className="ui info message">
               <div className="content">
-                <i aria-hidden="true" class="university icon"></i>
+                <i aria-hidden="true" className="university icon"></i>
                 <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
                 <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
               </div>
