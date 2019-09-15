@@ -3,7 +3,6 @@ import {
 } from './index'
 
 export class BillingPreferences extends EntityModel {
-  id = ""
   plaidLinkPublicToken = ""
   bankAccountHolderName = ""
   bankAccountHolderType = ""
