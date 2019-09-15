@@ -1,4 +1,5 @@
 
+
 # revops-js
 
 > Official RevOps Javascript Component Library
@@ -7,7 +8,31 @@
 
 RevOps helps software businesses setup their usage-based pricing and billing. Request an account at https://www.revops.io to start automate your pricing today.
 
-## Install
+## Usage
+
+### Create a payment portal to create and manage new customers with a few lines of code.
+
+```jsx
+import React from 'react'
+
+import { PaymentMethod } from 'revops-js'
+
+export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
+  <PaymentMethod
+    publicKey={publicKey}
+    account={{
+      accountId: accountId,
+    }}
+    logo="https://bill.sh/example_logos/pigeon.png"
+    companyName="pigeonDelivery , Inc."
+    styles={defaultStyles}
+  />
+)
+
+export default App
+```
+
+## Getting Started
 
 ### Step 0.
 Sign-up for an account with RevOps: https://www.revops.io
@@ -86,31 +111,9 @@ class SignupForm extends Component {
 }
 ```
 
-## Usage
 
-### Create a payment portal to create and manage new customers with a few lines of code.
 
-```jsx
-import React from 'react'
-
-import { PaymentPortal } from 'revops-js'
-
-export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
-  <PaymentPortal
-    publicKey={publicKey}
-    account={{
-      accountId: accountId,
-    }}
-    logo="https://bill.sh/example_logos/pigeon.png"
-    companyName="pigeonDelivery , Inc."
-    styles={defaultStyles}
-  />
-)
-
-export default App
-```
-
-## Props for `<PaymentPortal />`
+## Props for `<PaymentMethod />`
 
 | Prop     |      type      |  Description |
 |----------|:--------------:|-------------:|
@@ -124,7 +127,14 @@ export default App
 
 
 
-## Account Object `<PaymentPortal account={{ ... }} />`
+## Account Object `<PaymentMethod account={{ ... }} />`
+
+When the `account` property is defined on a `<PaymentMethod />` component, it will instantiate a set of default values for the form. This allows you to set specific account details necessary to bill them later.
+
+Only two fields are required:
+1. `account.accountId` - The customer `accountId` to connect with a RevOps Account.
+2. `account.email` - The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`
+
 
 The following table describes all the properties on the account object that are used
 to initial new accounts.
@@ -133,7 +143,44 @@ to initial new accounts.
 |----------|:--------------:|-------------:|
 | accountId |    PropTypes.string   |  The customer `accountId` to connect with a RevOps Account. |
 | email | PropTypes.string | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
+| billingContact | PropTypes.object | Object defining `email`, `name`, `phone`, and `title` of the direct billing contact, if it is different than the `account.email` provided.
+| billingPreferences | PropTypes.object | Object defining preferences filled out by RevOps.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
 
+## BillingPreferences Object
+BillingPreferences can be found on the account object and defaults can be set at runtime by setting the `billingPreferences` property on `account`.
+
+An example of `billingPreferences` looks like:
+```jsx
+account = {
+  /*...*/
+  billingPreferences: {
+    plaidLinkPublicToken: "",
+    bankAccountHolderName: "",
+    bankAccountHolderType: "",
+    bankAccountNumber: "",
+    bankCountry: "",
+    bankName: "",
+    bankRoutingNumber: "",
+    cardName: "3vffvd4v4455dx",
+    cardToken: "w4cr4f4yf4fdvcf",
+    paymentMethod: "card"
+  }
+}
+```
+
+| Prop     |      type      |  Description |  Tokenized |
+|------------------|:--------------:|-------------:|---------|
+| paymentMethod    | PropTypes.oneOf(['ach', 'card', 'plaid']) | The primary method used for paying. | ✅ |
+| cardName | PropTypes.string | Name on the credit card. |  ✅
+| cardToken | PropTypes.string | Token used for authorizing payment. | ✅
+| cardNumber | PropTypes.string | Number on the credit card | ✅
+| cardExpdate | PropTypes.string | Date of Expiration on the credit card.| ✅
+| bankAccountHolderName | PropTypes.string | Name on the Bank Account | ✅
+| bankName | PropTypes.string | Name of Bank Institution | ✅
+| bankRoutingNumber | PropTypes.string | Routing Number of Issuing Bank | ✅
+| bankAccountNumber | PropTypes.string | Account Number of Issuing Bank | ✅
+| bankCountry | PropTypes.string | Country of Issuing Bank | ✅
+| plaidLinkToken | PropTypes.string | Link Token of Connected Plaid Bank | ✅
 
 ## License
 
