@@ -7,7 +7,7 @@ import {
 
 export class Account extends EntityModel {
   id = ""
-  externalId = ""
+  accountId = ""
   name = ""
   billingContact = new BillingContact()
   shippingContact = new ShippingContact()

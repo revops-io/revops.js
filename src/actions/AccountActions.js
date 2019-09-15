@@ -26,19 +26,3 @@ export function makeAccount(props = {
       { ...props.billingPreferences } : {},
   })
 }
-
-/* `createAccount` will create an account on RevOps
- * account - An account object.
- * returns { request, source }
- */
-export function createAccount(
-  account: Account,
-  onSuccess,
-  onError,
-  onCancel,
-) {
-  let client = new RevOpsAPIClient()
-  return client.put(`/accounts/${account.id}`, account, {
-    onSuccess, onError, onCancel
-  })
-}
