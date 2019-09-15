@@ -33,11 +33,11 @@ export class Account extends EntityModel {
     form,
     {
       onError,
-      onComplete,
+      onSuccess,
       onNext,
     }
   ) {
-    form.submit(`/v1/accounts/${this.id}`,
+    form.submit(`/v1/accounts/${this.accountId}`,
       {
         serializer: 'deep',
         serialization: 'json',
@@ -59,8 +59,8 @@ export class Account extends EntityModel {
               ...response,
             })
           }
-          if(!!onComplete !== false && typeof(onComplete) === 'function') {
-            onComplete(response)
+          if(!!onSuccess !== false && typeof(onSuccess) === 'function') {
+            onSuccess(response)
           }
         }
       },
