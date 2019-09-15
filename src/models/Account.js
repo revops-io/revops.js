@@ -37,7 +37,6 @@ export class Account extends EntityModel {
       onNext,
     }
   ) {
-    debugger
     if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
       throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
     }
