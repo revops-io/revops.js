@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import './styling/basestyles.css'
+
 import { makeAccount } from './actions/AccountActions'
 import {
   getErrorText,
