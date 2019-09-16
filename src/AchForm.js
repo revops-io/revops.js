@@ -4,18 +4,16 @@ import PropTypes from 'prop-types'
 import {
   getErrorText,
   getClassName,
-  convertAPIError,
   getDefaultValue,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
+import * as SharedStyles from './SharedStyles'
 
 import {
   TogglePlaid,
   configureVault,
-  configurePlaid,
   jsDependencies,
   addJS,
 } from './index'
@@ -36,6 +34,9 @@ export default class AchForm extends Component {
 
     /** Required RevOps API Public Key **/
     publicKey: PropTypes.string.isRequired,
+
+    /** Account object allows preconfigured account options to be set */
+    account: PropTypes.object,
 
     /** An AchForm can have custom styles */
     styles: PropTypes.object,
@@ -63,12 +64,42 @@ export default class AchForm extends Component {
 
     /** A boolean to show/hide change to credit card link. */
     showCardLink: PropTypes.bool,
+
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+    ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
+    /** Styles for your text links. */
+    linkStyling: PropTypes.object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth: PropTypes.object,
+
+    /** Internal Use-only: Environment string: local, staging, production */
+    env: PropTypes.string,
+
+    /** Internal Use-only: Change payment method swaps current payment method state */
+    changePaymentMethod: PropTypes.func,
+
+    /** Optional reference to allow your own save buttons */
+    saveRef: PropTypes.shape({ current: PropTypes.any }),
   }
 
   static defaultProps = {
     styles: {},
     hideTogglePlaid: true,
     showCardLink: false,
+    inputStyles: SharedStyles.inputStyles,
+    cardWidth: SharedStyles.cardWidth,
+    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
+    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
+    linkStyling: SharedStyles.linkStyling,
   }
 
   state = {
@@ -107,7 +138,7 @@ export default class AchForm extends Component {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
-        css: inputStyles,
+        css: this.props.inputStyles,
         errorColor: styles.errorColor,
         ...options,
       })
@@ -118,7 +149,8 @@ export default class AchForm extends Component {
     const { account } = this.props
 
     if(!!this.form === false) {
-      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
+      // eslint-disable-next-line
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, function () { });
     }
 
     this.createFormField(
@@ -177,7 +209,6 @@ export default class AchForm extends Component {
       getDefaultValue(account, 'bankAccountNumber', ''),
       {
         type: "text",
-        placeholder: "XXXXXXXXXXXXX",
         placeholder: "Enter bank account number",
         validations: ["required"],
       }
@@ -246,9 +277,9 @@ export default class AchForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, form, } = this.props
+    const { onLast, onCancel, } = this.props
     return (
-      <section style={cardWidth}>
+      <section style={this.props.cardWidth}>
         <label className="h3">Paying by ACH</label>
         {this.props.showCardLink === true &&
           <a
@@ -327,7 +358,7 @@ export default class AchForm extends Component {
 
         {this.props.hideTogglePlaid === false &&
           <TogglePlaid
-            style={linkStyling}
+            style={this.props.linkStyling}
             toggleHandler={this.props.togglePlaidHandler}
           />
         }
