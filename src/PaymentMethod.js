@@ -94,6 +94,7 @@ export default class PaymentMethod extends Component {
 
     this.state = {
       errors: false,
+      loading: false,
 
       /** if a default method isn't provided, default to first method. */
       method: !!this.props.defaultMethod === false?
@@ -237,6 +238,7 @@ export default class PaymentMethod extends Component {
         {method === false && <div className="ui clearing divider"></div>}
         {method === false &&
           <ButtonGroup
+            showAccept={false}
             onLast={onLast}
             onCancel={onCancel}
             hideNext={true}
