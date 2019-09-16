@@ -31,6 +31,9 @@ export interface PaymentMethodProps {
     /** How wide you want the content area of `<PaymentMethod />`. */
     cardWidth?: number,
 
+    /** Color of error text, a valid color name or hex. */
+    errorColor?: string,
+
     /** An enumerated list of supported payment method types
      * that the developer can enable for their customers.
      */

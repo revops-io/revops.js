@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+/** Color of error text, a valid color name or hex. */
+export const errorColor = "red"
+
 export const inputStyles = {
   background: 'hsla(0,0%,74%,.13)',
   borderRadius: '4px',
@@ -34,6 +37,7 @@ export const buttonStylesSecondary = {
   transition: 'all .15s ease-in-out 0s',
   borderRadius: '4px',
 }
+
 export const buttonStylesTertiary = {
   padding: '.6875em 1.1875em',
   transition: 'all .15s ease-in-out 0s',
@@ -51,6 +55,7 @@ export const cardWidth = {
   width: '404px',
   margin: '0 auto',
 }
+
 export const linkStyling = {
   color: '#4f34c7',
   display: 'block',
