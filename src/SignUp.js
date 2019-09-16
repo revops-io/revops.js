@@ -11,24 +11,6 @@ import {
 import { ButtonGroup } from './ButtonGroup'
 import { inputStyles, cardWidth } from './SharedStyles'
 
-const defaultStyles = {
-  border: 'none',
-  background: 'rgba(215, 224, 235, 0.18);',
-  height: '40px',
-  lineHeight: 'normal',
-  padding: '0 10px',
-  color: 'white',
-  fontSize: '12px',
-  boxSizing: 'border-box',
-  borderRadius: '4px',
-  letterSpacing: '.7px',
-  '&::placeholder': {
-    color: 'white',
-    fontSize: '12px',
-    opacity: '.5',
-  },
-};
-
 export class SignUp extends Component {
   state = {
     loading: false,
@@ -65,7 +47,7 @@ export class SignUp extends Component {
   initialize = () => {
     const { accountModel } = this.props
     let form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
+
 
     form.field("#signup-email .field-space", {
       type: "text",

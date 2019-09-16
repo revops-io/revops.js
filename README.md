@@ -17,7 +17,7 @@ import React from 'react'
 
 import { PaymentMethod } from 'revops-js'
 
-export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
+export const App = ({ accountId, publicKey = 'your-public-api-key' }) => (
   <PaymentMethod
     publicKey={publicKey}
     account={{
@@ -25,7 +25,6 @@ export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-ap
     }}
     logo="https://bill.sh/example_logos/pigeon.png"
     companyName="pigeonDelivery , Inc."
-    styles={defaultStyles}
   />
 )
 

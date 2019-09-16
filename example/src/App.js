@@ -5,21 +5,14 @@ import {
 } from 'revops-js'
 
 
-const defaultStyles = {
-  primaryColor: "blue",
-  secondaryColor: "red",
-};
-
-// Should we move this elsewhere? This should be defined by the Business
+// Example-specific
 const backgroundStyles = {
-  // should be true for every instance
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'top',
   width: '100vw',
   minHeight: '100vh',
   maxHeight: '100%',
-  // end
 }
 
 export default class App extends Component {
@@ -64,12 +57,17 @@ export default class App extends Component {
               accountId: "my-account-id",
               email: this.state.email,
             }}
-            styles={defaultStyles}
-            saveRef={this.saveRef}
+            inputStyles={{
+              background: 'red',
+              borderRadius: '50px',
+            }}
+            buttonStylesPrimary={{
+              background: 'red',
+            }}
+            linkStyling={{
+              color: 'red',
+            }}
           />
-          <div className="ui button" onClick={(e) => this.submitSecure(e)} tabIndex="0">
-            Save
-          </div>
         </div>
       </div>
     )

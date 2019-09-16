@@ -5,18 +5,17 @@ import PropTypes from 'prop-types'
 export const errorColor = "red"
 
 export const inputStyles = {
-  background: 'hsla(0,0%,74%,.13)',
+  background: '#ffffff',
   borderRadius: '4px',
   padding: '8px',
-  fontSize: '18px',
+  fontSize: '16px',
   lineHeight: '20px',
   outline: 'none',
   boxSizing: 'border-box',
   transition: 'all .15s ease-in-out 0s',
-  border: '2px solid #F6F6F6',
+  border: '1px solid #cccccc',
   '&:focus': {
-    background: 'white',
-    border: '2px solid #c550ff'
+    border: '1px solid #4183C4',
   },
 }
 
@@ -24,15 +23,13 @@ export const buttonStylesPrimary = {
   padding: '.6875em 1.1875em',
   transition: 'all .15s ease-in-out 0s',
   borderRadius: '4px',
-  background: '#8800cc',
+  background: '#4183C4',
   color: '#ffffff',
-  border: '1px solid #8800cc',
 }
 
 export const buttonStylesSecondary = {
-  color: '#4c4a57',
-  background: '#fff',
-  border: '.0625em solid #c2c1c7',
+  color: '#555555',
+  background: '#eeeeee',
   padding: '.6875em 1.1875em',
   transition: 'all .15s ease-in-out 0s',
   borderRadius: '4px',
@@ -42,7 +39,7 @@ export const buttonStylesTertiary = {
   padding: '.6875em 1.1875em',
   transition: 'all .15s ease-in-out 0s',
   borderRadius: '4px',
-  color: '#4f34c7',
+  color: '#4183C4',
   border: 'none',
   background: 'none',
 }
@@ -57,7 +54,5 @@ export const cardWidth = {
 }
 
 export const linkStyling = {
-  color: '#4f34c7',
-  display: 'block',
-  margin: '1rem 0 2rem',
+  color: '#4183C4',
 }

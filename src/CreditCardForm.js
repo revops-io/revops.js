@@ -14,6 +14,7 @@ import configure from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
+import { linkStyling } from './SharedStyles'
 
 import {
   jsDependencies,
@@ -230,6 +231,7 @@ export default class CreditCardForm extends Component {
         {this.props.showACHLink === true &&
           <a
             className="pay-by-ach-link"
+            style={linkStyling}
             onClick={this.props.changePaymentMethod}>
             Pay by ACH instead
           </a>

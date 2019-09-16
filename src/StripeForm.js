@@ -1,15 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-const defaultStyles = {
-  background: "#FFFFFF",
-  border: "1px solid #CED7E6",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height:  "40px",
-  padding: "0 16px"
-};
-
 export default class StripeForm extends Component {
   constructor(props) {
     super(props)
@@ -37,7 +28,6 @@ export default class StripeForm extends Component {
   }
 
   initialize = () => {
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     form.field("#customer-name .field-space", {

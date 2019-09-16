@@ -2,24 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import configure from './client/VaultConfig'
 
-const defaultStyles = {
-  border: 'none',
-  background: 'rgba(215, 224, 235, 0.18);',
-  height: '40px',
-  lineHeight: 'normal',
-  padding: '0 10px',
-  color: 'white',
-  fontSize: '12px',
-  boxSizing: 'border-box',
-  borderRadius: '4px',
-  letterSpacing: '.7px',
-  '&::placeholder': {
-    color: 'white',
-    fontSize: '12px',
-    opacity: '.5',
-  },
-};
-
 export default class ContactInformation extends Component {
   constructor(props) {
     super(props)
@@ -52,7 +34,7 @@ export default class ContactInformation extends Component {
   initialize = () => {
     const { accountModel } = this.props
     let form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
+    
 
     form.field("#customer-first-name .field-space", {
       type: "text",
