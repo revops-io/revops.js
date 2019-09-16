@@ -121,7 +121,7 @@ Now that `<PaymentMethod />` is working, it's important for it look that it fits
 | buttonStylesPrimary | PropTypes.object | Styles for your primary CTA. |
 | buttonStylesSecondary | PropTypes.object | Styles for your secondary CTA. |
 | linkStyling | PropTypes.object | Styles for your text links. |
-| cardWidth | PropTypes.object | How wide you want the content area of `<PaymentMethod />` to be |
+| cardWidth | PropTypes.object | How wide you want the content area of `<PaymentMethod />` to be. Give it `margin: 0 auto`. |
 
 You can use CSS properties to customize the appearance of `<PaymentMethod />`. Popular properties to use are:
 - `background`
