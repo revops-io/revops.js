@@ -43,6 +43,9 @@ export default class PaymentMethod extends Component {
     /** How wide you want the content area of `<PaymentMethod />`. */
     cardWidth: PropTypes.number,
 
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
     /** An enumerated list of supported payment method types
      * that the developer can enable for their customers.
      */
@@ -188,52 +191,52 @@ export default class PaymentMethod extends Component {
         <br />
         {
           method === PaymentMethods.METHOD_CARD &&
-          <div id="cc-info">
-            <CreditCardForm
-              ref={this.props.saveRef}
-              account={this.state.accountModel}
-              setAccount={(accountProperty, field, value) =>
-                this.setAccount(accountProperty, field, value)
-              }
-              showACHLink={this.isACHEnabled()}
-              changePaymentMethod={() => this.changePaymentMethodACH()}
-              {...this.props}
-            />
-          </div>
+            <div id="cc-info">
+              <CreditCardForm
+                ref={this.props.saveRef}
+                account={this.state.accountModel}
+                setAccount={(accountProperty, field, value) =>
+                  this.setAccount(accountProperty, field, value)
+                }
+                showACHLink={this.isACHEnabled()}
+                changePaymentMethod={() => this.changePaymentMethodACH()}
+                {...this.props}
+              />
+            </div>
         }
         {
           method === PaymentMethods.METHOD_ACH &&
-          <div id="bank-info">
-            <AchForm
-              ref={this.props.saveRef}
-              hideTogglePlaid={this.isPlaidEnabled() === true?
-                false: true
-              }
-              account={this.state.accountModel}
-              setAccount={(accountProperty, field, value) =>
-                this.setAccount(accountProperty, field, value)
-              }
-              changePaymentMethod={() => this.changePaymentMethodCC()}
-              showCardLink={this.isCardEnabled()}
-              togglePlaidHandler={this.togglePlaidHandler}
-              {...this.props}
-            />
-          </div>
+            <div id="bank-info">
+              <AchForm
+                ref={this.props.saveRef}
+                hideTogglePlaid={this.isPlaidEnabled() === true?
+                  false: true
+                }
+                account={this.state.accountModel}
+                setAccount={(accountProperty, field, value) =>
+                  this.setAccount(accountProperty, field, value)
+                }
+                changePaymentMethod={() => this.changePaymentMethodCC()}
+                showCardLink={this.isCardEnabled()}
+                togglePlaidHandler={this.togglePlaidHandler}
+                {...this.props}
+              />
+            </div>
         }
         {
           method === PaymentMethods.METHOD_PLAID &&
-          <div id="bank-info">
-            <PlaidForm
-              ref={this.props.saveRef}
-              account={this.state.accountModel}
-              setAccount={(accountProperty, field, value) =>
-                this.setAccount(accountProperty, field, value)
-              }
-              changePaymentMethod={() => this.changePaymentMethodCC()}
-              togglePlaidHandler={this.togglePlaidHandler}
-              {...this.props}
-            />
-          </div>
+            <div id="bank-info">
+              <PlaidForm
+                ref={this.props.saveRef}
+                account={this.state.accountModel}
+                setAccount={(accountProperty, field, value) =>
+                  this.setAccount(accountProperty, field, value)
+                }
+                changePaymentMethod={() => this.changePaymentMethodCC()}
+                togglePlaidHandler={this.togglePlaidHandler}
+                {...this.props}
+              />
+            </div>
         }
         {method === false && <div className="ui clearing divider"></div>}
         {method === false &&

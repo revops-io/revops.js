@@ -21,22 +21,10 @@ import {
 
 import configure from './client/VaultConfig'
 
-const defaultStyles = {
-  background: "#FFFFFF",
-  border: "1px solid #CED7E6",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height: "40px",
-  padding: "0 16px"
-};
-
 export default class PlaidForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
     publicKey: PropTypes.string.isRequired,
-
-    /** An AchForm can have custom styles */
-    styles: PropTypes.object,
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
@@ -75,6 +63,9 @@ export default class PlaidForm extends Component {
     /** How wide you want the content area of `<PaymentMethod />`. */
     cardWidth: PropTypes.object,
 
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
     /** Internal Use-only: Environment string: local, staging, production */
     env: PropTypes.string,
 
@@ -86,7 +77,6 @@ export default class PlaidForm extends Component {
   }
 
   static defaultProps = {
-    styles: {},
     inputStyles: SharedStyles.inputStyles,
     cardWidth: SharedStyles.cardWidth,
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
@@ -147,14 +137,13 @@ export default class PlaidForm extends Component {
   }
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     if(this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
         css: this.props.inputStyles,
-        errorColor: styles.errorColor,
+        errorColor: this.props.errorColor,
         ...options,
       })
     }

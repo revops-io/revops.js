@@ -20,15 +20,6 @@ import {
 
 import configure from './client/VaultConfig'
 
-const defaultStyles = {
-  background: "#FFFFFF",
-  border: "1px solid #CED7E6",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height: "40px",
-  padding: "0 16px"
-};
-
 export default class AchForm extends Component {
   static propTypes = {
 
@@ -37,9 +28,6 @@ export default class AchForm extends Component {
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
-
-    /** An AchForm can have custom styles */
-    styles: PropTypes.object,
 
     /** A callable function to fire when form is complete */
     onComplete: PropTypes.func,
@@ -81,6 +69,9 @@ export default class AchForm extends Component {
     /** How wide you want the content area of `<PaymentMethod />`. */
     cardWidth: PropTypes.object,
 
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
     /** Internal Use-only: Environment string: local, staging, production */
     env: PropTypes.string,
 
@@ -92,7 +83,6 @@ export default class AchForm extends Component {
   }
 
   static defaultProps = {
-    styles: {},
     hideTogglePlaid: true,
     showCardLink: false,
     inputStyles: SharedStyles.inputStyles,
@@ -100,6 +90,7 @@ export default class AchForm extends Component {
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
     buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
     linkStyling: SharedStyles.linkStyling,
+    errorColor: SharedStyles.errorColor,
   }
 
   state = {
@@ -132,14 +123,12 @@ export default class AchForm extends Component {
   }
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
-
     if(this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
         css: this.props.inputStyles,
-        errorColor: styles.errorColor,
+        errorColor: this.props.errorColor,
         ...options,
       })
     }

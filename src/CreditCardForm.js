@@ -21,33 +21,11 @@ import {
   configureVault,
 } from './index'
 
-const defaultStyles = {
-  border: 'none',
-  background: 'rgba(215, 224, 235, 0.18);',
-  height: '40px',
-  lineHeight: 'normal',
-  padding: '0 10px',
-  color: 'white',
-  fontSize: '12px',
-  boxSizing: 'border-box',
-  borderRadius: '4px',
-  letterSpacing: '.7px',
-  '&::placeholder': {
-    color: 'white',
-    fontSize: '12px',
-    opacity: '.5',
-  },
-};
-
 
 export default class CreditCardForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
     publicKey: PropTypes.string.isRequired,
-
-    /** CreditCardForm can have custom styles,
-     ** these styles are passed onto children components */
-    styles: PropTypes.object,
 
     /** Boolean prop for showing/hiding ACH Link */
     showACHLink: PropTypes.bool,
@@ -89,6 +67,9 @@ export default class CreditCardForm extends Component {
     /** How wide you want the content area of `<PaymentMethod />`. */
     cardWidth: PropTypes.object,
 
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
     /** Internal Use-only: Environment string: local, staging, production */
     env: PropTypes.string,
 
@@ -97,13 +78,13 @@ export default class CreditCardForm extends Component {
   }
 
   static defaultProps = {
-    styles: {},
     showACHLink: false,
     inputStyles: SharedStyles.inputStyles,
     cardWidth: SharedStyles.cardWidth,
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
     buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
     linkStyling: SharedStyles.linkStyling,
+    errorColor: SharedStyles.errorColor,
   }
 
   state = {
@@ -131,10 +112,6 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const styles = this.props.styles === undefined ? defaultStyles : {
-      ...defaultStyles,
-      ...this.props.styles,
-    }
     const { account } = this.props
 
     // eslint-disable-next-line
@@ -142,7 +119,7 @@ export default class CreditCardForm extends Component {
 
     form.field("#cc-holder .field-space", {
       type: "text",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       name: "billingPreferences.cardName",
       defaultValue: getDefaultValue(account, 'cardName', ''),
       placeholder: "Florence Izote",
@@ -152,7 +129,7 @@ export default class CreditCardForm extends Component {
 
     form.field("#cc-number .field-space", {
       type: "card-number",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       name: "billingPreferences.cardNumber",
       defaultValue: getDefaultValue(account, 'cardNumber', ''),
       placeholder: "Card number",
@@ -164,7 +141,7 @@ export default class CreditCardForm extends Component {
 
     form.field("#cc-cvc .field-space", {
       type: "card-security-code",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       name: "billingPreferences.cardCvv",
       placeholder: "311",
       validations: ["required", "validCardSecurityCode"],
@@ -174,7 +151,7 @@ export default class CreditCardForm extends Component {
     form.field("#cc-exp .field-space", {
       type: "card-expiration-date",
       name: "billingPreferences.cardExpdate",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       placeholder: "01 / 2022",
       defaultValue: getDefaultCardExpDate(account, ''),
       serializers: [
