@@ -313,6 +313,7 @@ export default class CreditCardForm extends Component {
         <span>{getErrorText('', 'networkError', errors)}</span>
         {!!this.props.saveRef === false &&
           <ButtonGroup
+            showAccept={false}
             loading={this.state.loading}
             onSubmit={this.onSubmit}
             onLast={onLast}

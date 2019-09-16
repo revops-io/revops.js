@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import { PropTypes } from 'prop-types'
 import { buttonStylesPrimary, buttonStylesSecondary } from './SharedStyles'
 
 export const ButtonGroup = ({
@@ -60,14 +60,14 @@ export const ButtonGroup = ({
 }
 
 ButtonGroup.propTypes = {
-  loading: PropTypes.boolean,
+  loading: PropTypes.bool,
   onNext: PropTypes.func,
   onLast: PropTypes.func,
-  finalStep: PropTypes.func,
+  finalStep: PropTypes.bool,
   onSubmit: PropTypes.func,
-  showAccept: PropTypes.boolean,
-  hideNext: PropTypes.boolean,
-  hidePrevious: PropTypes.boolean,
+  showAccept: PropTypes.bool,
+  hideNext: PropTypes.bool,
+  hidePrevious: PropTypes.bool,
 }
 
 export default ButtonGroup
