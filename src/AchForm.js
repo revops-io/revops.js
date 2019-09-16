@@ -357,6 +357,8 @@ export default class AchForm extends Component {
             onCancel={onCancel}
             finalStep={true}
             onSubmit={this.onSubmit}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

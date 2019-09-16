@@ -296,6 +296,8 @@ export default class CreditCardForm extends Component {
             onLast={onLast}
             onCancel={onCancel}
             finalStep={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

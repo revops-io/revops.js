@@ -245,6 +245,8 @@ export default class PaymentMethod extends Component {
             onLast={onLast}
             onCancel={onCancel}
             hideNext={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

@@ -290,6 +290,8 @@ export default class PlaidForm extends Component {
             onLast={onLast}
             onCancel={onCancel}
             finalStep={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>
