@@ -16,10 +16,8 @@ import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 
 import {
-  styleDependencies,
   jsDependencies,
   addJS,
-  addStylesheet,
   configureVault,
 } from './index'
 
@@ -90,6 +88,12 @@ export default class CreditCardForm extends Component {
 
     /** How wide you want the content area of `<PaymentMethod />`. */
     cardWidth: PropTypes.object,
+
+    /** Internal Use-only: Environment string: local, staging, production */
+    env: PropTypes.string,
+
+    /** Internal Use-only: Change payment method swaps current payment method state */
+    changePaymentMethod: PropTypes.func,
   }
 
   static defaultProps = {
@@ -132,6 +136,8 @@ export default class CreditCardForm extends Component {
       ...this.props.styles,
     }
     const { account } = this.props
+
+    // eslint-disable-next-line
     const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
     form.field("#cc-holder .field-space", {
@@ -238,7 +244,7 @@ export default class CreditCardForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, form, } = this.props
+    const { onLast, onCancel, } = this.props
 
     return (
       <section style={this.props.cardWidth}>
