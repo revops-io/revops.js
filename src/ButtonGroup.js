@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { buttonStylesPrimary, buttonStylesSecondary } from './SharedStyles'
+import * as SharedStyles from './SharedStyles'
 
 export const ButtonGroup = ({
   loading = false,
@@ -11,6 +11,8 @@ export const ButtonGroup = ({
   showAccept,
   hideNext,
   hidePrevious = true,
+  buttonStylesPrimary = SharedStyles.buttonStylesPrimary,
+  buttonStylesSecondary = SharedStyles.buttonStylesSecondary,
 }) => {
   return (
     <div id="form-nav">
@@ -60,14 +62,22 @@ export const ButtonGroup = ({
 }
 
 ButtonGroup.propTypes = {
-  loading: PropTypes.boolean,
+  loading: PropTypes.bool,
   onNext: PropTypes.func,
   onLast: PropTypes.func,
-  finalStep: PropTypes.func,
+  finalStep: PropTypes.bool,
   onSubmit: PropTypes.func,
-  showAccept: PropTypes.boolean,
-  hideNext: PropTypes.boolean,
-  hidePrevious: PropTypes.boolean,
+  showAccept: PropTypes.bool,
+  hideNext: PropTypes.bool,
+  hidePrevious: PropTypes.bool,
+
+  /** Styles for your primary CTA button. */
+  buttonStylesPrimary: PropTypes.object,
+
+  /** Styles for your secondary CTA button.
+  ** Eg. Previous, Cancel buttons. */
+  buttonStylesSecondary: PropTypes.object,
+
 }
 
 export default ButtonGroup

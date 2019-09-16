@@ -26,7 +26,25 @@ export default class PaymentMethod extends Component {
 
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
-    styles: PropTypes.object,
+
+     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+     ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
+    /** Styles for your text links. */
+    linkStyling: PropTypes.object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth: PropTypes.number,
+
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
 
     /** An enumerated list of supported payment method types
      * that the developer can enable for their customers.
@@ -79,6 +97,7 @@ export default class PaymentMethod extends Component {
 
     this.state = {
       errors: false,
+      loading: false,
 
       /** if a default method isn't provided, default to first method. */
       method: !!this.props.defaultMethod === false?
@@ -172,59 +191,62 @@ export default class PaymentMethod extends Component {
         <br />
         {
           method === PaymentMethods.METHOD_CARD &&
-          <div id="cc-info">
-            <CreditCardForm
-              ref={this.props.saveRef}
-              account={this.state.accountModel}
-              setAccount={(accountProperty, field, value) =>
-                this.setAccount(accountProperty, field, value)
-              }
-              showACHLink={this.isACHEnabled()}
-              changePaymentMethod={() => this.changePaymentMethodACH()}
-              {...this.props}
-            />
-          </div>
+            <div id="cc-info">
+              <CreditCardForm
+                ref={this.props.saveRef}
+                account={this.state.accountModel}
+                setAccount={(accountProperty, field, value) =>
+                  this.setAccount(accountProperty, field, value)
+                }
+                showACHLink={this.isACHEnabled()}
+                changePaymentMethod={() => this.changePaymentMethodACH()}
+                {...this.props}
+              />
+            </div>
         }
         {
           method === PaymentMethods.METHOD_ACH &&
-          <div id="bank-info">
-            <AchForm
-              ref={this.props.saveRef}
-              hideTogglePlaid={this.isPlaidEnabled() === true?
-                false: true
-              }
-              account={this.state.accountModel}
-              setAccount={(accountProperty, field, value) =>
-                this.setAccount(accountProperty, field, value)
-              }
-              changePaymentMethod={() => this.changePaymentMethodCC()}
-              showCardLink={this.isCardEnabled()}
-              togglePlaidHandler={this.togglePlaidHandler}
-              {...this.props}
-            />
-          </div>
+            <div id="bank-info">
+              <AchForm
+                ref={this.props.saveRef}
+                hideTogglePlaid={this.isPlaidEnabled() === true?
+                  false: true
+                }
+                account={this.state.accountModel}
+                setAccount={(accountProperty, field, value) =>
+                  this.setAccount(accountProperty, field, value)
+                }
+                changePaymentMethod={() => this.changePaymentMethodCC()}
+                showCardLink={this.isCardEnabled()}
+                togglePlaidHandler={this.togglePlaidHandler}
+                {...this.props}
+              />
+            </div>
         }
         {
           method === PaymentMethods.METHOD_PLAID &&
-          <div id="bank-info">
-            <PlaidForm
-              ref={this.props.saveRef}
-              account={this.state.accountModel}
-              setAccount={(accountProperty, field, value) =>
-                this.setAccount(accountProperty, field, value)
-              }
-              changePaymentMethod={() => this.changePaymentMethodCC()}
-              togglePlaidHandler={this.togglePlaidHandler}
-              {...this.props}
-            />
-          </div>
+            <div id="bank-info">
+              <PlaidForm
+                ref={this.props.saveRef}
+                account={this.state.accountModel}
+                setAccount={(accountProperty, field, value) =>
+                  this.setAccount(accountProperty, field, value)
+                }
+                changePaymentMethod={() => this.changePaymentMethodCC()}
+                togglePlaidHandler={this.togglePlaidHandler}
+                {...this.props}
+              />
+            </div>
         }
         {method === false && <div className="ui clearing divider"></div>}
         {method === false &&
           <ButtonGroup
+            showAccept={false}
             onLast={onLast}
             onCancel={onCancel}
             hideNext={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

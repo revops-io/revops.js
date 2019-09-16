@@ -13,44 +13,20 @@ import {
 import configure from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, cardWidth } from './SharedStyles'
+import * as SharedStyles from './SharedStyles'
+import { linkStyling } from './SharedStyles'
 
 import {
-  styleDependencies,
   jsDependencies,
   addJS,
-  addStylesheet,
   configureVault,
 } from './index'
-
-const defaultStyles = {
-  border: 'none',
-  background: 'rgba(215, 224, 235, 0.18);',
-  height: '40px',
-  lineHeight: 'normal',
-  padding: '0 10px',
-  color: 'white',
-  fontSize: '12px',
-  boxSizing: 'border-box',
-  borderRadius: '4px',
-  letterSpacing: '.7px',
-  '&::placeholder': {
-    color: 'white',
-    fontSize: '12px',
-    opacity: '.5',
-  },
-};
-
 
 
 export default class CreditCardForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
     publicKey: PropTypes.string.isRequired,
-
-    /** CreditCardForm can have custom styles,
-     ** these styles are passed onto children components */
-    styles: PropTypes.object,
 
     /** Boolean prop for showing/hiding ACH Link */
     showACHLink: PropTypes.bool,
@@ -75,11 +51,41 @@ export default class CreditCardForm extends Component {
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
+
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+    ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
+    /** Styles for your text links. */
+    linkStyling: PropTypes.object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth: PropTypes.object,
+
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
+    /** Internal Use-only: Environment string: local, staging, production */
+    env: PropTypes.string,
+
+    /** Internal Use-only: Change payment method swaps current payment method state */
+    changePaymentMethod: PropTypes.func,
   }
 
   static defaultProps = {
-    styles: {},
     showACHLink: false,
+    inputStyles: SharedStyles.inputStyles,
+    cardWidth: SharedStyles.cardWidth,
+    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
+    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
+    linkStyling: SharedStyles.linkStyling,
+    errorColor: SharedStyles.errorColor,
   }
 
   state = {
@@ -107,48 +113,46 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const styles = this.props.styles === undefined ? defaultStyles : {
-      ...defaultStyles,
-      ...this.props.styles,
-    }
     const { account } = this.props
+
+    // eslint-disable-next-line
     const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
     form.field("#cc-holder .field-space", {
       type: "text",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       name: "billingPreferences.cardName",
       defaultValue: getDefaultValue(account, 'cardName', ''),
       placeholder: "Florence Izote",
       validations: ["required"],
-      css: inputStyles
+      css: this.props.inputStyles,
     });
 
     form.field("#cc-number .field-space", {
       type: "card-number",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       name: "billingPreferences.cardNumber",
       defaultValue: getDefaultValue(account, 'cardNumber', ''),
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
       autoComplete: 'cc-number',
-      css: inputStyles
+      css: this.props.inputStyles,
     });
 
     form.field("#cc-cvc .field-space", {
       type: "card-security-code",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       name: "billingPreferences.cardCvv",
       placeholder: "311",
       validations: ["required", "validCardSecurityCode"],
-      css: inputStyles
+      css: this.props.inputStyles,
     });
 
     form.field("#cc-exp .field-space", {
       type: "card-expiration-date",
       name: "billingPreferences.cardExpdate",
-      errorColor: styles.errorColor,
+      errorColor: this.props.errorColor,
       placeholder: "01 / 2022",
       defaultValue: getDefaultCardExpDate(account, ''),
       serializers: [
@@ -158,7 +162,7 @@ export default class CreditCardForm extends Component {
         })
       ],
       validations: ["required", "validCardExpirationDate"],
-      css: inputStyles
+      css: this.props.inputStyles,
     })
 
     this.form = form
@@ -218,15 +222,16 @@ export default class CreditCardForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, form, } = this.props
+    const { onLast, onCancel, } = this.props
 
     return (
-      <section style={cardWidth}>
+      <section style={this.props.cardWidth}>
 
         <label className="h3">Paying by credit card</label>
         {this.props.showACHLink === true &&
           <a
             className="pay-by-ach-link"
+            style={linkStyling}
             onClick={this.props.changePaymentMethod}>
             Pay by ACH instead
           </a>
@@ -287,11 +292,14 @@ export default class CreditCardForm extends Component {
         <span>{getErrorText('', 'networkError', errors)}</span>
         {!!this.props.saveRef === false &&
           <ButtonGroup
+            showAccept={false}
             loading={this.state.loading}
             onSubmit={this.onSubmit}
             onLast={onLast}
             onCancel={onCancel}
             finalStep={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

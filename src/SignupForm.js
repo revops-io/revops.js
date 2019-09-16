@@ -3,40 +3,8 @@ import PropTypes from 'prop-types'
 
 import configure from './client/VaultConfig'
 
+import { inputStyles } from './SharedStyles'
 import { ButtonGroup } from './ButtonGroup'
-
-const defaultStyles = {
-  border: "none",
-  background: "rgba(215, 224, 235, 0.18);",
-  height: "40px",
-  lineHeight: "normal",
-  padding: "0 10px",
-  color: "white",
-  fontSize: "12px",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  letterSpacing: ".7px",
-  "&::placeholder": {
-    color: "white",
-    fontSize: "12px",
-    opacity: ".5"
-  }
-};
-
-const inputStyles = {
-  background: 'hsla(0,0%,74%,.13)',
-  borderRadius: '4px',
-  padding: '8px',
-  fontSize: '18px',
-  lineHeight: '20px',
-  outline: 'none',
-  boxSizing: 'border-box',
-  transition: 'all .15s ease-in-out 0s',
-  '&:focus': {
-    background: 'white',
-    border: '2px solid #c550ff'
-  },
-}
 
 export default class SignupForm extends Component {
   static propTypes = {
@@ -54,7 +22,6 @@ export default class SignupForm extends Component {
   }
 
   initialize() {
-    const styles = this.props.styles === undefined? defaultStyles : this.props.styles
 
     const form = VGSCollect.create(configure(this.props.env).vaultId, function(state) {});
 
@@ -63,7 +30,6 @@ export default class SignupForm extends Component {
       name: "card.name",
       placeholder: "Joe Business",
       validations: ["required"],
-      // css: styles
       css: inputStyles
     });
 
@@ -72,7 +38,6 @@ export default class SignupForm extends Component {
       name: "card.number",
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
-      // css: styles
       css: inputStyles
     });
 
@@ -81,7 +46,6 @@ export default class SignupForm extends Component {
       name: "card.cvc",
       placeholder: "344",
       validations: ["required", "validCardSecurityCode"],
-      // css: styles
       css: inputStyles
     });
 
@@ -90,7 +54,6 @@ export default class SignupForm extends Component {
       name: "card.expirationDate",
       placeholder: "01 / 2016",
       validations: ["required", "validCardExpirationDate"],
-      // css: styles
       css: inputStyles
     });
 

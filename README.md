@@ -17,7 +17,7 @@ import React from 'react'
 
 import { PaymentMethod } from 'revops-js'
 
-export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-api-key' }) => (
+export const App = ({ accountId, publicKey = 'your-public-api-key' }) => (
   <PaymentMethod
     publicKey={publicKey}
     account={{
@@ -25,7 +25,6 @@ export const App = ({ accountId, defaultStyles = {}, publicKey = 'your-public-ap
     }}
     logo="https://bill.sh/example_logos/pigeon.png"
     companyName="pigeonDelivery , Inc."
-    styles={defaultStyles}
   />
 )
 
@@ -110,6 +109,56 @@ class SignupForm extends Component {
 	}
 }
 ```
+
+### Step 4.
+
+Now that `<PaymentMethod />` is working, it's important for it look that it fits seamlessly into your application. These are the props available for styling:
+
+| Prop     |      type      |  Description |
+|----------|:--------------:|-------------:|
+| inputStyles | PropTypes.object | Styles for input fields. `&:focus` state can also be styled. |
+| buttonStylesPrimary | PropTypes.object | Styles for your primary CTA. |
+| buttonStylesSecondary | PropTypes.object | Styles for your secondary CTA. |
+| linkStyling | PropTypes.object | Styles for your text links. |
+| cardWidth | PropTypes.object | How wide you want the content area of `<PaymentMethod />` to be. Give it `margin: 0 auto`. |
+| errorColor | PropTypes.string | Give the hex code for the color of the input borders and text when a field is missing or incorrect. |
+
+You can use CSS properties to customize the appearance of `<PaymentMethod />`. Popular properties to use are:
+- `background`
+- `border`
+- `borderRadius`
+- `color`
+- `fontSize`
+- `lineHeight`
+- `padding`
+
+Here is an example how to style inputs:
+```
+<PaymentMethod
+  publicKey={publicKey}
+  account={{
+    accountId: accountId,
+    email: email
+  }}
+  defaultMethod="card"
+  saveRef={this.saveRef}
+  inputStyles={
+    background: '#eeeeee',
+    borderRadius: '2px',
+    padding: '4px 8px',
+    fontSize: '18px',
+    lineHeight: '20px',
+    outline: 'none',
+    transition: 'all .15s ease-in-out 0s',
+    border: '2px solid mistyrose',
+    '&:focus': { // the focus pseudo-class
+      background: '#ffffff',
+      border: `2px solid papayawhip`
+    }
+  }
+/>
+```
+
 
 
 ## Props for `<PaymentMethod />`

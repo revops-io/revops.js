@@ -4,13 +4,12 @@ import PropTypes from 'prop-types'
 import {
   getErrorText,
   getClassName,
-  convertAPIError,
   getDefaultValue,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, buttonStylesPrimary, linkStyling, cardWidth } from './SharedStyles'
+import * as SharedStyles from './SharedStyles'
 
 import {
   TogglePlaid,
@@ -22,22 +21,13 @@ import {
 
 import configure from './client/VaultConfig'
 
-const defaultStyles = {
-  background: "#FFFFFF",
-  border: "1px solid #CED7E6",
-  boxSizing: "border-box",
-  borderRadius: "4px",
-  height: "40px",
-  padding: "0 16px"
-};
-
 export default class PlaidForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
     publicKey: PropTypes.string.isRequired,
 
-    /** An AchForm can have custom styles */
-    styles: PropTypes.object,
+    /** Account object allows preconfigured account options to be set */
+    account: PropTypes.object,
 
     /** A callable function to fire when form is complete */
     onComplete: PropTypes.func,
@@ -56,10 +46,42 @@ export default class PlaidForm extends Component {
 
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
+
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+    ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
+    /** Styles for your text links. */
+    linkStyling: PropTypes.object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth: PropTypes.object,
+
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
+    /** Internal Use-only: Environment string: local, staging, production */
+    env: PropTypes.string,
+
+    /** Internal Use-only: Change payment method swaps current payment method state */
+    changePaymentMethod: PropTypes.func,
+
+    /** Optional reference to allow your own save buttons */
+    saveRef: PropTypes.shape({ current: PropTypes.any }),
   }
 
   static defaultProps = {
-    styles: {},
+    inputStyles: SharedStyles.inputStyles,
+    cardWidth: SharedStyles.cardWidth,
+    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
+    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
+    linkStyling: SharedStyles.linkStyling,
   }
 
   state = {
@@ -115,14 +137,13 @@ export default class PlaidForm extends Component {
   }
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
-    const styles = this.props.styles === undefined ? defaultStyles : this.props.styles
 
     if(this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
-        css: inputStyles,
-        errorColor: styles.errorColor,
+        css: this.props.inputStyles,
+        errorColor: this.props.errorColor,
         ...options,
       })
     }
@@ -142,9 +163,8 @@ export default class PlaidForm extends Component {
   }
 
   initialize = () => {
-    const { account } = this.props
-
     if(!!this.form === false) {
+      // eslint-disable-next-line
       this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     }
 
@@ -217,14 +237,18 @@ export default class PlaidForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, form, } = this.props
+    const { onLast, onCancel, } = this.props
     return (
-      <section style={cardWidth}>
+      <section style={this.props.cardWidth}>
         <label className="h3">Paying by ACH</label>
-        <a className="pay-by-cc-link" onClick={this.props.changePaymentMethod}>Pay by credit card instead</a>
+        <a
+          className="pay-by-cc-link"
+          onClick={this.props.changePaymentMethod}>
+          Pay by credit card instead
+        </a>
         <button
           className="ui button big centered single"
-          style={buttonStylesPrimary}
+          style={this.props.buttonStylesPrimary}
           onClick={() => this.openPlaid()}>
           Sync your bank account
         </button>
@@ -254,7 +278,7 @@ export default class PlaidForm extends Component {
         }
 
         <TogglePlaid
-          style={linkStyling}
+          style={this.props.linkStyling}
           toggleHandler={this.props.togglePlaidHandler}
         />
 
@@ -266,6 +290,8 @@ export default class PlaidForm extends Component {
             onLast={onLast}
             onCancel={onCancel}
             finalStep={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

@@ -55,7 +55,7 @@ describe('The CreditCardForm Component', () => {
 
     wrapper.setState({
       errors: null,
-      loading: null,
+      loading: false,
       status: null,
       response: null,
     })

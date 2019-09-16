@@ -14,7 +14,25 @@ export interface PaymentMethodProps {
 
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
-    styles?: object,
+
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles?: object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary?: object,
+
+    /** Styles for your secondary CTA button.
+    ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary?: object,
+
+    /** Styles for your text links. */
+    linkStyling?: object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth?: number,
+
+    /** Color of error text, a valid color name or hex. */
+    errorColor?: string,
 
     /** An enumerated list of supported payment method types
      * that the developer can enable for their customers.
