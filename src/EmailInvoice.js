@@ -99,7 +99,7 @@ export default class EmailInvoice extends Component {
   render() {
     return (
       <section>
-        <form id="contact-form" className="ui form">
+        <div id="contact-form" className="ui form">
           <div id="customer-name" className="field">
             <label>Name</label>
             <span className="field-space"></span>
@@ -115,7 +115,7 @@ export default class EmailInvoice extends Component {
             <span className="field-space"></span>
           </div>
 
-        </form>
+        </div>
         {this.buttonGrp()}
       </section>
     )

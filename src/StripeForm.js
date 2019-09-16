@@ -93,7 +93,7 @@ export default class StripeForm extends Component {
     return (
       <section>
         <h1>Stripe</h1>
-        <form id="contact-form" className="ui form">
+        <div id="contact-form" className="ui form">
           <div id="customer-name" className="field">
             <label>Name</label>
             <span className="field-space"></span>
@@ -109,7 +109,7 @@ export default class StripeForm extends Component {
             <span className="field-space"></span>
           </div>
 
-        </form>
+        </div>
         {this.buttonGrp()}
       </section>
     )

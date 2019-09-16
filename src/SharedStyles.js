@@ -1,6 +1,3 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
 /** Color of error text, a valid color name or hex. */
 export const errorColor = "red"
 

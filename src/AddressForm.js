@@ -147,7 +147,7 @@ export class AddressForm extends Component {
   render() {
     return (
       <section>
-        <form id="contact-form" className="ui form">
+        <div id="contact-form" className="ui form">
 
           <div className="field">
             <label htmlFor="first-name">First Name</label>
@@ -188,7 +188,7 @@ export class AddressForm extends Component {
             <span id="zip" className="field-space"></span>
           </div>
 
-        </form>
+        </div>
         {this.buttonGrp()}
       </section>
     )

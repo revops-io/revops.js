@@ -253,7 +253,7 @@ export default class PlaidForm extends Component {
           Sync your bank account
         </button>
         {!!this.state.plaidMetadata !== false &&
-          <form id="content-form" className="ui form">
+          <div id="content-form" className="ui form">
             <div id="bank-name"
               className={
                getClassName(
@@ -274,7 +274,7 @@ export default class PlaidForm extends Component {
                 <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
               </div>
             </div>
-          </form>
+          </div>
         }
 
         <TogglePlaid

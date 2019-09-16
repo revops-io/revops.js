@@ -237,7 +237,7 @@ export default class CreditCardForm extends Component {
           </a>
         }
         <div className="form-container">
-          <form id="cc-form">
+          <div id="cc-form">
             <div id="cc-holder" className={
               getClassName(
                 "cardholder-container",
@@ -286,7 +286,7 @@ export default class CreditCardForm extends Component {
               <span>{getErrorText('CVC/CVV', 'billingPreferences.cardCvv', errors)}</span>
             </div>
 
-          </form>
+          </div>
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
