@@ -42,12 +42,10 @@ export default class App extends Component {
       <div className="ui container" style={backgroundStyles}>
         <div>
           <PaymentMethod
-            env={"staging"}
+            publicKey="pk_sandbox_123"
             account={{
               accountId: "my-account-id",
             }}
-            companyName="myDatabaseService, Inc."
-            styles={defaultStyles}
             methods={[
               "card",
               "ach",
