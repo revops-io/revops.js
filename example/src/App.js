@@ -57,16 +57,6 @@ export default class App extends Component {
               accountId: "my-account-id",
               email: this.state.email,
             }}
-            inputStyles={{
-              background: 'red',
-              borderRadius: '50px',
-            }}
-            buttonStylesPrimary={{
-              background: 'red',
-            }}
-            linkStyling={{
-              color: 'red',
-            }}
           />
         </div>
       </div>
