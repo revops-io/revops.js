@@ -38,9 +38,10 @@ export default class App extends Component {
     return (
       <div className="ui container" style={backgroundStyles}>
         <div>
-          <label>
+          <label className="ui label fluid">
             Email
             <input
+              className="ui input fluid"
               type="text"
               name="email"
               onChange={
@@ -51,8 +52,7 @@ export default class App extends Component {
             />
           </label>
           <PaymentMethod
-            publicKey="pk_live_b5fd0042bb1447689a473059c051f17a"
-            env={"localhost"}
+            publicKey="pk_sandbox_test"
             account={{
               accountId: "my-account-id",
               email: this.state.email,
