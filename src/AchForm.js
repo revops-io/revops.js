@@ -63,12 +63,34 @@ export default class AchForm extends Component {
 
     /** A boolean to show/hide change to credit card link. */
     showCardLink: PropTypes.bool,
+
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+    ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
+    /** Styles for your text links. */
+    linkStyling: PropTypes.object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth: PropTypes.object,
+
   }
 
   static defaultProps = {
     styles: {},
     hideTogglePlaid: true,
     showCardLink: false,
+    inputStyles: SharedStyles.inputStyles,
+    cardWidth: SharedStyles.cardWidth,
+    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
+    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
+    linkStyling: SharedStyles.linkStyling,
   }
 
   state = {
