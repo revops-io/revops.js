@@ -122,6 +122,7 @@ Now that `<PaymentMethod />` is working, it's important for it look that it fits
 | buttonStylesSecondary | PropTypes.object | Styles for your secondary CTA. |
 | linkStyling | PropTypes.object | Styles for your text links. |
 | cardWidth | PropTypes.object | How wide you want the content area of `<PaymentMethod />` to be. Give it `margin: 0 auto`. |
+| errorColor | PropTypes.string | Give the hex code for the color of the input borders and text when a field is missing or incorrect. |
 
 You can use CSS properties to customize the appearance of `<PaymentMethod />`. Popular properties to use are:
 - `background`
