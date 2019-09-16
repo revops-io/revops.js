@@ -2,7 +2,7 @@
   "parser": "babel-eslint",
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended"
+    "plugin:react/recommended",
   ],
   "env": {
     "es6": true,
@@ -18,7 +18,13 @@
   "settings": {
     "react": {
       version: require('./package.json').dependencies.react
-    }
+    },
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+      "typescript",
+      "typescriptreact"
+    ]
   },
   "rules": {
     // don't force es6 functions to include space before paren

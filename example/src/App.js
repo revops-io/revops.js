@@ -51,7 +51,7 @@ export default class App extends Component {
               type="text"
               name="email"
               onChange={
-                (e, data) => this.setState({
+                (e) => this.setState({
                   email: e.target.value,
                 })
               }
@@ -64,17 +64,11 @@ export default class App extends Component {
               accountId: "my-account-id",
               email: this.state.email,
             }}
-            companyName="myDatabaseService, Inc."
             styles={defaultStyles}
-            methods={[
-              "card",
-              "ach",
-            ]}
-            defaultMethod="card"
             saveRef={this.saveRef}
           />
           <div className="ui button" onClick={(e) => this.submitSecure(e)} tabIndex="0">
-            Submit Order
+            Save
           </div>
         </div>
       </div>

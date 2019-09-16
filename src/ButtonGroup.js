@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { buttonStylesPrimary, buttonStylesSecondary } from './SharedStyles'
 
@@ -6,12 +6,11 @@ export const ButtonGroup = ({
   loading = false,
   onNext,
   onLast,
-  onCancel,
   finalStep,
   onSubmit,
   showAccept,
   hideNext,
-  hidePrevious,
+  hidePrevious = true,
 }) => {
   return (
     <div id="form-nav">
@@ -33,7 +32,7 @@ export const ButtonGroup = ({
         >
         {loading === false ?
           (finalStep ?
-            'Submit'
+            'Save'
             :
             'Next'
           ) : null
@@ -59,3 +58,16 @@ export const ButtonGroup = ({
     </div>
   )
 }
+
+ButtonGroup.propTypes = {
+  loading: PropTypes.boolean,
+  onNext: PropTypes.func,
+  onLast: PropTypes.func,
+  finalStep: PropTypes.func,
+  onSubmit: PropTypes.func,
+  showAccept: PropTypes.boolean,
+  hideNext: PropTypes.boolean,
+  hidePrevious: PropTypes.boolean,
+}
+
+export default ButtonGroup

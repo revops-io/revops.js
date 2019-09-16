@@ -66,9 +66,9 @@ export default class PayAsYouGoForm extends Component {
 
 
         <div className="ui one column fluid grid">
-          <div class="column">
+          <div className="column">
             {this.state.method === 'payg' &&
-              <div class="stretched row">
+              <div className="stretched row">
                 <StepNavigation
                   activeStep={this.getActiveStep()}
                   setStep={(id) => {
@@ -90,7 +90,7 @@ export default class PayAsYouGoForm extends Component {
                 }}>
                   <StandardTerms />
                 </div>
-                <button class="fluid ui button" onClick={()=> {
+                <button className="fluid ui button" onClick={()=> {
                   this.setState({ agreeToTerms: true, activeStep: 2, })
                 }}>Agree to Standard Terms</button>
 
@@ -144,7 +144,7 @@ export default class PayAsYouGoForm extends Component {
                       </div>
                     </div>
                     <div className="column row">
-                    <button class="fluid ui button" onClick={()=> {
+                    <button className="fluid ui button" onClick={()=> {
                       this.setState({ agreeToTerms: true, activeStep: 2, })
                     }}>Get Started</button>
                     </div>
