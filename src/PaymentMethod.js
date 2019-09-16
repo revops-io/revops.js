@@ -26,7 +26,22 @@ export default class PaymentMethod extends Component {
 
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
-    styles: PropTypes.object,
+
+     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+     ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
+    /** Styles for your text links. */
+    linkStyling: PropTypes.object,
+
+    /** How wide you want the content area of `<PaymentMethod />`. */
+    cardWidth: PropTypes.number,
 
     /** An enumerated list of supported payment method types
      * that the developer can enable for their customers.
