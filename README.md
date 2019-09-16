@@ -58,56 +58,56 @@ import React, { Component } from 'react'
 import { PaymentMethod } from 'revops-js'
 
 class SignupForm extends Component {
-	constructor(props) {
-		super(props)
-		this.saveRef = React.createRef()
-	}
+  constructor(props) {
+    super(props)
+    this.saveRef = React.createRef()
+  }
 
-	submitSecure = (e) => {
-		e.preventDefault()
+  submitSecure = (e) => {
+    e.preventDefault()
 
-		// Tell RevOps to create the account.
-	  if (!!this.saveRef === true) {
-	    this.saveRef.current.onSubmit()
-	  }
-	}
+    // Tell RevOps to create the account.
+    if (!!this.saveRef === true) {
+      this.saveRef.current.onSubmit()
+    }
+  }
 
-	render() {
-		const {
-			/* RevOps API Sandbox Key */
-			publicKey = 'pk_test_1234567543',
+  render() {
+    const {
+      /* RevOps API Sandbox Key */
+      publicKey = 'pk_test_1234567543',
 
-			/* Your Customer's Account ID,
-			 * can be a string up to 255 characters long. */
-			accountId = 'this-account-id',
+      /* Your Customer's Account ID,
+      * can be a string up to 255 characters long. */
+      accountId = 'this-account-id',
 
-			/* Your Customer's email address. */
-			email,
-		} = this.props
+      /* Your Customer's email address. */
+      email,
+    } = this.props
 
-		return (
-		  <div>
-			 <form>
-				<label>Email
-				  <input type="email" name="email" value={email} />
-				</label>
-				<label>Password
-					<input type="password" name="password" />
-				</label>
-				<PaymentMethod
-					publicKey={publicKey}
-					account={{
-						accountId: accountId,
-						email: email
-					}}
-					defaultMethod="card"
-					saveRef={this.saveRef}
-				/>
-				<input type="submit" onClick={this.submitSecure} />
-			 </form>
-		  </div>
-		)
-	}
+    return (
+    <div>
+      <form>
+        <label>Email
+          <input type="email" name="email" value={email} />
+        </label>
+        <label>Password
+          <input type="password" name="password" />
+        </label>
+        <PaymentMethod
+          publicKey={publicKey}
+          account={{
+            accountId: accountId,
+            email: email
+          }}
+          defaultMethod="card"
+          saveRef={this.saveRef}
+        />
+        <input type="submit" onClick={this.submitSecure} />
+        </form>
+      </div>
+    )
+  }
 }
 ```
 
