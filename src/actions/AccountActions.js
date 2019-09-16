@@ -4,10 +4,6 @@ import {
   ShippingContact,
 } from '../models'
 
-import {
-  RevOpsAPIClient
-} from '../client'
-
 export function makeAccount(props = {
   id,
   name,

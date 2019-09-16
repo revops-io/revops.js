@@ -7,8 +7,6 @@ import {
   CreditCardForm,
   PlaidForm,
   AchForm,
-  EmailInvoice,
-  StripeForm,
   jsDependencies,
   addJS,
 } from './index'
@@ -59,6 +57,9 @@ export default class PaymentMethod extends Component {
 
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
+
+    /** Account object allows preconfigured account options to be set */
+    account: PropTypes.object,
   }
 
 
@@ -78,12 +79,19 @@ export default class PaymentMethod extends Component {
 
     this.state = {
       errors: false,
-      method: this.props.defaultMethod,
+
+      /** if a default method isn't provided, default to first method. */
+      method: !!this.props.defaultMethod === false?
+        this.props.methods[0] : this.props.defaultMethod,
     }
     this.form = null
   }
 
   validateMethods(props) {
+    if(!!props.defaultMethod === false) {
+      return
+    }
+
     let method = props.methods.find(
       m => m === props.defaultMethod
     )
