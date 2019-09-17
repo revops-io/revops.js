@@ -80,10 +80,10 @@ export default class PaymentMethod extends Component {
     account: PropTypes.object,
 
     /** Render customized Card forms */
-    renderCardForms: PropTypes.element,
+    renderCardForms: PropTypes.func,
 
     /** Render customized ACH forms */
-    renderAchForms: PropTypes.element,
+    renderAchForms: PropTypes.func,
   }
 
 
