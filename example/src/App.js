@@ -53,6 +53,7 @@ export default class App extends Component {
           </label>
           <PaymentMethod
             publicKey="pk_sandbox_test"
+            methods={['plaid', 'ach', 'card']}
             account={{
               accountId: "my-account-id",
               email: this.state.email,
