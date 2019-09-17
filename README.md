@@ -80,7 +80,7 @@ class SignupForm extends Component {
   onComplete = (response) => {
     console.log(response)
   }
-  
+
   onError = (error) => {
     console.error(error)
   }
@@ -128,18 +128,27 @@ class SignupForm extends Component {
 
 ### Step 4.
 
-Now that `<PaymentMethod />` is working, it's important for it look that it fits seamlessly into your application. These are the props available for styling:
+Now that `<PaymentMethod />` is working, it's important for it look that it fits seamlessly into your application. There are 3 things that affect styling:
 
-| Prop     |      type      |  Description |
-|----------|:--------------:|-------------:|
-| inputStyles | PropTypes.object | Styles for input fields. `&:focus` state can also be styled. |
-| buttonStylesPrimary | PropTypes.object | Styles for your primary CTA. |
-| buttonStylesSecondary | PropTypes.object | Styles for your secondary CTA. |
-| linkStyling | PropTypes.object | Styles for your text links. |
-| cardWidth | PropTypes.object | How wide you want the content area of `<PaymentMethod />` to be. Give it `margin: 0 auto`. |
-| errorColor | PropTypes.string | Give the hex code for the color of the input borders and text when a field is missing or incorrect. |
+1. `defaultStyles.css` > Demo CSS Rules – Found in the example repo. It controls button and text colors specific to the example application. When you use <PaymentMethod /> in your own application, you should delete this section so your customized CSS can dictate the styling.
+2. `defaultStyles.css` > Layout CSS Rules – These styles control the layout of how the elements are laid out.
+3. `inputStyles` prop – This prop is used on the <PaymentMethod /> component. Any CSS rules for the input fields must be done through this prop to properly apply the CSS. This is due to the use of iframes on the input fields to securely collect your users' data.
 
-You can use CSS properties to customize the appearance of `<PaymentMethod />`. Popular properties to use are:
+List of Elements
+- Content Width
+- Inputs & Dropdowns
+- Labels
+- Buttons
+  - Primary Buttons
+  - Secondary Buttons
+
+#### Content Width
+At the very top of the Demo section of `defaultStyles.css`, the `.section-width` CSS class controls the width of the content of the form fields
+
+#### Inputs & Dropdowns
+Both inputs and dropdowns require their CSS styles to be passed through the `inputStyles` prop on the `<PaymentMethod />` component. Commonly-used CSS rules are supported, as well as pseudo-classes such as `:focus` and `::placeholder`.
+
+Popular properties to use are:
 - `background`
 - `border`
 - `borderRadius`
@@ -148,8 +157,8 @@ You can use CSS properties to customize the appearance of `<PaymentMethod />`. P
 - `lineHeight`
 - `padding`
 
-Here is an example how to style inputs:
-```
+**Example**
+```jsx
 <PaymentMethod
   publicKey={publicKey}
   account={{
@@ -174,6 +183,21 @@ Here is an example how to style inputs:
   }}
 />
 ```
+
+
+#### Labels
+Styling for labels can be found in `defaultStyles.css`. The CSS selectors for the labels are:
+```css
+#card-form .field > label,
+#ach-form .field > label,
+#plaid-form .field > label {
+  ...
+}
+```
+
+#### Buttons
+Class names for the primary and secondary buttons are `btn-primary` and `btn-secondary`.
+
 
 
 

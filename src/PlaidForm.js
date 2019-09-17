@@ -50,22 +50,6 @@ export default class PlaidForm extends Component {
     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
     inputStyles: PropTypes.object,
 
-    /** Styles for your primary CTA button. */
-    buttonStylesPrimary: PropTypes.object,
-
-    /** Styles for your secondary CTA button.
-    ** Eg. Previous, Cancel buttons. */
-    buttonStylesSecondary: PropTypes.object,
-
-    /** Styles for your text links. */
-    linkStyling: PropTypes.object,
-
-    /** How wide you want the content area of `<PaymentMethod />`. */
-    cardWidth: PropTypes.object,
-
-    /** Color of error text, a valid color name or hex. */
-    errorColor: PropTypes.string,
-
     /** Internal Use-only: Environment string: local, staging, production */
     env: PropTypes.string,
 
@@ -78,10 +62,6 @@ export default class PlaidForm extends Component {
 
   static defaultProps = {
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
-    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
-    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
-    linkStyling: SharedStyles.linkStyling,
   }
 
   state = {
@@ -239,7 +219,7 @@ export default class PlaidForm extends Component {
     const { errors, } = this.state
     const { onLast, onCancel, } = this.props
     return (
-      <section style={this.props.cardWidth}>
+      <section className="section-width">
         <label className="h3">Paying by ACH</label>
         <a
           className="pay-by-cc-link"
@@ -247,8 +227,7 @@ export default class PlaidForm extends Component {
           Pay by credit card instead
         </a>
         <button
-          className="ui button big centered single"
-          style={this.props.buttonStylesPrimary}
+          className="btn-secondary centered single"
           onClick={() => this.openPlaid()}>
           Sync your bank account
         </button>
@@ -282,7 +261,7 @@ export default class PlaidForm extends Component {
           toggleHandler={this.props.togglePlaidHandler}
         />
 
-        <div className="ui clearing divider"></div>
+        <div className="divider-line"></div>
         {!!this.props.saveRef === false &&
           <ButtonGroup
             loading={this.state.loading}
@@ -290,8 +269,6 @@ export default class PlaidForm extends Component {
             onLast={onLast}
             onCancel={onCancel}
             finalStep={true}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

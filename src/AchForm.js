@@ -57,22 +57,6 @@ export default class AchForm extends Component {
     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
     inputStyles: PropTypes.object,
 
-    /** Styles for your primary CTA button. */
-    buttonStylesPrimary: PropTypes.object,
-
-    /** Styles for your secondary CTA button.
-    ** Eg. Previous, Cancel buttons. */
-    buttonStylesSecondary: PropTypes.object,
-
-    /** Styles for your text links. */
-    linkStyling: PropTypes.object,
-
-    /** How wide you want the content area of `<PaymentMethod />`. */
-    cardWidth: PropTypes.object,
-
-    /** Color of error text, a valid color name or hex. */
-    errorColor: PropTypes.string,
-
     /** Internal Use-only: Environment string: local, staging, production */
     env: PropTypes.string,
 
@@ -89,11 +73,6 @@ export default class AchForm extends Component {
     hideTogglePlaid: true,
     showCardLink: false,
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
-    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
-    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
-    linkStyling: SharedStyles.linkStyling,
-    errorColor: SharedStyles.errorColor,
   }
 
   state = {
@@ -302,7 +281,7 @@ export default class AchForm extends Component {
     } = this.props
 
     return (
-      <section style={this.props.cardWidth}>
+      <section className="section-width">
         <label className="h3">Paying by ACH</label>
         {this.props.showCardLink === true &&
           <a
@@ -311,8 +290,13 @@ export default class AchForm extends Component {
             Pay by credit card instead
           </a>
         }
-
-        <div id="ach-form" className="ui form">
+        {this.props.hideTogglePlaid === false &&
+          <TogglePlaid
+            toggleHandler={this.props.togglePlaidHandler}
+          />
+        }
+        <div className="divider-line"></div>
+        <div id="ach-form" className="form-container">
           {!!children !== false &&
             React.createElement(children, {
               ...this.props,
@@ -377,21 +361,13 @@ export default class AchForm extends Component {
             </React.Fragment>
           }
         </div>
-        <div className="ui clearing divider"></div>
-        {this.props.hideTogglePlaid === false &&
-          <TogglePlaid
-            style={this.props.linkStyling}
-            toggleHandler={this.props.togglePlaidHandler}
-          />
-        }
+        <div className="divider-line"></div>
         {!!this.props.saveRef === false &&
           <ButtonGroup
             onLast={onLast}
             onCancel={onCancel}
             finalStep={true}
             onSubmit={this.onSubmit}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

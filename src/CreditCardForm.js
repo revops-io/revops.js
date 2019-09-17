@@ -14,7 +14,6 @@ import configure from './client/VaultConfig'
 
 import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
-import { linkStyling } from './SharedStyles'
 
 import {
   Field,
@@ -56,22 +55,6 @@ export default class CreditCardForm extends Component {
     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
     inputStyles: PropTypes.object,
 
-    /** Styles for your primary CTA button. */
-    buttonStylesPrimary: PropTypes.object,
-
-    /** Styles for your secondary CTA button.
-    ** Eg. Previous, Cancel buttons. */
-    buttonStylesSecondary: PropTypes.object,
-
-    /** Styles for your text links. */
-    linkStyling: PropTypes.object,
-
-    /** How wide you want the content area of `<PaymentMethod />`. */
-    cardWidth: PropTypes.object,
-
-    /** Color of error text, a valid color name or hex. */
-    errorColor: PropTypes.string,
-
     /** Internal Use-only: Environment string: local, staging, production */
     env: PropTypes.string,
 
@@ -82,11 +65,6 @@ export default class CreditCardForm extends Component {
   static defaultProps = {
     showACHLink: false,
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
-    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
-    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
-    linkStyling: SharedStyles.linkStyling,
-    errorColor: SharedStyles.errorColor,
   }
 
   state = {
@@ -253,13 +231,12 @@ export default class CreditCardForm extends Component {
     const { onLast, onCancel, children } = this.props
 
     return (
-      <section style={this.props.cardWidth}>
+      <section className="section-width">
 
         <label className="h3">Paying by credit card</label>
         {this.props.showACHLink === true &&
           <a
             className="pay-by-ach-link"
-            style={linkStyling}
             onClick={this.props.changePaymentMethod}>
             Pay by ACH instead
           </a>
@@ -312,7 +289,7 @@ export default class CreditCardForm extends Component {
             }
           </div>
         </div>
-        <div className="ui clearing divider"></div>
+        <div className="divider-line"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
         {!!this.props.saveRef === false &&
           <ButtonGroup

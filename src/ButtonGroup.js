@@ -11,26 +11,22 @@ export const ButtonGroup = ({
   showAccept,
   hideNext,
   hidePrevious = true,
-  buttonStylesPrimary = SharedStyles.buttonStylesPrimary,
-  buttonStylesSecondary = SharedStyles.buttonStylesSecondary,
 }) => {
   return (
     <div id="button-group">
     { showAccept &&
       <button
         id="form-next-btn"
-        className="ui right floated button big btn-primary"
+        className="btn-primary"
         onClick={onNext}
-        style={buttonStylesPrimary}
         >Accept
       </button>
     }
     { hideNext !== true && showAccept !== true &&
       <button
         id="form-next-btn"
-        className="ui right floated button big btn-primary"
+        className="btn-primary"
         onClick={onSubmit}
-        style={buttonStylesPrimary}
         >
         {loading === false ?
           (finalStep ?
@@ -51,9 +47,8 @@ export const ButtonGroup = ({
     { hidePrevious !== true &&
       <button
         id="form-prev-btn"
-        className="ui right floated button big btn-secondary"
+        className="btn-secondary"
         onClick={() => onLast()}
-        style={buttonStylesSecondary}
         >Previous
       </button>
     }
@@ -72,11 +67,11 @@ ButtonGroup.propTypes = {
   hidePrevious: PropTypes.bool,
 
   /** Styles for your primary CTA button. */
-  buttonStylesPrimary: PropTypes.object,
+  // buttonStylesPrimary: PropTypes.object,
 
   /** Styles for your secondary CTA button.
   ** Eg. Previous, Cancel buttons. */
-  buttonStylesSecondary: PropTypes.object,
+  // buttonStylesSecondary: PropTypes.object,
 
 }
 

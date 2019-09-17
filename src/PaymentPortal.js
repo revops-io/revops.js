@@ -13,14 +13,14 @@ import {
 } from './index'
 
 import { SignUp } from './SignUp'
-import { buttonStylesPrimary } from './SharedStyles'
+// import { buttonStylesPrimary } from './SharedStyles'
 
 const CustomThankYouMessage = () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>Thank You!</h1>
       <p>You can <a href="example.com">view pricing</a> for your references. <br />Otherwise you can get started.</p>
-      <button className="ui button huge primary" style={buttonStylesPrimary}>Start building</button>
+      <button className="btn-primary">Start building</button>
     </div>
   )
 }

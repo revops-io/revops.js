@@ -9,7 +9,6 @@ import {
 } from './FormHelpers'
 
 import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, cardWidth } from './SharedStyles'
 
 export class SignUp extends Component {
   state = {
@@ -128,7 +127,7 @@ export class SignUp extends Component {
   render() {
     const { errors } = this.state
     return (
-      <section style={cardWidth}>
+      <section className="section-width">
         <div id="contact-form" className="ui form">
           <div id="signup-email" className="field">
             <label>Email</label>
@@ -143,7 +142,7 @@ export class SignUp extends Component {
           </div>
 
         </div>
-        <div className="ui clearing divider"></div>
+        <div className="divider-line"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
         <ButtonGroup
           loading={this.state.loading}

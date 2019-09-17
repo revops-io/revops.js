@@ -30,22 +30,6 @@ export default class PaymentMethod extends Component {
      /** `inputStyles` for input fields. `&:focus` state can also be styled. */
     inputStyles: PropTypes.object,
 
-    /** Styles for your primary CTA button. */
-    buttonStylesPrimary: PropTypes.object,
-
-    /** Styles for your secondary CTA button.
-     ** Eg. Previous, Cancel buttons. */
-    buttonStylesSecondary: PropTypes.object,
-
-    /** Styles for your text links. */
-    linkStyling: PropTypes.object,
-
-    /** How wide you want the content area of `<PaymentMethod />`. */
-    cardWidth: PropTypes.number,
-
-    /** Color of error text, a valid color name or hex. */
-    errorColor: PropTypes.string,
-
     /** An enumerated list of supported payment method types
      * that the developer can enable for their customers.
      */
@@ -255,15 +239,13 @@ export default class PaymentMethod extends Component {
               />
             </div>
         }
-        {method === false && <div className="ui clearing divider"></div>}
+        {method === false && <div className="divider-line"></div>}
         {method === false &&
           <ButtonGroup
             showAccept={false}
             onLast={onLast}
             onCancel={onCancel}
             hideNext={true}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section>

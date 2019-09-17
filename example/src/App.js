@@ -2,19 +2,10 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
-  Field,
 } from 'revops-js'
 
 import "revops-js/themes/defaultStyles.css"
 
-const backgroundStyles = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'top',
-  width: '100vw',
-  minHeight: '100vh',
-  maxHeight: '100%',
-}
 
 export default class App extends Component {
   state = {
@@ -38,21 +29,21 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className="ui container" style={backgroundStyles}>
+      <div className="revops-demo">
         <div>
-          <label className="ui label fluid">
+          <label className="revops-demo-label">
             Email
-            <input
-              className="ui input fluid"
-              type="text"
-              name="email"
-              onChange={
-                (e) => this.setState({
-                  email: e.target.value,
-                })
-              }
-            />
           </label>
+          <input
+            className="revops-demo-input"
+            type="text"
+            name="email"
+            onChange={
+              (e) => this.setState({
+                email: e.target.value,
+              })
+            }
+          />
           <PaymentMethod
             publicKey="pk_sandbox_123"
             methods={['card', 'ach', 'plaid']}

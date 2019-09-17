@@ -6,7 +6,7 @@ export const TogglePlaid = ({
   toggleHandler,
   plaidSelected = false,
 }) => (
-  <a className="manual-link single centered" style={linkStyling} onClick={() => toggleHandler()}>
+  <a className="manual-link" style={linkStyling} onClick={() => toggleHandler()}>
     {
       plaidSelected === true ?
         'or manually enter bank account details'

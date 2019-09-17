@@ -11,25 +11,155 @@
  * List of classes & ids
  */
 
+
+/*  DEMO STYLES =========
+ * -----------------------
+ * Overall
+ * ----------------------- */
+  .section-width {
+    /* This dictates the width of the form elements */
+    width: 404px;
+  }
+
+ /*
+ * -----------------------
+ * Links
+ * ----------------------- */
+a.pay-by-ach-link,
+a.pay-by-cc-link,
+.manual-link {
+  color: #4183C4;
+}
+a.pay-by-ach-link:hover,
+a.pay-by-cc-link:hover,
+.manual-link:hover {
+  text-decoration: underline;
+}
+
 /*
+ * -----------------------
+ * Buttons
+ * ----------------------- */
+ .btn-primary,
+ .btn-secondary {
+   padding: .75rem 1.25rem;
+   font-size: 1rem;
+   font-weight: 700;
+ }
+ .btn-primary:hover,
+ .btn-secondary:hover {
+  cursor: pointer;
+ }
+.btn-primary {
+  color: #ffffff;
+  border-radius: 6px;
+  background: #4183C4;
+  float: right;
+}
+.btn-secondary {
+  border-radius: 6px;
+  background-color: #eee;
+  color:#555;
+}
+.centered.single {
+  margin: 2rem auto 0;
+}
+
+/*
+ * -----------------------
+ * Fields (Card, ACH, Plaid)
+ * ----------------------- */
+
+.field-space iframe {
+  height: 50px;
+}
+
+.field-examples {
+  border-radius: 6px;
+}
+
+#card-form .field > label,
+#ach-form .field > label,
+#plaid-form .field > label {
+  color: #777582;
+  font-weight: bold;
+}
+
+
+label.h3 {
+  font-size: 1.28571429rem;
+  line-height: 1.28571429em;
+  font-weight: 700;
+}
+
+.form-container label {
+  font-weight: bold;
+}
+
+/*
+ * -----------------------
+ * Error Messaging
+ * -----------------------*/
+
+.validation-error .field-space + span {
+  color: red;
+}
+.validation-error .field-space {
+  border: 2px solid red;
+  border-radius: 6px;
+}
+
+/*
+ * -----------------------
+ * Misc for demo app
+ * -----------------------*/
+.revops-demo {
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-height: 100vh;
+  max-height: 100%;
+}
+.revops-demo-label {
+  color: #777582;
+  font-weight: bold;
+  display: block;
+  margin-bottom: .5rem;
+}
+.revops-demo-input {
+  display: block;
+  border-radius: 4px;
+  height: 50px;
+  padding: 8px;
+  font-size: 16px;
+  line-height: 20px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all .15s ease-in-out;
+  border: 1px solid #cccccc;
+}
+/* ===== END OF DEMO STYLES */
+
+
+
+/*  LAYOUT STYLES ========
  * -----------------------
  * Links
  * ----------------------- */
 a.pay-by-ach-link,
 a.pay-by-cc-link {
-  /* Needs to be a variable of the chosen link colors */
-  /*color: #4f34c7;*/
   float: right;
 }
 a.pay-by-ach-link:hover,
 a.pay-by-cc-link:hover,
 .manual-link:hover {
   cursor: pointer;
-  text-decoration: underline;
 }
-.manual-link.single.centered {
+.manual-link {
   display: block;
-  margin: 1rem 0 2rem;
+  margin: 1rem 0;
 }
 
 /*
@@ -39,8 +169,8 @@ a.pay-by-cc-link:hover,
 
 .field-space iframe {
   border: 0 none transparent;
-  height: 50px;
   vertical-align: middle;
+  height: 50px;
   width: 100%;
 }
 
@@ -50,25 +180,18 @@ a.pay-by-cc-link:hover,
 }
 
 .field-examples {
-  width: 500px;
   margin: 0 auto;
-  border-radius: 6px;
 }
 
 #card-form .field > label,
 #ach-form .field > label,
 #plaid-form .field > label {
-  color: #777582;
-  font-weight: bold;
   margin-top: 1rem;
 }
 
 
 label.h3 {
-  font-size: 1.28571429rem;
-  line-height: 1.28571429em;
   margin: calc(2rem - .14285714em) 0 1rem;
-  font-weight: 700;
   padding: 0;
 }
 
@@ -77,10 +200,8 @@ label.h3:first-child {
 }
 
 .form-container label {
-  font-weight: bold;
   display: inline-block;
   line-height: 2rem;
-  margin-top: 1rem;
 }
 
 /* Container for Buttons */
@@ -159,26 +280,20 @@ label.h3
  * -----------------------*/
 
 .validation-error .field-space + span {
-  color: red;
-  margin-top: 3px;
   display: inline-block;
-}
-.validation-error .field-space {
-  border: 2px solid red;
-  border-radius: 4px;
+  margin-top: 3px;
 }
 
-/* Error Messaging */
-.validation-error .field-space + span {
-  color: red;
-  margin-top: 3px;
-  display: inline-block;
-}
-.validation-error .field-space {
-  border: 2px solid red;
-  border-radius: 4px;
-}
-
+/*
+ * -----------------------
+ * Misc
+ * ----------------------- */
+  .divider-line {
+    border-top: 1px solid rgba(34,36,38,.15);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
 
 /* Media Query Reset */
 @media only screen and (max-width: 992px) {
@@ -198,3 +313,4 @@ label.h3
     max-width: 465px;
   }
 }
+/* ===== END OF LAYOUT STYLES */
