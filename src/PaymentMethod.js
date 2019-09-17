@@ -185,7 +185,7 @@ export default class PaymentMethod extends Component {
 
   render() {
     const { method } = this.state
-    const { onLast, onCancel } = this.props
+    const { onLast, onCancel, renderCardForms } = this.props
     return (
       <section className="">
         <br />
@@ -201,7 +201,9 @@ export default class PaymentMethod extends Component {
                 showACHLink={this.isACHEnabled()}
                 changePaymentMethod={() => this.changePaymentMethodACH()}
                 {...this.props}
-              />
+              >
+              {renderCardForms}
+              </CreditCardForm>
             </div>
         }
         {

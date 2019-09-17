@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
+  Field,
 } from 'revops-js'
 
 import "revops-js/themes/defaultStyles.css"
@@ -58,6 +59,42 @@ export default class App extends Component {
               accountId: "my-account-id",
               email: this.state.email,
             }}
+            renderCardForms={(props) =>
+              <React.Fragment>
+                <h1>My Custom Form</h1>
+                <Field
+                  id="card-name"
+                  name="cardName"
+                  label="Card Holder"
+                  defaultValue={'My Name Is...'}
+                  errors={props.errors}
+                  showInlineError={true}
+                />
+                <Field
+                  id="card-number"
+                  name="cardNumber"
+                  label="Card Number"
+                  errors={props.errors}
+                  showInlineError={true}
+                />
+
+                <Field
+                  id="card-expdate"
+                  name="cardExpdate"
+                  label="Expiration"
+                  errors={props.errors}
+                  showInlineError={true}
+                />
+
+                <Field
+                  id="card-cvc"
+                  name="cardCvv"
+                  label="CVC/CVV"
+                  errors={props.errors}
+                  showInlineError={true}
+                />
+              </React.Fragment>
+            }
           />
         </div>
       </div>

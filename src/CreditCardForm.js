@@ -253,40 +253,50 @@ export default class CreditCardForm extends Component {
         }
         <div className="form-container">
           <div id="card-form" className="ui form">
-            <Field
-              id="card-name"
-              name="cardName"
-              label="Card Holder"
-              defaultValue={getDefaultValue(this.props.account, 'cardName', '')}
-              showInlineError={true}
-              errors={errors}
-            />
-            <Field
-              id="card-number"
-              name="cardNumber"
-              label="Card Number"
-              defaultValue={getDefaultValue(this.props.account, 'cardNumber', '')}
-              showInlineError={true}
-              errors={errors}
-            />
+            {!!children !== false &&
+              React.createElement(children, {
+                ...this.props,
+                ...this.state,
+              }, null)
+            }
+            {!!children === false &&
+              <React.Fragment>
+                <Field
+                  id="card-name"
+                  name="cardName"
+                  label="Card Holder"
+                  defaultValue={getDefaultValue(this.props.account, 'cardName', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
+                <Field
+                  id="card-number"
+                  name="cardNumber"
+                  label="Card Number"
+                  defaultValue={getDefaultValue(this.props.account, 'cardNumber', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
 
-            <Field
-              id="card-expdate"
-              name="cardExpdate"
-              label="Expiration"
-              defaultValue={getDefaultValue(this.props.account, 'cardExpdate', '')}
-              showInlineError={true}
-              errors={errors}
-            />
+                <Field
+                  id="card-expdate"
+                  name="cardExpdate"
+                  label="Expiration"
+                  defaultValue={getDefaultValue(this.props.account, 'cardExpdate', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
 
-            <Field
-              id="card-cvc"
-              name="cardCvv"
-              label="CVC/CVV"
-              defaultValue={getDefaultValue(this.props.account, 'cardCvv', '')}
-              showInlineError={true}
-              errors={errors}
-            />
+                <Field
+                  id="card-cvc"
+                  name="cardCvv"
+                  label="CVC/CVV"
+                  defaultValue={getDefaultValue(this.props.account, 'cardCvv', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
+              </React.Fragment>
+            }
           </div>
         </div>
         <div className="ui clearing divider"></div>
