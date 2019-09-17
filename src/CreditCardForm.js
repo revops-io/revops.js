@@ -190,13 +190,14 @@ export default class CreditCardForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof(onComplete) === 'function') {
+    if(onComplete !== false && typeof (onComplete) === 'function') {
       onComplete(response)
     }
   }
 
-  onError = ({status, errors, response}) => {
+  onError = (error) => {
     const { onError } = this.props
+    const { status, errors, response } = error
     this.setState({
       errors: {
         ...errors,
@@ -207,8 +208,8 @@ export default class CreditCardForm extends Component {
       loading: false,
     })
 
-    if(onError !== false && typeof(onError) === 'function') {
-      onError(errors)
+    if(onError !== false && typeof (onError) === 'function') {
+      onError(error)
     }
   }
 

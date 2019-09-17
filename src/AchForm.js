@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  getErrorText,
-  getClassName,
+  convertAPIError,
   getDefaultValue,
 } from './FormHelpers'
 
@@ -232,14 +231,21 @@ export default class AchForm extends Component {
     )
   }
 
-  onError = ({errors}) => {
+  onError = (error) => {
     const { onError } = this.props
+    const { status, errors, response } = error
     this.setState({
-      errors
+      errors: {
+        ...errors,
+        ...convertAPIError(status, response),
+      },
+      status,
+      response,
+      loading: false,
     })
 
-    if(onError !== false && typeof(onError) === 'function') {
-      onError(errors)
+    if(onError !== false && typeof (onError) === 'function') {
+      onError(error)
     }
   }
 
@@ -278,7 +284,7 @@ export default class AchForm extends Component {
     })
 
     const onError = this.onError
-    const onComplete = this.onError
+    const onComplete = this.onComplete
     account.saveWithSecureForm(
       this.props.publicKey,
       form,

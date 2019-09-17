@@ -57,12 +57,12 @@ export class Account extends EntityModel {
           if (status === 401) {
             console.warn("[401] RevOps API access denied. Update your `publicKey`.")
           } else if (status === 400) {
-            console.warn("[400]RevOps API bad request:", response)
+            console.warn(`[400] RevOps API bad request: ${response}`)
           } else {
-            console.error(`[${status}] RevOps API error:`, response)
+            console.error(`[${status}] RevOps API error: ${JSON.stringify(response)}`)
           }
           if (!!onError !== false && typeof (onError) === 'function') {
-            onError({ status, response })
+            onError({ errors: response, status, response: true })
           }
         } else {
           Object.keys(response).map(attrName =>
