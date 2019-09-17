@@ -17,6 +17,7 @@ import * as SharedStyles from './SharedStyles'
 import { linkStyling } from './SharedStyles'
 
 import {
+  Field,
   jsDependencies,
   addJS,
   configureVault,
@@ -112,60 +113,86 @@ export default class CreditCardForm extends Component {
     )
   }
 
+  initForm(id, fieldRender) {
+    if(document.getElementById(id)) {
+      fieldRender()
+    }
+  }
+
   initialize = () => {
     const { account } = this.props
 
     // eslint-disable-next-line
     const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
-    form.field("#cc-holder .field-space", {
-      type: "text",
-      errorColor: this.props.errorColor,
-      name: "billingPreferences.cardName",
-      defaultValue: getDefaultValue(account, 'cardName', ''),
-      placeholder: "Florence Izote",
-      validations: ["required"],
-      css: this.props.inputStyles,
-    });
+    this.initForm('card-name',
+      () => form.field("#card-name .field-space", {
+        type: "text",
+        errorColor: this.props.errorColor,
+        name: "billingPreferences.cardName",
+        defaultValue: getDefaultValue(account, 'cardName', ''),
+        placeholder: "Florence Izote",
+        validations: ["required"],
+        css: this.props.inputStyles,
+      })
+    )
 
-    form.field("#cc-number .field-space", {
-      type: "card-number",
-      errorColor: this.props.errorColor,
-      name: "billingPreferences.cardNumber",
-      defaultValue: getDefaultValue(account, 'cardNumber', ''),
-      placeholder: "Card number",
-      validations: ["required", "validCardNumber"],
-      showCardIcon: true,
-      autoComplete: 'cc-number',
-      css: this.props.inputStyles,
-    });
+    this.initForm('card-number', () =>
+      form.field("#card-number .field-space", {
+        type: "card-number",
+        errorColor: this.props.errorColor,
+        name: "billingPreferences.cardNumber",
+        defaultValue: getDefaultValue(account, 'cardNumber', ''),
+        placeholder: "Card number",
+        validations: ["required", "validCardNumber"],
+        showCardIcon: true,
+        autoComplete: 'card-number',
+        css: this.props.inputStyles,
+      })
+    )
 
-    form.field("#cc-cvc .field-space", {
-      type: "card-security-code",
-      errorColor: this.props.errorColor,
-      name: "billingPreferences.cardCvv",
-      placeholder: "311",
-      validations: ["required", "validCardSecurityCode"],
-      css: this.props.inputStyles,
-    });
+    this.initForm('card-cvc', () =>
+      form.field("#card-cvc .field-space", {
+        type: "card-security-code",
+        errorColor: this.props.errorColor,
+        name: "billingPreferences.cardCvv",
+        placeholder: "311",
+        validations: ["required", "validCardSecurityCode"],
+        css: this.props.inputStyles,
+      })
+    )
 
-    form.field("#cc-exp .field-space", {
-      type: "card-expiration-date",
-      name: "billingPreferences.cardExpdate",
-      errorColor: this.props.errorColor,
-      placeholder: "01 / 2022",
-      defaultValue: getDefaultCardExpDate(account, ''),
-      serializers: [
-        form.SERIALIZERS.separate({
-          monthName: 'month',
-          yearName: 'year',
-        })
-      ],
-      validations: ["required", "validCardExpirationDate"],
-      css: this.props.inputStyles,
-    })
+    this.initForm('card-expdate', () =>
+      form.field("#card-expdate .field-space", {
+        type: "card-expiration-date",
+        name: "billingPreferences.cardExpdate",
+        errorColor: this.props.errorColor,
+        placeholder: "01 / 2022",
+        defaultValue: getDefaultCardExpDate(account, ''),
+        serializers: [
+          form.SERIALIZERS.separate({
+            monthName: 'month',
+            yearName: 'year',
+          })
+        ],
+        validations: ["required", "validCardExpirationDate"],
+        css: this.props.inputStyles,
+      })
+    )
 
     this.form = form
+  }
+
+  onComplete = (response) => {
+    const { onComplete } = this.props
+
+    this.setState({
+      loading: false,
+    })
+
+    if(onComplete !== false && typeof(onComplete) === 'function') {
+      onComplete(response)
+    }
   }
 
   onError = ({status, errors, response}) => {
@@ -187,7 +214,7 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, onComplete = false } = this.props
+    const { onNext, } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -210,6 +237,7 @@ export default class CreditCardForm extends Component {
     })
 
     const onError = this.onError
+    const onComplete = this.onComplete
     account.saveWithSecureForm(
       this.props.publicKey,
       form,
@@ -222,7 +250,7 @@ export default class CreditCardForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, } = this.props
+    const { onLast, onCancel, children } = this.props
 
     return (
       <section style={this.props.cardWidth}>
@@ -237,55 +265,51 @@ export default class CreditCardForm extends Component {
           </a>
         }
         <div className="form-container">
-          <div id="cc-form">
-            <div id="cc-holder" className={
-              getClassName(
-                "cardholder-container",
-                "billingPreferences.cardName",
-                errors
-              )
-            }>
-              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Name', 'billingPreferences.cardName', errors)}</span>
-            </div>
+          <div id="card-form" className="ui form">
+            {!!children !== false &&
+              React.createElement(children, {
+                ...this.props,
+                ...this.state,
+              }, null)
+            }
+            {!!children === false &&
+              <React.Fragment>
+                <Field
+                  id="card-name"
+                  name="cardName"
+                  label="Card Holder"
+                  defaultValue={getDefaultValue(this.props.account, 'cardName', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
+                <Field
+                  id="card-number"
+                  name="cardNumber"
+                  label="Card Number"
+                  defaultValue={getDefaultValue(this.props.account, 'cardNumber', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
 
-            <div id="cc-number" className={
-              getClassName(
-                "card-number-container",
-                "billingPreferences.cardNumber",
-                errors
-              )
-            }>
-              <label htmlFor="cc-number" className="hidden"> Card Number </label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Number', 'billingPreferences.cardNumber', errors)}</span>
-            </div>
+                <Field
+                  id="card-expdate"
+                  name="cardExpdate"
+                  label="Expiration"
+                  defaultValue={getDefaultValue(this.props.account, 'cardExpdate', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
 
-            <div id="cc-exp" className={
-              getClassName(
-                "exp-container",
-                "billingPreferences.cardExpdate",
-                errors
-              )
-            }>
-              <label htmlFor="cc-exp" className="hidden"> Expiration </label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Expiration', 'billingPreferences.cardExpdate', errors)}</span>
-            </div>
-
-            <div id="cc-cvc" className={
-              getClassName(
-                "cvc-container",
-                "billingPreferences.cardCvv",
-                errors
-              )
-            }>
-              <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('CVC/CVV', 'billingPreferences.cardCvv', errors)}</span>
-            </div>
-
+                <Field
+                  id="card-cvc"
+                  name="cardCvv"
+                  label="CVC/CVV"
+                  defaultValue={getDefaultValue(this.props.account, 'cardCvv', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
+              </React.Fragment>
+            }
           </div>
         </div>
         <div className="ui clearing divider"></div>

@@ -92,6 +92,8 @@ export const configurePlaid = (
   document.body.appendChild(plaid);
 }
 
+export { default as ErrorMessage } from './ErrorMessage'
+export { default as Field } from './Field'
 export { default as TogglePlaid } from './TogglePlaid'
 export { default as StandardTerms } from './StandardTerms'
 export { default as CreditCardForm } from './CreditCardForm'

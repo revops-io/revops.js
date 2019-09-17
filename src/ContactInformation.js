@@ -34,7 +34,7 @@ export default class ContactInformation extends Component {
   initialize = () => {
     const { accountModel } = this.props
     let form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
-    
+
 
     form.field("#customer-first-name .field-space", {
       type: "text",
@@ -101,7 +101,7 @@ export default class ContactInformation extends Component {
   buttonGrp = () => {
     const { onLast, onCancel, finalStep } = this.props
     return (
-      <div id="form-nav">
+      <div id="button-group">
         <button
           id="form-cancel-btn"
           className="ui left floated button secondary basic"

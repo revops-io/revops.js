@@ -78,6 +78,12 @@ export default class PaymentMethod extends Component {
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
+
+    /** Render customized Card forms */
+    renderCardForms: PropTypes.func,
+
+    /** Render customized ACH forms */
+    renderAchForms: PropTypes.func,
   }
 
 
@@ -185,7 +191,13 @@ export default class PaymentMethod extends Component {
 
   render() {
     const { method } = this.state
-    const { onLast, onCancel } = this.props
+    const {
+      onLast,
+      onCancel,
+      renderCardForms,
+      renderAchForms,
+    } = this.props
+
     return (
       <section className="">
         <br />
@@ -201,7 +213,9 @@ export default class PaymentMethod extends Component {
                 showACHLink={this.isACHEnabled()}
                 changePaymentMethod={() => this.changePaymentMethodACH()}
                 {...this.props}
-              />
+              >
+                {renderCardForms}
+              </CreditCardForm>
             </div>
         }
         {
@@ -220,7 +234,9 @@ export default class PaymentMethod extends Component {
                 showCardLink={this.isCardEnabled()}
                 togglePlaidHandler={this.togglePlaidHandler}
                 {...this.props}
-              />
+              >
+                {renderAchForms}
+              </AchForm>
             </div>
         }
         {
@@ -235,6 +251,7 @@ export default class PaymentMethod extends Component {
                 changePaymentMethod={() => this.changePaymentMethodCC()}
                 togglePlaidHandler={this.togglePlaidHandler}
                 {...this.props}
+
               />
             </div>
         }

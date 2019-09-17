@@ -127,7 +127,7 @@ export class AddressForm extends Component {
   buttonGrp = () => {
     const { onLast, onCancel, finalStep } = this.props
     return (
-      <div id="form-nav">
+      <div id="button-group">
         <button
           id="form-cancel-btn"
           className="ui left floated button secondary basic"

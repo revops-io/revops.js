@@ -15,7 +15,7 @@ export const ButtonGroup = ({
   buttonStylesSecondary = SharedStyles.buttonStylesSecondary,
 }) => {
   return (
-    <div id="form-nav">
+    <div id="button-group">
     { showAccept &&
       <button
         id="form-next-btn"

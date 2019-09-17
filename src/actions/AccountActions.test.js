@@ -1,6 +1,3 @@
-import axios from 'axios'
-import MockAdapter from 'axios-mock-adapter'
-var mockAxios = new MockAdapter(axios)
 
 /* Include all actions to test under `actions` namespace */
 import * as actions from './AccountActions'
@@ -11,7 +8,6 @@ jest.mock('uuid/v4')
 describe('AccountActions', () => {
   beforeEach(() => {
     uuid.mockClear()
-    mockAxios.reset()
     uuid.mockImplementation(() => 'test-uuid')
   })
 

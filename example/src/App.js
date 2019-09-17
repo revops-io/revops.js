@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
+  Field,
 } from 'revops-js'
 
+import "revops-js/themes/defaultStyles.css"
 
-// Example-specific
 const backgroundStyles = {
   display: 'flex',
   justifyContent: 'center',
@@ -18,6 +19,7 @@ const backgroundStyles = {
 export default class App extends Component {
   state = {
     email: '',
+    success: false,
   }
 
   constructor(props) {
@@ -52,12 +54,21 @@ export default class App extends Component {
             />
           </label>
           <PaymentMethod
-            publicKey="pk_sandbox_test"
+            publicKey="pk_sandbox_123"
+            methods={['card', 'ach', 'plaid']}
             account={{
-              accountId: "my-account-id",
+              accountId: "100000-3",
               email: this.state.email,
             }}
+            onComplete={(response) => {
+              this.setState({ success: true })
+            }}
+
           />
+          {this.state.success === true &&
+            <h1>Details Saved!</h1>
+          }
+
         </div>
       </div>
     )

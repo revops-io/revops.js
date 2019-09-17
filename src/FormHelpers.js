@@ -12,6 +12,7 @@ export const getErrorText = (prefix, errorKey, errors) => {
 
 /* getClassName - reveals correct className when an error occurs */
 export const getClassName = (className, errorKey, errors) => {
+  className = `field ${className}`
   if (!!errors === true && !!errors[errorKey] === true) {
     return className + ' validation-error'
   } else {

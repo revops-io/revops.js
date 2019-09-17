@@ -253,7 +253,7 @@ export default class PlaidForm extends Component {
           Sync your bank account
         </button>
         {!!this.state.plaidMetadata !== false &&
-          <div id="content-form" className="ui form">
+          <div id="plaid-form" className="ui form">
             <div id="bank-name"
               className={
                getClassName(
