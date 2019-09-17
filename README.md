@@ -71,6 +71,14 @@ class SignupForm extends Component {
     }
   }
 
+  onComplete = (response) => {
+    console.log(response)
+  }
+  
+  onError = (error) => {
+    console.error(error)
+  }
+
   render() {
     const {
       /* RevOps API Sandbox Key */
@@ -101,6 +109,8 @@ class SignupForm extends Component {
           }}
           defaultMethod="card"
           saveRef={this.saveRef}
+          onComplete={this.onComplete}
+          onError={this.onError}
         />
         <input type="submit" onClick={this.submitSecure} />
         </form>
@@ -171,7 +181,7 @@ Here is an example how to style inputs:
 | methods | PropTypes.arrayOf(PropTypes.oneOf(['ach', 'card', 'plaid'])) | List of supported payment methods.
 | defaultMethod | PropTypes.oneOf(['ach', 'card', 'plaid']) | The payment method shown first.
 | saveRef | PropTypes.shape({ current: PropTypes.any }) | Assign a ref to add an external save button. If assigned, it will hide built-in buttons.
-| styles | PropTypes.object | Inelin CSS Style definition to customize the form.
+| styles | PropTypes.object | Inline CSS Style definition to customize the form.
 
 
 
@@ -189,10 +199,12 @@ to initial new accounts.
 
 | Prop     |      type      |  Description |
 |----------|:--------------:|-------------:|
-| accountId |    PropTypes.string   |  The customer `accountId` to connect with a RevOps Account. |
-| email | PropTypes.string | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
+| accountId |    PropTypes.string.isRequired   |  The customer `accountId` to connect with a RevOps Account. |
+| email | PropTypes.string.isRequired | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
 | billingContact | PropTypes.object | Object defining `email`, `name`, `phone`, and `title` of the direct billing contact, if it is different than the `account.email` provided.
 | billingPreferences | PropTypes.object | Object defining preferences filled out by RevOps.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
+| onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request.
+| onError({errors, status, response}) | PropTypes.func | This callback returns an error for an unsuccessful HTTP request.
 
 ## BillingPreferences Object
 BillingPreferences can be found on the account object and defaults can be set at runtime by setting the `billingPreferences` property on `account`.
