@@ -121,7 +121,7 @@ export default class ContactInformation extends Component {
   render() {
     return (
       <section>
-        <form id="contact-form" className="ui form">
+        <div id="contact-form" className="ui form">
           <div id="customer-first-name" className="field">
             <label>First Name</label>
             <span className="field-space"></span>
@@ -141,7 +141,7 @@ export default class ContactInformation extends Component {
             <span className="field-space"></span>
           </div>
 
-        </form>
+        </div>
         {this.buttonGrp()}
       </section>
     )

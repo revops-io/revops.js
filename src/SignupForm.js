@@ -75,7 +75,7 @@ export default class SignupForm extends Component {
                 <span className="card-image"> <i className="far fa-credit-card"></i> </span>
               </div>
 
-              <form id="cc-form">
+              <div id="cc-form">
                 <div id="cc-number" className="card-number-container">
                   <label htmlFor="cc-number" className="hidden"> Card Number </label>
                   <span className="field-space">  </span>
@@ -95,7 +95,7 @@ export default class SignupForm extends Component {
                   <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
                   <span className="field-space"></span>
                 </div>
-              </form>
+              </div>
             </div>
             <div className="card-back"><div className="card-stripe"></div></div>
           </div>

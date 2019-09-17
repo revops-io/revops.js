@@ -129,7 +129,7 @@ export class SignUp extends Component {
     const { errors } = this.state
     return (
       <section style={cardWidth}>
-        <form id="contact-form" className="ui form">
+        <div id="contact-form" className="ui form">
           <div id="signup-email" className="field">
             <label>Email</label>
             <span className="field-space"></span>
@@ -142,7 +142,7 @@ export class SignUp extends Component {
             <span>{getErrorText('Password', 'password', errors)}</span>
           </div>
 
-        </form>
+        </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
         <ButtonGroup
