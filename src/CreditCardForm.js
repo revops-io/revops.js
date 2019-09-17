@@ -183,6 +183,18 @@ export default class CreditCardForm extends Component {
     this.form = form
   }
 
+  onComplete = (response) => {
+    const { onComplete } = this.props
+
+    this.setState({
+      loading: false,
+    })
+
+    if(onComplete !== false && typeof(onComplete) === 'function') {
+      onComplete(response)
+    }
+  }
+
   onError = ({status, errors, response}) => {
     const { onError } = this.props
     this.setState({
@@ -202,7 +214,7 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, onComplete = false } = this.props
+    const { onNext, } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -225,6 +237,7 @@ export default class CreditCardForm extends Component {
     })
 
     const onError = this.onError
+    const onComplete = this.onComplete
     account.saveWithSecureForm(
       this.props.publicKey,
       form,
