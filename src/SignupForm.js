@@ -25,7 +25,7 @@ export default class SignupForm extends Component {
 
     const form = VGSCollect.create(configure(this.props.env).vaultId, function(state) {});
 
-    form.field("#card-holder .field-space", {
+    form.field("#card-cardName .field-space", {
       type: "text",
       name: "card.name",
       placeholder: "Joe Business",
@@ -82,8 +82,8 @@ export default class SignupForm extends Component {
 
                 </div>
 
-                <div id="card-holder" className="cardholder-container">
-                  <label htmlFor="card-holder" className="hidden">Card Holder</label>
+                <div id="card-cardName" className="cardName">
+                  <label htmlFor="card-cardName" className="hidden">Card Holder</label>
                   <span className="field-space"></span>
                 </div>
 

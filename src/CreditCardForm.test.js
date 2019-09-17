@@ -26,7 +26,7 @@ describe('The CreditCardForm Component', () => {
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
     expect(wrapper.find('#card-form').length).to.equal(1)
-    expect(wrapper.find('#card-holder').length).to.equal(1)
+    expect(wrapper.find('#card-name').length).to.equal(1)
     expect(wrapper.find('#card-expdate').length).to.equal(1)
     expect(wrapper.find('#card-cvc').length).to.equal(1)
   })

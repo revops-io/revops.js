@@ -35,7 +35,7 @@ describe('The PlaidForm Component', () => {
     const mockProps = generateMockProps({})
     const wrapper = shallow(<PlaidForm  {...mockProps} />)
 
-    expect(wrapper.find('form').length).to.equal(0)
+    expect(wrapper.find('#plaid-form').length).to.equal(0)
     wrapper.instance().onPlaidSelect("token", {
       account: {
         name: "",
@@ -43,7 +43,7 @@ describe('The PlaidForm Component', () => {
         mask: "",
       }
     })
-    expect(wrapper.find('form').length).to.equal(1)
+    expect(wrapper.find('#plaid-form').length).to.equal(1)
 
   })
 
