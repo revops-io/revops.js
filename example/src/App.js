@@ -4,8 +4,8 @@ import {
   PaymentMethod,
 } from 'revops-js'
 
+import "revops-js/themes/defaultStyles.css"
 
-// Example-specific
 const backgroundStyles = {
   display: 'flex',
   justifyContent: 'center',

@@ -1,0 +1,219 @@
+/**
+   ____            ____
+   / __ \___ _   __/ __ \____  _____
+  / /_/ / _ \ | / / / / / __ \/ ___/
+ / _, _/  __/ |/ / /_/ / /_/ (__  )
+/_/ |_|\___/|___/\____/ .___/____/
+                     /_/
+ **/
+
+ 
+p {
+  font-size: 17px;
+}
+img.logo {
+  margin: 3.5em auto; /* Needs to be a variable*/
+  display: block;
+}
+
+#main-wrapper {
+  max-width: 500px;
+}
+
+#standard-terms {
+  padding-bottom: 60px;
+}
+
+.field-space iframe {
+  border: 0 none transparent;
+  height: 50px;
+  vertical-align: middle;
+  width: 100%;
+}
+
+.field-space {
+  width: 100%;
+  display: block;
+}
+
+.field-examples {
+  width: 500px;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+label.h3 {
+  font-size: 1.28571429rem;
+  line-height: 1.28571429em;
+  margin: calc(2rem - .14285714em) 0 1rem;
+  font-weight: 700;
+  padding: 0;
+}
+label.h3:first-child {
+  margin-top: 0;
+}
+a.pay-by-ach-link,
+a.pay-by-cc-link {
+  /* Needs to be a variable of the chosen link colors */
+  /*color: #4f34c7;*/
+  float: right;
+}
+a.pay-by-ach-link:hover,
+a.pay-by-cc-link:hover,
+.manual-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.manual-link.single.centered {
+  display: block;
+  margin: 1rem 0 2rem;
+}
+
+/* Button Styling */
+.centered.single.ui.button {
+  text-align: center;
+  display: block;
+  margin: 1.7rem auto 0;
+}
+.centered.single {
+  display: block;
+  text-align: center;
+}
+
+/* Form Styling */
+.form-container label {
+  font-weight: bold;
+  display: inline-block;
+  line-height: 2rem;
+  margin-top: 1rem;
+}
+.ui.form .field>label {
+  font-weight: bold;
+  margin-top: 1rem;
+}
+#form-nav {
+  height: 7px;
+}
+
+
+
+/* Consistent Credit Card Styling */
+#cc-cvc.cvc-container {
+  float: right;
+}
+a.pay-by-ach-link:hover,
+a.pay-by-cc-link:hover,
+a.manual-link {
+  cursor: pointer;
+
+}
+/* Form Styling */
+.form-container label {
+  font-weight: bold;
+  display: inline-block;
+  line-height: 2rem;
+  margin-top: 1rem;
+}
+.ui.form .field>label {
+  font-weight: bold;
+  margin-top: 1rem;
+}
+#standard-terms {
+  max-width: 768px;
+  margin: 0 auto;
+}
+#standard-terms .float-wrapper {
+  position: relative;
+  width: 100%;
+  overflow-y: hidden;
+}
+#standard-terms .float-above {
+  position: fixed;
+  z-index: 1;
+  bottom: 0;
+  background: white;
+  padding: 1rem 0;
+  border-top: 1px solid #ccc;
+  width: 100%;
+  max-width: 768px;
+}
+#form-nav {
+  height: 7px;
+}
+
+
+
+/* Consistent Credit Card Styling */
+#cc-cvc.cvc-container {
+  float: right;
+}
+#cc-exp.exp-container,
+#cc-cvc.cvc-container {
+  width: 47%;
+  display: inline-block;
+}
+
+/* Error Messaging */
+.validation-error .field-space + span {
+  color: red;
+  margin-top: 3px;
+  display: inline-block;
+}
+.validation-error .field-space {
+  border: 2px solid red;
+  border-radius: 4px;
+}
+
+/**** MEMSQL SPECIFIC ***/
+.ui.grid.memsql-layout {
+  margin-top: 9rem;
+}
+.memsql-layout .ui.raised.segment {
+  box-shadow: none;
+  border: none;
+}
+.memsql-layout #signup-email {
+  margin-top: 5rem;
+}
+h1 {
+  color: #4c4a57;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 24px;
+  text-align: center;
+}
+
+.ui.form .field > label {
+  color: #777582
+}
+
+/* Error Messaging */
+.validation-error .field-space + span {
+  color: red;
+  margin-top: 3px;
+  display: inline-block;
+}
+.validation-error .field-space {
+  border: 2px solid red;
+  border-radius: 4px;
+}
+
+
+/* Media Query Reset */
+@media only screen and (max-width: 992px) {
+  #standard-terms .float-above {
+    width: 67vw;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .ui.container {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+@media only screen and (max-width: 501px) {
+  #standard-terms .float-above {
+    width: 84%;
+    max-width: 465px;
+  }
+}
