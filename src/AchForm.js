@@ -243,9 +243,20 @@ export default class AchForm extends Component {
     }
   }
 
+  onComplete = (response) => {
+    const { onComplete } = this.props
+    this.setState({
+      loading: false,
+    })
+
+    if(onComplete !== false && typeof(onComplete) === 'function') {
+      onComplete(response)
+    }
+  }
+
   onSubmit = () => {
     const { form } = this
-    const { onNext, onComplete = false } = this.props
+    const { onNext, } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -267,6 +278,7 @@ export default class AchForm extends Component {
     })
 
     const onError = this.onError
+    const onComplete = this.onError
     account.saveWithSecureForm(
       this.props.publicKey,
       form,
