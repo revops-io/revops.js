@@ -17,6 +17,10 @@ import React from 'react'
 
 import { PaymentMethod } from 'revops-js'
 
+/* Default stylesheet to configure look and feel */
+import "revops-js/themes/defaultStyles.css"
+
+
 export const App = ({ accountId, publicKey = 'your-public-api-key' }) => (
   <PaymentMethod
     publicKey={publicKey}
@@ -54,6 +58,9 @@ Next, let's add a credit card payment method to the form below. We set `defaultM
 ```jsx
 import React, { Component } from 'react'
 import { PaymentMethod } from 'revops-js'
+
+/* Default stylesheet to configure look and feel */
+import "revops-js/themes/defaultStyles.css"
 
 class SignupForm extends Component {
   constructor(props) {
@@ -151,7 +158,7 @@ Here is an example how to style inputs:
   }}
   defaultMethod="card"
   saveRef={this.saveRef}
-  inputStyles={
+  inputStyles={{
     background: '#eeeeee',
     borderRadius: '2px',
     padding: '4px 8px',
@@ -164,7 +171,7 @@ Here is an example how to style inputs:
       background: '#ffffff',
       border: `2px solid papayawhip`
     }
-  }
+  }}
 />
 ```
 
