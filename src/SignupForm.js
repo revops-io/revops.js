@@ -25,7 +25,7 @@ export default class SignupForm extends Component {
 
     const form = VGSCollect.create(configure(this.props.env).vaultId, function(state) {});
 
-    form.field("#cc-holder .field-space", {
+    form.field("#card-holder .field-space", {
       type: "text",
       name: "card.name",
       placeholder: "Joe Business",
@@ -33,7 +33,7 @@ export default class SignupForm extends Component {
       css: inputStyles
     });
 
-    form.field("#cc-number .field-space", {
+    form.field("#card-number .field-space", {
       type: "card-number",
       name: "card.number",
       placeholder: "Card number",
@@ -41,7 +41,7 @@ export default class SignupForm extends Component {
       css: inputStyles
     });
 
-    form.field("#cc-cvc .field-space", {
+    form.field("#card-cvc .field-space", {
       type: "card-security-code",
       name: "card.cvc",
       placeholder: "344",
@@ -49,7 +49,7 @@ export default class SignupForm extends Component {
       css: inputStyles
     });
 
-    form.field("#cc-exp .field-space", {
+    form.field("#card-expdate .field-space", {
       type: "card-expiration-date",
       name: "card.expirationDate",
       placeholder: "01 / 2016",
@@ -75,24 +75,24 @@ export default class SignupForm extends Component {
                 <span className="card-image"> <i className="far fa-credit-card"></i> </span>
               </div>
 
-              <div id="cc-form">
-                <div id="cc-number" className="card-number-container">
-                  <label htmlFor="cc-number" className="hidden"> Card Number </label>
+              <div id="card-form">
+                <div id="card-number" className="card-number-container">
+                  <label htmlFor="card-number" className="hidden"> Card Number </label>
                   <span className="field-space">  </span>
 
                 </div>
 
-                <div id="cc-holder" className="cardholder-container">
-                  <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+                <div id="card-holder" className="cardholder-container">
+                  <label htmlFor="card-holder" className="hidden">Card Holder</label>
                   <span className="field-space"></span>
                 </div>
 
-                <div id="cc-exp" className="exp-container">
-                  <label htmlFor="cc-exp" className="hidden"> Expiration </label>
+                <div id="card-expdate" className="exp-container">
+                  <label htmlFor="card-expdate" className="hidden"> Expiration </label>
                   <span className="field-space"></span>
                 </div>
-                <div id="cc-cvc" className="cvc-container">
-                  <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
+                <div id="card-cvc" className="cvc-container">
+                  <label htmlFor="card-cvc" className="hidden"> CVC/CVV</label>
                   <span className="field-space"></span>
                 </div>
               </div>

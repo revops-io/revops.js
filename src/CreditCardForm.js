@@ -118,7 +118,7 @@ export default class CreditCardForm extends Component {
     // eslint-disable-next-line
     const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
 
-    form.field("#cc-holder .field-space", {
+    form.field("#card-holder .field-space", {
       type: "text",
       errorColor: this.props.errorColor,
       name: "billingPreferences.cardName",
@@ -128,7 +128,7 @@ export default class CreditCardForm extends Component {
       css: this.props.inputStyles,
     });
 
-    form.field("#cc-number .field-space", {
+    form.field("#card-number .field-space", {
       type: "card-number",
       errorColor: this.props.errorColor,
       name: "billingPreferences.cardNumber",
@@ -136,11 +136,11 @@ export default class CreditCardForm extends Component {
       placeholder: "Card number",
       validations: ["required", "validCardNumber"],
       showCardIcon: true,
-      autoComplete: 'cc-number',
+      autoComplete: 'card-number',
       css: this.props.inputStyles,
     });
 
-    form.field("#cc-cvc .field-space", {
+    form.field("#card-cvc .field-space", {
       type: "card-security-code",
       errorColor: this.props.errorColor,
       name: "billingPreferences.cardCvv",
@@ -149,7 +149,7 @@ export default class CreditCardForm extends Component {
       css: this.props.inputStyles,
     });
 
-    form.field("#cc-exp .field-space", {
+    form.field("#card-expdate .field-space", {
       type: "card-expiration-date",
       name: "billingPreferences.cardExpdate",
       errorColor: this.props.errorColor,
@@ -237,51 +237,51 @@ export default class CreditCardForm extends Component {
           </a>
         }
         <div className="form-container">
-          <div id="cc-form">
-            <div id="cc-holder" className={
+          <div id="card-form" className="ui form">
+            <div id="card-holder" className={
               getClassName(
                 "cardholder-container",
                 "billingPreferences.cardName",
                 errors
               )
             }>
-              <label htmlFor="cc-holder" className="hidden">Card Holder</label>
+              <label htmlFor="card-holder" className="hidden">Card Holder</label>
               <span className="field-space"></span>
               <span>{getErrorText('Name', 'billingPreferences.cardName', errors)}</span>
             </div>
 
-            <div id="cc-number" className={
+            <div id="card-number" className={
               getClassName(
                 "card-number-container",
                 "billingPreferences.cardNumber",
                 errors
               )
             }>
-              <label htmlFor="cc-number" className="hidden"> Card Number </label>
+              <label htmlFor="card-number" className="hidden"> Card Number </label>
               <span className="field-space"></span>
               <span>{getErrorText('Number', 'billingPreferences.cardNumber', errors)}</span>
             </div>
 
-            <div id="cc-exp" className={
+            <div id="card-expdate" className={
               getClassName(
                 "exp-container",
                 "billingPreferences.cardExpdate",
                 errors
               )
             }>
-              <label htmlFor="cc-exp" className="hidden"> Expiration </label>
+              <label htmlFor="card-expdate" className="hidden"> Expiration </label>
               <span className="field-space"></span>
               <span>{getErrorText('Expiration', 'billingPreferences.cardExpdate', errors)}</span>
             </div>
 
-            <div id="cc-cvc" className={
+            <div id="card-cvc" className={
               getClassName(
                 "cvc-container",
                 "billingPreferences.cardCvv",
                 errors
               )
             }>
-              <label htmlFor="cc-cvc" className="hidden"> CVC/CVV</label>
+              <label htmlFor="card-cvc" className="hidden"> CVC/CVV</label>
               <span className="field-space"></span>
               <span>{getErrorText('CVC/CVV', 'billingPreferences.cardCvv', errors)}</span>
             </div>

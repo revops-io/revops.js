@@ -29,7 +29,7 @@ describe('Formhelper methods', () => {
           errorMessages: ['Error Text']
         }
       })
-      expect(className).to.equal('some-class validation-error')
+      expect(className).to.equal('field some-class validation-error')
     })
 
     it('should return the correct className without an error', () => {
@@ -38,7 +38,7 @@ describe('Formhelper methods', () => {
           errorMessages: ['Error Text']
         }
       })
-      expect(className).to.equal('some-class')
+      expect(className).to.equal('field some-class')
     })
   })
 
@@ -59,7 +59,7 @@ describe('Formhelper methods', () => {
         }
       })
       expect(error).to.have.deep.property(
-        'billingPreferences.cardExpdate', 
+        'billingPreferences.cardExpdate',
         {
           "errorMessages": ["error message"]
         });
@@ -67,13 +67,11 @@ describe('Formhelper methods', () => {
     it('should return the correct http error', () => {
       const error = convertAPIError(400, false)
       expect(error).to.have.deep.property(
-        'networkError', 
+        'networkError',
         {
           "errorMessages": ["Please try again. If this persists, contact support."]
         });
     })
-      
+
   })
 })
-
-

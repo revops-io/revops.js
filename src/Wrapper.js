@@ -5,7 +5,7 @@ export default class Wrapper extends Component {
   buttonGrp = () => {
     const { onLast, onCancel, firstStep, finalStep, onNext } = this.props
     return (
-      <div id="form-nav">
+      <div id="button-group">
         {!firstStep && <button
           id="form-cancel-btn"
           className="ui left floated button secondary basic"

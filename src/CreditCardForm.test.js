@@ -25,10 +25,10 @@ describe('The CreditCardForm Component', () => {
     expect(wrapper.length).to.equal(1)
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
-    expect(wrapper.find('#cc-form').length).to.equal(1)
-    expect(wrapper.find('#cc-holder').length).to.equal(1)
-    expect(wrapper.find('#cc-exp').length).to.equal(1)
-    expect(wrapper.find('#cc-cvc').length).to.equal(1)
+    expect(wrapper.find('#card-form').length).to.equal(1)
+    expect(wrapper.find('#card-holder').length).to.equal(1)
+    expect(wrapper.find('#card-expdate').length).to.equal(1)
+    expect(wrapper.find('#card-cvc').length).to.equal(1)
   })
 
   it('should not render button group when saveRef is defined', () => {

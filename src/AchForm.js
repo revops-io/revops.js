@@ -154,7 +154,7 @@ export default class AchForm extends Component {
     )
 
     this.createFormField(
-      "#bank-acct-country .field-space",
+      "#bank-account-country .field-space",
       'billingPreferences.bankCountry',
       getDefaultValue(account, 'bankCountry', 'USA'),
       {
@@ -179,7 +179,7 @@ export default class AchForm extends Component {
     )
 
     this.createFormField(
-      "#bank-acct-type .field-space",
+      "#bank-account-type .field-space",
       "billingPreferences.bankAccountHolderType",
       getDefaultValue(account, 'bankAccountHolderType', 'company'),
       {
@@ -193,7 +193,7 @@ export default class AchForm extends Component {
     )
 
     this.createFormField(
-      "#bank-acct-number .field-space",
+      "#bank-account-number .field-space",
       "billingPreferences.bankAccountNumber",
       getDefaultValue(account, 'bankAccountNumber', ''),
       {
@@ -278,7 +278,7 @@ export default class AchForm extends Component {
           </a>
         }
 
-        <div id="contact-form" className="ui form">
+        <div id="ach-form" className="ui form">
 
             <div id="bank-name"
               className={
@@ -306,13 +306,13 @@ export default class AchForm extends Component {
             <span>{getErrorText('Name', 'billingPreferences.bankAccountHolderName', errors)}</span>
           </div>
 
-          <div id="bank-acct-country"
+          <div id="bank-account-country"
             className="field">
             <label >Bank Country</label>
             <span className="field-space"></span>
           </div>
 
-          <div id="bank-acct-type"
+          <div id="bank-account-type"
           className="field">
             <label >Account Type</label>
             <span className="field-space"></span>
@@ -330,7 +330,7 @@ export default class AchForm extends Component {
             <span className="field-space"></span>
             <span>{getErrorText('Routing number', 'billingPreferences.bankRoutingNumber', errors)}</span>
           </div>
-          <div id="bank-acct-number"
+          <div id="bank-account-number"
             className={
              getClassName(
                "field",

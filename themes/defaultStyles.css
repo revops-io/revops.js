@@ -7,22 +7,35 @@
                      /_/
  **/
 
- 
-p {
-  font-size: 17px;
+/* =======================
+ * List of classes & ids
+ */
+
+/*
+ * -----------------------
+ * Links
+ * ----------------------- */
+a.pay-by-ach-link,
+a.pay-by-cc-link {
+  /* Needs to be a variable of the chosen link colors */
+  /*color: #4f34c7;*/
+  float: right;
 }
-img.logo {
-  margin: 3.5em auto; /* Needs to be a variable*/
+a.pay-by-ach-link:hover,
+a.pay-by-cc-link:hover,
+.manual-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.manual-link.single.centered {
   display: block;
+  margin: 1rem 0 2rem;
 }
 
-#main-wrapper {
-  max-width: 500px;
-}
-
-#standard-terms {
-  padding-bottom: 60px;
-}
+/*
+ * -----------------------
+ * Fields (Card, ACH, Plaid)
+ * ----------------------- */
 
 .field-space iframe {
   border: 0 none transparent;
@@ -42,6 +55,15 @@ img.logo {
   border-radius: 6px;
 }
 
+#card-form .field > label,
+#ach-form .field > label,
+#plaid-form .field > label {
+  color: #777582;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+
 label.h3 {
   font-size: 1.28571429rem;
   line-height: 1.28571429em;
@@ -49,25 +71,52 @@ label.h3 {
   font-weight: 700;
   padding: 0;
 }
+
 label.h3:first-child {
   margin-top: 0;
 }
-a.pay-by-ach-link,
-a.pay-by-cc-link {
-  /* Needs to be a variable of the chosen link colors */
-  /*color: #4f34c7;*/
+
+.form-container label {
+  font-weight: bold;
+  display: inline-block;
+  line-height: 2rem;
+  margin-top: 1rem;
+}
+
+/* Container for Buttons */
+#button-group {
+  height: 7px;
+}
+
+/*
+ * -----------------------
+ * Card Form
+ * -----------------------*/
+#card-cvc.cvc-container {
   float: right;
 }
-a.pay-by-ach-link:hover,
-a.pay-by-cc-link:hover,
-.manual-link:hover {
-  cursor: pointer;
-  text-decoration: underline;
+
+#card-expdate.exp-container,
+#card-cvc.cvc-container {
+  width: 47%;
+  display: inline-block;
 }
-.manual-link.single.centered {
-  display: block;
-  margin: 1rem 0 2rem;
-}
+
+/*
+ * -----------------------
+ * ACH Form
+ * -----------------------*/
+label.h3
+
+/*
+ * -----------------------
+ * Plaid Form
+ * -----------------------*/
+
+/*
+ * -----------------------
+ * Buttons
+ * -----------------------*/
 
 /* Button Styling */
 .centered.single.ui.button {
@@ -80,44 +129,10 @@ a.pay-by-cc-link:hover,
   text-align: center;
 }
 
-/* Form Styling */
-.form-container label {
-  font-weight: bold;
-  display: inline-block;
-  line-height: 2rem;
-  margin-top: 1rem;
-}
-.ui.form .field>label {
-  font-weight: bold;
-  margin-top: 1rem;
-}
-#form-nav {
-  height: 7px;
-}
-
-
-
-/* Consistent Credit Card Styling */
-#cc-cvc.cvc-container {
-  float: right;
-}
-a.pay-by-ach-link:hover,
-a.pay-by-cc-link:hover,
-a.manual-link {
-  cursor: pointer;
-
-}
-/* Form Styling */
-.form-container label {
-  font-weight: bold;
-  display: inline-block;
-  line-height: 2rem;
-  margin-top: 1rem;
-}
-.ui.form .field>label {
-  font-weight: bold;
-  margin-top: 1rem;
-}
+/*
+ * -----------------------
+ * Terms & Conditions
+ * -----------------------*/
 #standard-terms {
   max-width: 768px;
   margin: 0 auto;
@@ -137,23 +152,12 @@ a.manual-link {
   width: 100%;
   max-width: 768px;
 }
-#form-nav {
-  height: 7px;
-}
 
+/*
+ * -----------------------
+ * Error Messaging
+ * -----------------------*/
 
-
-/* Consistent Credit Card Styling */
-#cc-cvc.cvc-container {
-  float: right;
-}
-#cc-exp.exp-container,
-#cc-cvc.cvc-container {
-  width: 47%;
-  display: inline-block;
-}
-
-/* Error Messaging */
 .validation-error .field-space + span {
   color: red;
   margin-top: 3px;
@@ -162,29 +166,6 @@ a.manual-link {
 .validation-error .field-space {
   border: 2px solid red;
   border-radius: 4px;
-}
-
-/**** MEMSQL SPECIFIC ***/
-.ui.grid.memsql-layout {
-  margin-top: 9rem;
-}
-.memsql-layout .ui.raised.segment {
-  box-shadow: none;
-  border: none;
-}
-.memsql-layout #signup-email {
-  margin-top: 5rem;
-}
-h1 {
-  color: #4c4a57;
-  font-size: 24px;
-  font-weight: 600;
-  line-height: 24px;
-  text-align: center;
-}
-
-.ui.form .field > label {
-  color: #777582
 }
 
 /* Error Messaging */
