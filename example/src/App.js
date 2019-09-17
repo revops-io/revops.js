@@ -19,6 +19,7 @@ const backgroundStyles = {
 export default class App extends Component {
   state = {
     email: '',
+    success: false,
   }
 
   constructor(props) {
@@ -53,50 +54,21 @@ export default class App extends Component {
             />
           </label>
           <PaymentMethod
-            publicKey="pk_sandbox_test"
+            publicKey="pk_sandbox_123"
             methods={['card', 'ach', 'plaid']}
             account={{
-              accountId: "my-account-id",
+              accountId: "100000-3",
               email: this.state.email,
             }}
+            onComplete={(response) => {
+              this.setState({ success: true })
+            }}
 
-            renderCardForms={(props) =>
-              <React.Fragment>
-                <h1>My Custom Form</h1>
-                <Field
-                  id="card-name"
-                  name="cardName"
-                  label="Card Holder"
-                  defaultValue={'My Name Is...'}
-                  errors={props.errors}
-                  showInlineError={true}
-                />
-                <Field
-                  id="card-number"
-                  name="cardNumber"
-                  label="Card Number"
-                  errors={props.errors}
-                  showInlineError={true}
-                />
-
-                <Field
-                  id="card-expdate"
-                  name="cardExpdate"
-                  label="Expiration"
-                  errors={props.errors}
-                  showInlineError={true}
-                />
-
-                <Field
-                  id="card-cvc"
-                  name="cardCvv"
-                  label="CVC/CVV"
-                  errors={props.errors}
-                  showInlineError={true}
-                />
-              </React.Fragment>
-            }
           />
+          {this.state.success === true &&
+            <h1>Details Saved!</h1>
+          }
+
         </div>
       </div>
     )
