@@ -22,9 +22,8 @@ export const App = ({ accountId, publicKey = 'your-public-api-key' }) => (
     publicKey={publicKey}
     account={{
       accountId: accountId,
+      email: 'bugs@bunny.com',
     }}
-    logo="https://bill.sh/example_logos/pigeon.png"
-    companyName="pigeonDelivery , Inc."
   />
 )
 
