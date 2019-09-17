@@ -248,6 +248,93 @@ account = {
 | bankCountry | PropTypes.string | Country of Issuing Bank | ✅
 | plaidLinkToken | PropTypes.string | Link Token of Connected Plaid Bank | ✅
 
+## Error Handling and Validation
+If an error occurs we have you covered with the `onError` callback. It is designed 
+to be called anytime we detect an error with revops-js and will return
+a useful error object that can be used to implement custom validation or error handling. 
+This can be particularly useful when you need to keep branding consistent or need to 
+integrate revops-js with an existing application. 
+
+### Validation Errors
+Prior to submitting the form a validation step is performed and if the form cannot 
+be submitted revops-js will return an object that indicates the current problem areas.
+
+```json
+{
+  "errors": 
+  {
+    "billingPreferences.propertyName": // name of field
+    {
+      "errorMessages": ["is required"], // one or more fields that could not be accepted
+      "isDirty": "true",
+      "isEmpty": "true",
+      "isFocused": "false",
+      "isValid": "false",
+      "name": "billingPreferences.propertyName"
+    }
+    ...
+  },
+  "response": "false", // response will always equal false for validation errors
+  "status": "false"   // status will always equal false for validation errors
+} 
+```
+
+### Network Errors
+Network errors share a the same signature but the errors will include the response
+from the server and the response field will be returned true.
+
+```json
+{
+  "errors": 
+  {
+    "http_status": "401",
+    "message":"Unauthorized"
+  },
+  "response": "true", // indicates a network was made but was unsuccessful
+  "status": "401"     // HTTP status of the response
+}
+```
+
+#### HTTP Status
+| Status | Meaning |
+|----------|:-------------------|
+| 200 | OK Everything worked as expected.
+| 400 | RevOps API bad request.
+| 401 | RevOps API access denied. Update your `publicKey`.
+| 404 | The requested resource doesn't exist.
+| 500 | Server Errors, contact [RevOps](https://revops.io) for assistance. 
+
+### Example
+```jsx
+export default class App extends Component {
+  // called when an error occurs in revops-js
+  onError = ({errors, response, status}) => {
+    if(response === false){
+      this.setState({formDirty: true, errors})
+    } else if (status >= 500) {
+      this.setState({networkError: true })
+    } else {
+      this.setState({networkError: true, errors})
+    }
+  }
+
+  render() {
+    return (
+      <div className="ui container" style={backgroundStyles}>
+        <PaymentMethod
+          publicKey="pk_sandbox"
+          methods={['card', 'ach', 'plaid']}
+          account={{
+            accountId: "100000-3",
+            email: this.state.email,
+          }}
+          onError={this.onError} />
+      </div>
+    )
+  }
+}
+```
+
 ## License
 
 MIT © [RevOps, Inc.](https://revops.io)
