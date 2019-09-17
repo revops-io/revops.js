@@ -12,6 +12,7 @@ import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 
 import {
+  Field,
   TogglePlaid,
   configureVault,
   jsDependencies,
@@ -80,6 +81,8 @@ export default class AchForm extends Component {
 
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
+
+    children: PropTypes.element,
   }
 
   static defaultProps = {
@@ -134,6 +137,12 @@ export default class AchForm extends Component {
     }
   }
 
+  initForm(id, fieldRender) {
+    if(document.getElementById(id)) {
+      fieldRender()
+    }
+  }
+
   initialize = () => {
     const { account } = this.props
 
@@ -142,7 +151,8 @@ export default class AchForm extends Component {
       this.form = VGSCollect.create(configure(this.props.env).vaultId, function () { });
     }
 
-    this.createFormField(
+    this.initForm('bank-name',
+      () => this.createFormField(
       "#bank-name .field-space",
       'billingPreferences.bankName',
       getDefaultValue(account, 'bankName', ''),
@@ -151,9 +161,10 @@ export default class AchForm extends Component {
         placeholder: "Name of Bank Institution",
         validations: ["required"],
       }
-    )
+    ))
 
-    this.createFormField(
+    this.initForm('bank-account-country',
+      () => this.createFormField(
       "#bank-account-country .field-space",
       'billingPreferences.bankCountry',
       getDefaultValue(account, 'bankCountry', 'USA'),
@@ -166,8 +177,10 @@ export default class AchForm extends Component {
           { value: 'Mexico', text: 'Mexico' },
         ],
       })
+    )
 
-    this.createFormField(
+    this.initForm('bank-holder-name',
+      () => this.createFormField(
       "#bank-holder-name .field-space",
       "billingPreferences.bankAccountHolderName",
       getDefaultValue(account, 'bankAccountHolderName', ''),
@@ -176,9 +189,10 @@ export default class AchForm extends Component {
         placeholder: "Name on the account",
         validations: ["required"],
       }
-    )
+    ))
 
-    this.createFormField(
+    this.initForm('bank-account-type',
+      () => this.createFormField(
       "#bank-account-type .field-space",
       "billingPreferences.bankAccountHolderType",
       getDefaultValue(account, 'bankAccountHolderType', 'company'),
@@ -190,9 +204,10 @@ export default class AchForm extends Component {
           { value: 'individual', text: 'Individual' },
         ],
       }
-    )
+    ))
 
-    this.createFormField(
+    this.initForm('bank-account-number',
+      () => this.createFormField(
       "#bank-account-number .field-space",
       "billingPreferences.bankAccountNumber",
       getDefaultValue(account, 'bankAccountNumber', ''),
@@ -201,17 +216,19 @@ export default class AchForm extends Component {
         placeholder: "Enter bank account number",
         validations: ["required"],
       }
-    )
+    ))
 
-    this.createFormField(
-      "#bank-routing-number .field-space",
-      "billingPreferences.bankRoutingNumber",
-      getDefaultValue(account, 'bankRoutingNumber', ''),
-      {
-        type: "text",
-        placeholder: "Enter bank routing number",
-        validations: ["required"],
-      }
+    this.initForm('bank-routing-number', () =>
+      this.createFormField(
+        "#bank-routing-number .field-space",
+        "billingPreferences.bankRoutingNumber",
+        getDefaultValue(account, 'bankRoutingNumber', ''),
+        {
+          type: "text",
+          placeholder: "Enter bank routing number",
+          validations: ["required"],
+        }
+      )
     )
   }
 
@@ -266,7 +283,12 @@ export default class AchForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, } = this.props
+    const {
+      onLast,
+      onCancel,
+      children,
+    } = this.props
+
     return (
       <section style={this.props.cardWidth}>
         <label className="h3">Paying by ACH</label>
@@ -279,72 +301,71 @@ export default class AchForm extends Component {
         }
 
         <div id="ach-form" className="ui form">
+          {!!children !== false &&
+            React.createElement(children, {
+              ...this.props,
+              ...this.state,
+            }, null)
+          }
+          {!!children === false &&
+            <React.Fragment>
+              <Field
+                id="bank-name"
+                name="bankName"
+                label="Bank Name"
+                defaultValue={getDefaultValue(this.props.account, 'bankName', '')}
+                showInlineError={true}
+                errors={errors}
+              />
 
-            <div id="bank-name"
-              className={
-               getClassName(
-                 "field",
-                 "billingPreferences.bankName",
-                 errors
-               )
-             }>
-              <label>Bank Name</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
-            </div>
+              <Field
+                id="bank-holder-name"
+                name="bankAccountHolderName"
+                label="Account Holder Name"
+                defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderName', '')}
+                showInlineError={true}
+                errors={errors}
+              />
 
-          <div id="bank-holder-name"
-            className={
-             getClassName(
-               "field",
-               "billingPreferences.bankAccountHolderName",
-               errors
-             )
-           }>
-            <label >Account Holder Name</label>
-            <span className="field-space"></span>
-            <span>{getErrorText('Name', 'billingPreferences.bankAccountHolderName', errors)}</span>
-          </div>
+              <Field
+                id="bank-account-country"
+                name="bankCountry"
+                label="Bank Country"
+                defaultValue={getDefaultValue(this.props.account, 'bankCountry', '')}
+                showInlineError={true}
+                errors={errors}
+              />
 
-          <div id="bank-account-country"
-            className="field">
-            <label >Bank Country</label>
-            <span className="field-space"></span>
-          </div>
+              <Field
+                id="bank-account-type"
+                name="bankAccountHolderType"
+                label="Account Type"
+                defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderType', '')}
+                showInlineError={true}
+                errors={errors}
+              />
 
-          <div id="bank-account-type"
-          className="field">
-            <label >Account Type</label>
-            <span className="field-space"></span>
-          </div>
+              <Field
+                id="bank-routing-number"
+                name="bankRoutingNumber"
+                label="Routing Number"
+                defaultValue={getDefaultValue(this.props.account, 'bankRoutingNumber', '')}
+                showInlineError={true}
+                errors={errors}
+              />
 
-          <div id="bank-routing-number"
-            className={
-             getClassName(
-               "field",
-               "billingPreferences.bankRoutingNumber",
-               errors
-             )
-          }>
-            <label >Routing Number</label>
-            <span className="field-space"></span>
-            <span>{getErrorText('Routing number', 'billingPreferences.bankRoutingNumber', errors)}</span>
-          </div>
-          <div id="bank-account-number"
-            className={
-             getClassName(
-               "field",
-               "billingPreferences.bankAccountNumber",
-               errors
-             )
-          }>
-            <label>Account Number</label>
-            <span className="field-space"></span>
-            <span>{getErrorText('Account number', 'billingPreferences.bankAccountNumber', errors)}</span>
-          </div>
+              <Field
+                id="bank-account-number"
+                name="bankAccountNumber"
+                label="Account Number"
+                defaultValue={getDefaultValue(this.props.account, 'bankAccountNumber', '')}
+                showInlineError={true}
+                errors={errors}
+              />
+            </React.Fragment>
+          }
         </div>
         <div className="ui clearing divider"></div>
-
         {this.props.hideTogglePlaid === false &&
           <TogglePlaid
             style={this.props.linkStyling}
