@@ -54,11 +54,12 @@ export default class App extends Component {
           </label>
           <PaymentMethod
             publicKey="pk_sandbox_test"
-            methods={['plaid', 'ach', 'card']}
+            methods={['card', 'ach', 'plaid']}
             account={{
               accountId: "my-account-id",
               email: this.state.email,
             }}
+
             renderCardForms={(props) =>
               <React.Fragment>
                 <h1>My Custom Form</h1>
