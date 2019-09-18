@@ -274,7 +274,7 @@ __Example Error__
 
 __Additional HTTP Statuses__
 | Status | Meaning |
-|----------|:-------------------|
+|--------|:--------|
 | 200 | OK Everything worked as expected.
 | 400 | RevOps API bad request.
 | 401 | RevOps API access denied. Update your `publicKey`.
@@ -320,7 +320,7 @@ This callback returns the form state when a validation error is detected. This i
 
 Form Properties
 | Property | Description |
-|----------|:-------------------|
+|----------|:------------|
 | `isDirty` | Checks if you put any changes to the field
 | `isFocused` | Shows if the field in a focus right now
 | `errorMessages` | An array of error messages for a specific field
