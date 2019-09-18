@@ -253,11 +253,13 @@ account = {
 ## Available Callbacks
 Revops-js provides callbacks that can be used to implement custom validation or error handling. They are particularly useful when you need to keep branding consistent or need to integrate revops-js with an existing application.
 
-### onComplete 
-The `onComplete` callback is triggered when the revops-js component successfully submits its information and return the [Account Object](#Account-Object-`<PaymentMethod-account={{-...-}}-/>`) that has been created.
+### `onComplete` 
+This callback is triggered when the revops-js component successfully submits its information and return the [Account Object](#Account-Object-`<PaymentMethod-account={{-...-}}-/>`) that has been created.
 
-### onError 
-The `onError` callback is called when the form submission process is unsuccessful. These typically indicate a configuration issue or a problem with a network requests.
+### `onError`
+The `onError` callback is called when the form submission process is unsuccessful. This typically indicates a configuration issue or a problem with a network request.
+
+Also, while we don't recommend it, you can suppress the built-in validation warnings using the `showInlineError={false}` prop. *Just be careful!* Without this feedback on errors, users may become frustrated. 
 
 __Example Error__
 ```json
@@ -269,6 +271,7 @@ __Example Error__
   } 
 }
 ```
+
 __Additional HTTP Statuses__
 | Status | Meaning |
 |----------|:-------------------|
@@ -276,17 +279,18 @@ __Additional HTTP Statuses__
 | 400 | RevOps API bad request.
 | 401 | RevOps API access denied. Update your `publicKey`.
 | 404 | The requested resource doesn't exist.
-| 500 | Server Errors, contact [RevOps](https://revops.io) for assistance. 
+| 500s | Server errors, contact [RevOps](https://revops.io) for assistance. 
 
 __Error handling example__
 ```jsx
-export default class App extends Component {
+export default class App extends Component {}
 
   handleError = ({response, status}) =>{
     this.setState({hasError: true})
   }
 
   render() {
+    const { email } = this.props
     return (
       <div>
         <PaymentMethod
@@ -294,7 +298,7 @@ export default class App extends Component {
           methods={['card', 'ach', 'plaid']}
           account={{
             accountId: "100000-3",
-            email: this.state.email,
+            email,
           }}
           // called when revops-js detects an error
           onError={this.handleError}
@@ -311,8 +315,8 @@ export default class App extends Component {
 }
 ```
 
-### onValidationError
-The `onValidationError` callback returns the form state when a validation error is detected. This can be particularly useful in larger workflows when the next step is dependent on the success of the previous one.
+### `onValidationError`
+This callback returns the form state when a validation error is detected. This is done by default by the revops-js components but can be accessed or extended via the callback. This can be particularly useful in larger workflows where the next step is dependent on the success of the previous one.
 
 Form Properties
 | Property | Description |
