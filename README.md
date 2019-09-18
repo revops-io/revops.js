@@ -273,6 +273,7 @@ __Example Error__
 ```
 
 __Additional HTTP Statuses__
+
 | Status | Meaning |
 |--------|:--------|
 | 200 | OK Everything worked as expected.
@@ -319,6 +320,7 @@ export default class App extends Component {}
 This callback returns the form state when a validation error is detected. This is done by default by the revops-js components but can be accessed or extended via the callback. This can be particularly useful in larger workflows where the next step is dependent on the success of the previous one.
 
 Form Properties
+
 | Property | Description |
 |----------|:------------|
 | `isDirty` | Checks if you put any changes to the field
