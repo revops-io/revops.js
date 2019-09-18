@@ -209,8 +209,9 @@ to initial new accounts.
 | email | PropTypes.string.isRequired | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
 | billingContact | PropTypes.object | Object defining `email`, `name`, `phone`, and `title` of the direct billing contact, if it is different than the `account.email` provided.
 | billingPreferences | PropTypes.object | Object defining preferences filled out by RevOps.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
-| onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request.
-| onError({errors, status, response}) | PropTypes.func | This callback returns an error for an unsuccessful HTTP request.
+| onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request. [onComplete](#onComplete)
+| onError(error) | PropTypes.func | Called when revops-js detects an error. See [onError](#onError) for more details.
+| onValidationError(formState) | PropTypes.func | Called when a validation error is detected See [onValidationError](#onValidationError) for more details.
 
 ## BillingPreferences Object
 BillingPreferences can be found on the account object and defaults can be set at runtime by setting the `billingPreferences` property on `account`.
@@ -248,54 +249,27 @@ account = {
 | bankCountry | PropTypes.string | Country of Issuing Bank | ✅
 | plaidLinkToken | PropTypes.string | Link Token of Connected Plaid Bank | ✅
 
-## Error Handling and Validation
-If an error occurs we have you covered with the `onError` callback. It is designed 
-to be called anytime we detect an error with revops-js and will return
-a useful error object that can be used to implement custom validation or error handling. 
-This can be particularly useful when you need to keep branding consistent or need to 
-integrate revops-js with an existing application. 
 
-### Validation Errors
-Prior to submitting the form a validation step is performed and if the form cannot 
-be submitted revops-js will return an object that indicates the current problem areas.
+## Available Callbacks
+Revops-js provides callbacks that can be used to implement custom validation or error handling. They are particularly useful when you need to keep branding consistent or need to integrate revops-js with an existing application.
 
+### onComplete 
+The `onComplete` callback is triggered when the revops-js component successfully submits its information and return the [Account Object](#Account-Object-`<PaymentMethod-account={{-...-}}-/>`) that has been created.
+
+### onError 
+The `onError` callback is called when the form submission process is unsuccessful. These typically indicate a configuration issue or a problem with a network requests.
+
+__Example Error__
 ```json
 {
-  "errors": 
-  {
-    "billingPreferences.propertyName": // name of field
-    {
-      "errorMessages": ["is required"], // one or more fields that could not be accepted
-      "isDirty": "true",
-      "isEmpty": "true",
-      "isFocused": "false",
-      "isValid": "false",
-      "name": "billingPreferences.propertyName"
-    }
-    ...
-  },
-  "response": "false", // response will always equal false for validation errors
-  "status": "false"   // status will always equal false for validation errors
-} 
-```
-
-### Network Errors
-Network errors share a the same signature but the errors will include the response
-from the server and the response field will be returned true.
-
-```json
-{
-  "errors": 
-  {
-    "http_status": "401",
-    "message":"Unauthorized"
-  },
-  "response": "true", // indicates a network was made but was unsuccessful
-  "status": "401"     // HTTP status of the response
+  "status": 401,
+  "response": {
+    "http_status": 401,
+    "message": "Unauthorized"
+  } 
 }
 ```
-
-#### HTTP Status
+__Additional HTTP Statuses__
 | Status | Meaning |
 |----------|:-------------------|
 | 200 | OK Everything worked as expected.
@@ -304,23 +278,17 @@ from the server and the response field will be returned true.
 | 404 | The requested resource doesn't exist.
 | 500 | Server Errors, contact [RevOps](https://revops.io) for assistance. 
 
-### Example
+__Error handling example__
 ```jsx
 export default class App extends Component {
-  // called when an error occurs in revops-js
-  onError = ({errors, response, status}) => {
-    if(response === false){
-      this.setState({formDirty: true, errors})
-    } else if (status >= 500) {
-      this.setState({networkError: true })
-    } else {
-      this.setState({networkError: true, errors})
-    }
+
+  handleError = ({response, status}) =>{
+    this.setState({hasError: true})
   }
 
   render() {
     return (
-      <div className="ui container" style={backgroundStyles}>
+      <div>
         <PaymentMethod
           publicKey="pk_sandbox"
           methods={['card', 'ach', 'plaid']}
@@ -328,10 +296,46 @@ export default class App extends Component {
             accountId: "100000-3",
             email: this.state.email,
           }}
-          onError={this.onError} />
+          // called when revops-js detects an error
+          onError={this.handleError}
+        />
+        {
+          this.state.hasError &&
+          <p className="error-msg"> 
+            An Error Occurred 
+          </p>
+        }
       </div>
     )
   }
+}
+```
+
+### onValidationError
+The `onValidationError` callback returns the form state when a validation error is detected. This can be particularly useful in larger workflows when the next step is dependent on the success of the previous one.
+
+Form Properties
+| Property | Description |
+|----------|:-------------------|
+| `isDirty` | Checks if you put any changes to the field
+| `isFocused` | Shows if the field in a focus right now
+| `errorMessages` | An array of error messages for a specific field
+| `isValid` | Shows field validity
+| `name` | Shows field name
+| `isEmpty` | Determines whether the field is empty
+
+__Example form state object__
+```json
+{
+  "billingPreferences.propertyName": {
+    "isDirty": false,
+    "isFocused": false,
+    "errorMessages": [
+      "is required"
+    ],
+    "isValid": false,
+    "name": "billingPreferences.propertyName",
+    }, ...
 }
 ```
 
