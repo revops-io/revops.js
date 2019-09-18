@@ -236,7 +236,7 @@ export default class CreditCardForm extends Component {
         <label className="h3">Paying by credit card</label>
         {this.props.showACHLink === true &&
           <a
-            className="pay-by-ach-link"
+            className="pay-by-link"
             onClick={this.props.changePaymentMethod}>
             Pay by ACH instead
           </a>

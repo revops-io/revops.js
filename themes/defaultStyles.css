@@ -25,13 +25,13 @@
  * -----------------------
  * Links
  * ----------------------- */
-a.pay-by-ach-link,
-a.pay-by-cc-link,
+a.pay-by-link,
+a.pay-by-link,
 .manual-link {
   color: #4183C4;
 }
-a.pay-by-ach-link:hover,
-a.pay-by-cc-link:hover,
+a.pay-by-link:hover,
+a.pay-by-link:hover,
 .manual-link:hover {
   text-decoration: underline;
 }
@@ -148,12 +148,12 @@ label.h3 {
  * -----------------------
  * Links
  * ----------------------- */
-a.pay-by-ach-link,
-a.pay-by-cc-link {
+a.pay-by-link,
+a.pay-by-link {
   float: right;
 }
-a.pay-by-ach-link:hover,
-a.pay-by-cc-link:hover,
+a.pay-by-link:hover,
+a.pay-by-link:hover,
 .manual-link:hover {
   cursor: pointer;
 }

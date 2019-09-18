@@ -39,19 +39,19 @@ export default App
 ### Step 0.
 Sign-up for an account with RevOps: https://www.revops.io
 
-### Step 1.
+### Step 1. Installation
 ```bash
 npm install --save revops-js
 ```
 
-### Step 2.
+### Step 2. Import library
 
 Import the `<PaymentMethod />` component into your Signup Form.
 ```jsx
 import { PaymentMethod } from 'revops-js'
 ```
 
-### Step 3.
+### Step 3. Choose payment methods
 
 Next, let's add a credit card payment method to the form below. We set `defaultMethod='card'` on `<PaymentMethod />` to prompt the customer to fill in credit card information first. Alternatively, you can try `defaultMethod='ach'` or `defaultMethod='plaid'` if you have either of those in your supported `methods`.
 
@@ -126,13 +126,15 @@ class SignupForm extends Component {
 }
 ```
 
-### Step 4.
+### Step 4. Styling the payment portal
 
 Now that `<PaymentMethod />` is working, it's important for it look that it fits seamlessly into your application. There are 3 things that affect styling:
 
-1. `defaultStyles.css` > Demo CSS Rules – Found in the example repo. It controls button and text colors specific to the example application. When you use <PaymentMethod /> in your own application, you should delete this section so your customized CSS can dictate the styling.
-2. `defaultStyles.css` > Layout CSS Rules – These styles control the layout of how the elements are laid out.
+**Important notes:**
+1. `demoStyles.css`– When imported to your app, it controls button and text colors specific to the example application. When you use <PaymentMethod /> in your own application, you should remove this file so your customized CSS can dictate the styling.
+2. `defaultLayout.css` – These styles control the layout of how the elements are laid out. You can choose not to import this file.
 3. `inputStyles` prop – This prop is used on the <PaymentMethod /> component. Any CSS rules for the input fields must be done through this prop to properly apply the CSS. This is due to the use of iframes on the input fields to securely collect your users' data.
+4. This library was made to easily adopt your CSS rules. You can choose to import one, or both, or neither CSS files to see how they affect the library's rendering on your app.
 
 List of Elements
 - Content Width
@@ -141,9 +143,10 @@ List of Elements
 - Buttons
   - Primary Buttons
   - Secondary Buttons
+- Text Links
 
 #### Content Width
-At the very top of the Demo section of `defaultStyles.css`, the `.section-width` CSS class controls the width of the content of the form fields
+The `.section-width` CSS class controls the width of the content of the form fields.
 
 #### Inputs & Dropdowns
 Both inputs and dropdowns require their CSS styles to be passed through the `inputStyles` prop on the `<PaymentMethod />` component. Commonly-used CSS rules are supported, as well as pseudo-classes such as `:focus` and `::placeholder`.
@@ -198,6 +201,9 @@ Styling for labels can be found in `defaultStyles.css`. The CSS selectors for th
 #### Buttons
 Class names for the primary and secondary buttons are `btn-primary` and `btn-secondary`.
 
+
+#### Text Links
+If you need to style the text links specifically, the class `pay-by-link` controls the text links that float to the right (i.e. "Pay by credit card") while the `.manual-link` class controls the rest of the text links.
 
 
 

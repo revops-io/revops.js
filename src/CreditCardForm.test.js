@@ -43,7 +43,7 @@ describe('The CreditCardForm Component', () => {
       changePaymentMethod: jest.fn(),
     })
     const wrapper = shallow(<CreditCardForm  {...mockProps} />)
-    const achLink = wrapper.find('a.pay-by-ach-link')
+    const achLink = wrapper.find('a.pay-by-link')
     expect(achLink.length).to.equal(1)
     achLink.simulate('click')
     expect(mockProps.changePaymentMethod.call.length).to.equal(1)

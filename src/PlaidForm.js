@@ -222,7 +222,7 @@ export default class PlaidForm extends Component {
       <section className="section-width">
         <label className="h3">Paying by ACH</label>
         <a
-          className="pay-by-cc-link"
+          className="pay-by-link"
           onClick={this.props.changePaymentMethod}>
           Pay by credit card instead
         </a>

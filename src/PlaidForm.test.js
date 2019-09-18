@@ -83,7 +83,7 @@ describe('The PlaidForm Component', () => {
       changePaymentMethod: jest.fn(),
     })
     const wrapper = shallow(<PlaidForm  {...mockProps} />)
-    const ccLink = wrapper.find('a.pay-by-cc-link')
+    const ccLink = wrapper.find('a.pay-by-link')
     expect(ccLink.length).to.equal(1)
     ccLink.simulate('click')
     expect(mockProps.changePaymentMethod.call.length).to.equal(1)
