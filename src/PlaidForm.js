@@ -170,7 +170,7 @@ export default class PlaidForm extends Component {
 
     this.createFormField(
       "#bank-name .field-space",
-      'billingPreferences.bankName',
+      'billing_preferences.bank_name',
       this.getBankName(),
       {
         type: "text",
@@ -259,7 +259,7 @@ export default class PlaidForm extends Component {
               className={
                getClassName(
                  "field",
-                 "billingPreferences.bankName",
+                 "billing_preferences.bank_name",
                  errors
                )
              }>
@@ -280,7 +280,8 @@ export default class PlaidForm extends Component {
 
         <TogglePlaid
           style={this.props.linkStyling}
-          toggleHandler={this.props.toggleHandler}
+          togglePlaidHandler={this.props.togglePlaidHandler}
+          plaidSelected={true}
         />
 
         <div className="ui clearing divider"></div>
