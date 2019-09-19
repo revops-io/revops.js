@@ -169,7 +169,7 @@ export default class AchForm extends Component {
       getDefaultValue(account, 'bankpostalcode', ''),
       {
         type: "zip-code",
-        placeholder: "postal code",
+        placeholder: "Postal code",
         validations: ["required"],
       }
     ))
@@ -351,10 +351,10 @@ export default class AchForm extends Component {
               />
 
               <Field
-                id="bank-zipcode"
-                name="bankZipcode"
-                label="Bank Zip Code"
-                defaultValue={getDefaultValue(this.props.account, 'bankZipcode', '')}
+                id="bank-postalcode"
+                name="bank-postalcode"
+                label="Postal Code"
+                defaultValue={getDefaultValue(this.props.account, 'bankPostalcode', '')}
                 showInlineError={true}
                 errors={errors}
               />
