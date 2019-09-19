@@ -162,7 +162,17 @@ export default class AchForm extends Component {
         validations: ["required"],
       }
     ))
-
+    this.initForm('bank-postalcode',
+      () => this.createFormField(
+      "#bank-postalcode .field-space",
+      'billing_preferences.bank_postal_code',
+      getDefaultValue(account, 'bankpostalcode', ''),
+      {
+        type: "zip-code",
+        placeholder: "Postal code",
+        validations: ["required"],
+      }
+    ))
     this.initForm('bank-account-country',
       () => this.createFormField(
       "#bank-account-country .field-space",
@@ -336,6 +346,15 @@ export default class AchForm extends Component {
                 name="bankAccountHolderName"
                 label="Account Holder Name"
                 defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderName', '')}
+                showInlineError={true}
+                errors={errors}
+              />
+
+              <Field
+                id="bank-postalcode"
+                name="bankPostalCode"
+                label="Postal Code"
+                defaultValue={getDefaultValue(this.props.account, 'bankPostalcode', '')}
                 showInlineError={true}
                 errors={errors}
               />
