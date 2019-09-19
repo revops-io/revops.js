@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import * as SharedStyles from './SharedStyles'
 
 export const TogglePlaid = ({
-  linkStyling,
-  toggleHandler,
+  linkStyling = SharedStyles.linkStyling,
+  togglePlaidHandler,
   plaidSelected = false,
 }) => (
-  <a className="manual-link single centered" style={linkStyling} onClick={() => toggleHandler()}>
+  <a className="manual-link" style={linkStyling} onClick={() => togglePlaidHandler()}>
     {
       plaidSelected === true ?
         'or manually enter bank account details'
@@ -18,7 +19,7 @@ export const TogglePlaid = ({
 
 TogglePlaid.propTypes = {
   linkStyling: PropTypes.object,
-  toggleHandler: PropTypes.func.isRequired,
+  togglePlaidHandler: PropTypes.func.isRequired,
 }
 
 export default TogglePlaid

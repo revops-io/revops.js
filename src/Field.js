@@ -6,6 +6,8 @@ import {
 } from './FormHelpers'
 import { ErrorMessage } from './index'
 
+import _ from 'lodash'
+
 export class Field extends Component {
   static propTypes = {
     id: PropTypes.string,
@@ -27,8 +29,8 @@ export class Field extends Component {
     return `${this.props.id}-container`
   }
 
-  getElementKey() {
-    return `billingPreferences.${this.props.name}`
+  getElementKey = () => {
+    return `billing_preferences.${_.snakeCase(this.props.name)}`
   }
 
   render () {
@@ -49,7 +51,7 @@ export class Field extends Component {
         {this.props.showInlineError === true &&
           <ErrorMessage
             label={this.props.label}
-            errorKey={`billingPreferences.${this.props.name}`}
+            errorKey={this.getElementKey()}
             errors={this.props.errors} />
         }
       </div>

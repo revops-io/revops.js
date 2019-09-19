@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
-  Field,
 } from 'revops-js'
 
 import "revops-js/themes/defaultStyles.css"
@@ -38,12 +37,11 @@ export default class App extends Component {
 
   render() {
     return (
-      <div className="ui container" style={backgroundStyles}>
+      <div style={backgroundStyles} className="revops-demo">
         <div>
-          <label className="ui label fluid">
+          <label>
             Email
             <input
-              className="ui input fluid"
               type="text"
               name="email"
               onChange={

@@ -11,14 +11,20 @@
  * List of classes & ids
  */
 
+.revops-demo,
+.revops-demo .h3,
+.revops-demo label,
+.revops-demo input,
+.revops-demo button,
+.revops-demo span {
+  font-family: Helvetica, Arial, sans-serif;
+}
 /*
  * -----------------------
  * Links
  * ----------------------- */
 a.pay-by-ach-link,
 a.pay-by-cc-link {
-  /* Needs to be a variable of the chosen link colors */
-  /*color: #4f34c7;*/
   float: right;
 }
 a.pay-by-ach-link:hover,
@@ -119,7 +125,7 @@ label.h3
  * -----------------------*/
 
 /* Button Styling */
-.centered.single.ui.button {
+.centered {
   text-align: center;
   display: block;
   margin: 1.7rem auto 0;

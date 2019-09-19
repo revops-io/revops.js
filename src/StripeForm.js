@@ -93,7 +93,7 @@ export default class StripeForm extends Component {
     return (
       <section>
         <h1>Stripe</h1>
-        <div id="contact-form" className="ui form">
+        <div id="contact-form" >
           <div id="customer-name" className="field">
             <label>Name</label>
             <span className="field-space"></span>

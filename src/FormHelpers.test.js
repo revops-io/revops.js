@@ -59,7 +59,7 @@ describe('Formhelper methods', () => {
         }
       })
       expect(error).to.have.deep.property(
-        'billingPreferences.cardExpdate',
+        'billing_preferences.card_expdate',
         {
           "errorMessages": ["error message"]
         });

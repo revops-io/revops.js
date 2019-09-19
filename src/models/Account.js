@@ -49,7 +49,7 @@ export class Account extends EntityModel {
         },
         serializer: 'deep',
         serialization: 'json',
-        data: this,
+        data: this.marshalize(),
         mapDotToObject: 'merge',
       },
       (status, response) => {

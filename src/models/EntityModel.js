@@ -61,9 +61,14 @@ export class EntityModel {
   }
 
   marshalize() {
+    debugger
     const marshalizedObject = {}
     Object.entries(this).forEach(([name, item]) => {
-      marshalizedObject[_.camelCase(name)] = item
+      if(item instanceof EntityModel) {
+        marshalizedObject[_.snakeCase(name)] = item.marshalize()
+      } else {
+        marshalizedObject[_.snakeCase(name)] = item
+      }
     })
 
     return marshalizedObject
