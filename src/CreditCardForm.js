@@ -180,12 +180,12 @@ export default class CreditCardForm extends Component {
       })
     )
 
-    this.initForm('card-zipcode', () =>
-      form.field("#card-zipcode .field-space", {
-        type: "zip-code",
+    this.initForm('card-postalcode', () =>
+      form.field("#card-postalcode .field-space", {
+        type: "postal-code",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_zipcode",
-        placeholder: "Zip code",
+        name: "billing_preferences.card_postalcode",
+        placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
       })

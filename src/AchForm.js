@@ -162,14 +162,14 @@ export default class AchForm extends Component {
         validations: ["required"],
       }
     ))
-    this.initForm('bank-zipcode',
+    this.initForm('bank-postalcode',
       () => this.createFormField(
-      "#bank-zipcode .field-space",
-      'billing_preferences.bank_zipcode',
-      getDefaultValue(account, 'bankzipcode', ''),
+      "#bank-postalcode .field-space",
+      'billing_preferences.bank_postalcode',
+      getDefaultValue(account, 'bankpostalcode', ''),
       {
         type: "zip-code",
-        placeholder: "Zip code",
+        placeholder: "postal code",
         validations: ["required"],
       }
     ))
