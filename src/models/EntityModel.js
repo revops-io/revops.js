@@ -61,6 +61,7 @@ export class EntityModel {
   }
 
   marshalize() {
+    debugger
     const marshalizedObject = {}
     Object.entries(this).forEach(([name, item]) => {
       if(item instanceof EntityModel) {
