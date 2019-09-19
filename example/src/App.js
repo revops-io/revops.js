@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
-  // Field,
 } from 'revops-js'
 
 import "revops-js/themes/defaultStyles.css"
