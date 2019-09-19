@@ -29,7 +29,7 @@ const CustomWelcomeMessage = () => {
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>Welcome</h1>
-      <p>Thank you for choosing MemSQL</p>
+      <p>Thank you for choosing us</p>
     </div>
   )
 }
