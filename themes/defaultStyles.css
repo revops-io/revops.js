@@ -11,6 +11,14 @@
  * List of classes & ids
  */
 
+.revops-demo,
+.revops-demo .h3,
+.revops-demo label,
+.revops-demo input,
+.revops-demo button,
+.revops-demo span {
+  font-family: Helvetica, Arial, sans-serif;
+}
 /*
  * -----------------------
  * Links

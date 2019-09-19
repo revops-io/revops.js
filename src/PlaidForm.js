@@ -280,7 +280,7 @@ export default class PlaidForm extends Component {
 
         <TogglePlaid
           style={this.props.linkStyling}
-          toggleHandler={this.props.togglePlaidHandler}
+          toggleHandler={this.props.toggleHandler}
         />
 
         <div className="ui clearing divider"></div>

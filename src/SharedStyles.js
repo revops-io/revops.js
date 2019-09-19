@@ -18,6 +18,7 @@ export const inputStyles = {
 
 export const buttonStylesPrimary = {
   background: '#4183C4',
+  border: 'none',
   borderRadius: '4px',
   color: '#ffffff',
   fontSize: '16px',
