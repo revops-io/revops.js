@@ -129,7 +129,7 @@ export class SignUp extends Component {
     const { errors } = this.state
     return (
       <section style={cardWidth}>
-        <div id="contact-form" className="ui form">
+        <div id="contact-form" >
           <div id="signup-email" className="field">
             <label>Email</label>
             <span className="field-space"></span>

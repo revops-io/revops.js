@@ -147,7 +147,7 @@ export class AddressForm extends Component {
   render() {
     return (
       <section>
-        <div id="contact-form" className="ui form">
+        <div id="contact-form">
 
           <div className="field">
             <label htmlFor="first-name">First Name</label>

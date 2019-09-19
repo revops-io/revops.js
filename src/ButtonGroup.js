@@ -19,7 +19,7 @@ export const ButtonGroup = ({
     { showAccept &&
       <button
         id="form-next-btn"
-        className="ui right floated button big btn-primary"
+        className="btn-primary"
         onClick={onNext}
         style={buttonStylesPrimary}
         >Accept
@@ -28,7 +28,7 @@ export const ButtonGroup = ({
     { hideNext !== true && showAccept !== true &&
       <button
         id="form-next-btn"
-        className="ui right floated button big btn-primary"
+        className="btn-primary"
         onClick={onSubmit}
         style={buttonStylesPrimary}
         >
@@ -51,7 +51,7 @@ export const ButtonGroup = ({
     { hidePrevious !== true &&
       <button
         id="form-prev-btn"
-        className="ui right floated button big btn-secondary"
+        className="btn-secondary"
         onClick={() => onLast()}
         style={buttonStylesSecondary}
         >Previous

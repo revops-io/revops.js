@@ -306,13 +306,14 @@ export default class AchForm extends Component {
         <label className="h3">Paying by ACH</label>
         {this.props.showCardLink === true &&
           <a
+            style={this.props.linkStyling}
             className="pay-by-cc-link"
             onClick={this.props.changePaymentMethod}>
             Pay by credit card instead
           </a>
         }
 
-        <div id="ach-form" className="ui form">
+        <div id="ach-form" className="form-container">
           {!!children !== false &&
             React.createElement(children, {
               ...this.props,
@@ -380,7 +381,6 @@ export default class AchForm extends Component {
         <div className="ui clearing divider"></div>
         {this.props.hideTogglePlaid === false &&
           <TogglePlaid
-            style={this.props.linkStyling}
             toggleHandler={this.props.togglePlaidHandler}
           />
         }

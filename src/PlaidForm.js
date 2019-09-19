@@ -243,17 +243,18 @@ export default class PlaidForm extends Component {
         <label className="h3">Paying by ACH</label>
         <a
           className="pay-by-cc-link"
+          style={this.props.linkStyling}
           onClick={this.props.changePaymentMethod}>
           Pay by credit card instead
         </a>
         <button
-          className="ui button big centered single"
+          className="btn-primary centered single"
           style={this.props.buttonStylesPrimary}
           onClick={() => this.openPlaid()}>
           Sync your bank account
         </button>
         {!!this.state.plaidMetadata !== false &&
-          <div id="plaid-form" className="ui form">
+          <div id="plaid-form" >
             <div id="bank-name"
               className={
                getClassName(

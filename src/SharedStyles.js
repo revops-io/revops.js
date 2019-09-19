@@ -17,29 +17,24 @@ export const inputStyles = {
 }
 
 export const buttonStylesPrimary = {
-  padding: '.6875em 1.1875em',
-  transition: 'all .15s ease-in-out 0s',
-  borderRadius: '4px',
   background: '#4183C4',
+  borderRadius: '4px',
   color: '#ffffff',
+  fontSize: '16px',
+  fontWeight: '700',
+  marginTop: '15px',
+  padding: '10px 20px',
+  transition: 'all .15s ease-in-out 0s',
 }
 
 export const buttonStylesSecondary = {
   color: '#555555',
   background: '#eeeeee',
+  borderRadius: '4px',
   padding: '.6875em 1.1875em',
   transition: 'all .15s ease-in-out 0s',
-  borderRadius: '4px',
 }
 
-export const buttonStylesTertiary = {
-  padding: '.6875em 1.1875em',
-  transition: 'all .15s ease-in-out 0s',
-  borderRadius: '4px',
-  color: '#4183C4',
-  border: 'none',
-  background: 'none',
-}
 
 export const backgroundColor = {
   background: 'black',

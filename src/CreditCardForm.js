@@ -265,7 +265,7 @@ export default class CreditCardForm extends Component {
           </a>
         }
         <div className="form-container">
-          <div id="card-form" className="ui form">
+          <div id="card-form" >
             {!!children !== false &&
               React.createElement(children, {
                 ...this.props,
