@@ -165,7 +165,7 @@ export default class AchForm extends Component {
     this.initForm('bank-postalcode',
       () => this.createFormField(
       "#bank-postalcode .field-space",
-      'billing_preferences.bank_postalcode',
+      'billing_preferences.bank_postal_code',
       getDefaultValue(account, 'bankpostalcode', ''),
       {
         type: "zip-code",
@@ -352,7 +352,7 @@ export default class AchForm extends Component {
 
               <Field
                 id="bank-postalcode"
-                name="bank-postalcode"
+                name="bankPostalCode"
                 label="Postal Code"
                 defaultValue={getDefaultValue(this.props.account, 'bankPostalcode', '')}
                 showInlineError={true}

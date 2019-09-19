@@ -184,7 +184,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-postalcode .field-space", {
         type: "zip-code",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_postalcode",
+        name: "billing_preferences.card_postal_code",
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -322,7 +322,7 @@ export default class CreditCardForm extends Component {
 
                 <Field
                   id="card-postalcode"
-                  name="cardPostalcode"
+                  name="cardPostalCode"
                   label="Postal Code"
                   defaultValue={getDefaultValue(this.props.account, 'cardPostalcode', '')}
                   showInlineError={true}
