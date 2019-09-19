@@ -98,21 +98,33 @@ label.h3:first-child {
  * -----------------------
  * Card Form
  * -----------------------*/
-#card-cvc.card-cvc-container {
-  float: right;
+#card-expdate.card-expdate-container,
+#card-cvc.card-cvc-container,
+#card-zipcode.card-zipcode-container {
+  width: 30%;
+  display: inline-block;
 }
-
 #card-expdate.card-expdate-container,
 #card-cvc.card-cvc-container {
-  width: 47%;
-  display: inline-block;
+  margin-right: 5%
 }
 
 /*
  * -----------------------
  * ACH Form
  * -----------------------*/
-label.h3
+label.h3 {}
+#bank-account-country.bank-account-country-container {
+  width: 65%;
+  float: right;
+}
+#bank-zipcode.bank-zipcode-container {
+  width: 30%;
+}
+#bank-zipcode.bank-zipcode-container,
+#bank-account-country.bank-account-country-container {
+  display: inline-block;
+}
 
 /*
  * -----------------------

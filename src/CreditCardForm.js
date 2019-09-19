@@ -180,6 +180,17 @@ export default class CreditCardForm extends Component {
       })
     )
 
+    this.initForm('card-zipcode', () =>
+      form.field("#card-zipcode .field-space", {
+        type: "zip-code",
+        errorColor: this.props.errorColor,
+        name: "billing_preferences.card_zipcode",
+        placeholder: "Zip code",
+        validations: ["required"],
+        css: this.props.inputStyles,
+      })
+    )
+
     this.form = form
   }
 
@@ -305,6 +316,15 @@ export default class CreditCardForm extends Component {
                   name="cardCvv"
                   label="CVC/CVV"
                   defaultValue={getDefaultValue(this.props.account, 'cardCvv', '')}
+                  showInlineError={true}
+                  errors={errors}
+                />
+
+                <Field
+                  id="card-zipcode"
+                  name="cardZipcode"
+                  label="Zip Code"
+                  defaultValue={getDefaultValue(this.props.account, 'cardZipcode', '')}
                   showInlineError={true}
                   errors={errors}
                 />
