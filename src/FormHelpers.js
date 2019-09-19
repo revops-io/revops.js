@@ -34,7 +34,7 @@ export const convertAPIError = (httpStatus, httpResponse) => {
       switch(httpResponse.error.param) {
         case 'exp_year':
         case 'exp_month':
-          param = 'billingPreferences.cardExpdate'
+          param = 'billing_preferences.card_expdate'
           break
         default:
           param = 'networkError'

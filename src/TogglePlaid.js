@@ -4,10 +4,10 @@ import * as SharedStyles from './SharedStyles'
 
 export const TogglePlaid = ({
   linkStyling = SharedStyles.linkStyling,
-  toggleHandler,
+  togglePlaidHandler,
   plaidSelected = false,
 }) => (
-  <a className="manual-link" style={linkStyling} onClick={() => toggleHandler()}>
+  <a className="manual-link" style={linkStyling} onClick={() => togglePlaidHandler()}>
     {
       plaidSelected === true ?
         'or manually enter bank account details'
@@ -19,7 +19,7 @@ export const TogglePlaid = ({
 
 TogglePlaid.propTypes = {
   linkStyling: PropTypes.object,
-  toggleHandler: PropTypes.func.isRequired,
+  togglePlaidHandler: PropTypes.func.isRequired,
 }
 
 export default TogglePlaid

@@ -129,7 +129,7 @@ export default class CreditCardForm extends Component {
       () => form.field("#card-name .field-space", {
         type: "text",
         errorColor: this.props.errorColor,
-        name: "billingPreferences.cardName",
+        name: "billing_preferences.card_name",
         defaultValue: getDefaultValue(account, 'cardName', ''),
         placeholder: "Florence Izote",
         validations: ["required"],
@@ -141,7 +141,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-number .field-space", {
         type: "card-number",
         errorColor: this.props.errorColor,
-        name: "billingPreferences.cardNumber",
+        name: "billing_preferences.card_number",
         defaultValue: getDefaultValue(account, 'cardNumber', ''),
         placeholder: "Card number",
         validations: ["required", "validCardNumber"],
@@ -155,7 +155,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-cvc .field-space", {
         type: "card-security-code",
         errorColor: this.props.errorColor,
-        name: "billingPreferences.cardCvv",
+        name: "billing_preferences.card_cvv",
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
         css: this.props.inputStyles,
@@ -165,7 +165,7 @@ export default class CreditCardForm extends Component {
     this.initForm('card-expdate', () =>
       form.field("#card-expdate .field-space", {
         type: "card-expiration-date",
-        name: "billingPreferences.cardExpdate",
+        name: "billing_preferences.card_expdate",
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
         defaultValue: getDefaultCardExpDate(account, ''),

@@ -154,7 +154,7 @@ export default class AchForm extends Component {
     this.initForm('bank-name',
       () => this.createFormField(
       "#bank-name .field-space",
-      'billingPreferences.bankName',
+      'billing_preferences.bank_name',
       getDefaultValue(account, 'bankName', ''),
       {
         type: "text",
@@ -166,7 +166,7 @@ export default class AchForm extends Component {
     this.initForm('bank-account-country',
       () => this.createFormField(
       "#bank-account-country .field-space",
-      'billingPreferences.bankCountry',
+      'billing_preferences.bank_country',
       getDefaultValue(account, 'bankCountry', 'USA'),
       {
         type: "dropdown",
@@ -182,7 +182,7 @@ export default class AchForm extends Component {
     this.initForm('bank-holder-name',
       () => this.createFormField(
       "#bank-holder-name .field-space",
-      "billingPreferences.bankAccountHolderName",
+      "billing_preferences.bank_account_holder_name",
       getDefaultValue(account, 'bankAccountHolderName', ''),
       {
         type: "text",
@@ -194,7 +194,7 @@ export default class AchForm extends Component {
     this.initForm('bank-account-type',
       () => this.createFormField(
       "#bank-account-type .field-space",
-      "billingPreferences.bankAccountHolderType",
+      "billing_preferences.bank_account_holder_type",
       getDefaultValue(account, 'bankAccountHolderType', 'company'),
       {
         type: "dropdown",
@@ -209,7 +209,7 @@ export default class AchForm extends Component {
     this.initForm('bank-account-number',
       () => this.createFormField(
       "#bank-account-number .field-space",
-      "billingPreferences.bankAccountNumber",
+      "billing_preferences.bank_account_number",
       getDefaultValue(account, 'bankAccountNumber', ''),
       {
         type: "text",
@@ -221,7 +221,7 @@ export default class AchForm extends Component {
     this.initForm('bank-routing-number', () =>
       this.createFormField(
         "#bank-routing-number .field-space",
-        "billingPreferences.bankRoutingNumber",
+        "billing_preferences.bank_routing_number",
         getDefaultValue(account, 'bankRoutingNumber', ''),
         {
           type: "text",
@@ -381,7 +381,7 @@ export default class AchForm extends Component {
         <div className="ui clearing divider"></div>
         {this.props.hideTogglePlaid === false &&
           <TogglePlaid
-            toggleHandler={this.props.togglePlaidHandler}
+            togglePlaidHandler={this.props.togglePlaidHandler}
           />
         }
         {!!this.props.saveRef === false &&
