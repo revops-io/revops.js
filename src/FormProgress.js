@@ -76,7 +76,7 @@ export class FormProgress extends React.Component {
           :
           <h1 className="ui center aligned header">{ companyName }</h1>
         }
-        <div className="ui grid memsql-layout">
+        <div className="ui grid">
           <div className="sixteen wide column">
             <div className="ui raised very padded container segment">
               {steps.map((step, i) => {
