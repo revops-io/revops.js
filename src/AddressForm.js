@@ -7,7 +7,6 @@ export class AddressForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      errors: 0,
       errors: false,
     }
     this.form = {};
