@@ -1,5 +1,3 @@
-
-
 # revops-js
 
 > Official RevOps Javascript Component Library
@@ -269,6 +267,35 @@ This is the ideal time to capture and extend the data model for your specific ne
 ### `onValidationError`
 This callback returns the form's state when a validation error is detected. Validation errors are handled locally and are not submitted to the server. This is useful in larger workflows where the next step is dependent on the success of the previous one.
 
+Validation Error Properties
+
+| Property | Description |
+|----------|:------------|
+| isDirty | Checks if you put any changes to the field
+| isFocused | Shows if the field in focus right now
+| errorMessages | An array of error messages for a specific field
+| isValid | Shows field validity
+| name | Shows field name
+| isEmpty | Determines whether the field is empty
+| elementId | DOM element with validation error
+
+__Example Validation Error__
+``` jsx
+{
+  "billing_preferences.cardNumber": {
+    "isDirty": false,
+    "isFocused": false,
+    "errorMessages": [
+      "is required"
+    ],
+    "isValid": false,
+    "name": "billing_preferences.cardNumber",
+    "elementId": "card-number"
+  }, 
+  /*...*/
+}
+```
+
 ### `onError`
 The `onError` callback is called when the form submission process is unsuccessful. This typically indicates a configuration issue or a problem with a network request as validation is handled locally and will not reach the server.
 
@@ -322,7 +349,7 @@ class App extends Component {
     this.setState({error: true, errorMsg}) 
   }
 
-  // This is a great chance save data internally
+  // This is a great chance save data internally if needed 
   onComplete = (response) => {
     console.log(response)
   }
@@ -340,8 +367,8 @@ class App extends Component {
           }}
           onComplete={this.onComplete}
           onError={this.onError}
-          onValidationError={() => {
-            this.setState({ formDirty: true })
+          onValidationError={(validationErrors) => {
+            this.setState({ validationErrors })
           }}
         />
         {this.state.success === true &&
@@ -437,6 +464,8 @@ class SignupForm extends Component {
   }
 }
 ```
+
+And violá, we can now control the submission process of the `<PaymentMethod />`. When combined with the various callbacks and some custom styling you can make the revops.js components fit into any workflow. 
 
 ## License
 

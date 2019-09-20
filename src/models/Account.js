@@ -5,6 +5,8 @@ import {
   BillingPreferences,
 } from './index'
 
+import _ from 'lodash'
+
 export class Account extends EntityModel {
   accountId = ""
   name = ""
@@ -81,10 +83,17 @@ export class Account extends EntityModel {
           }
         }
       },
-      () => {
+      (errors) => {
         if (!!onValidationError !== false && typeof (onValidationError) === 'function') {
           // tell the developer a validation issue has occurred
-          onValidationError()
+          errors = Object.entries(errors).map(([key, value]) => {
+            let elementId = _.kebabCase(key.replace('billingPreferences.', ''))
+            return { [key]: {
+              ...value,
+              elementId,
+            }}
+          })
+          onValidationError(errors)
         }
       }
     )
