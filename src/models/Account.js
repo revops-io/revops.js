@@ -35,6 +35,7 @@ export class Account extends EntityModel {
       onError,
       onComplete,
       onNext,
+      onValidationError,
     }
   ) {
     if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
@@ -62,30 +63,28 @@ export class Account extends EntityModel {
             console.error(`[${status}] RevOps API error: ${JSON.stringify(response)}`)
           }
           if (!!onError !== false && typeof (onError) === 'function') {
-            onError({ errors: response, status, response: true })
+            onError({ status, error: response.error })
           }
         } else {
           Object.keys(response).map(attrName =>
             this._setAttr(attrName, response[attrName])
           )
 
-          if(!!onNext !== false && typeof(onNext) === 'function') {
+          if (!!onNext !== false && typeof (onNext) === 'function') {
             onNext(status, {
               ...response,
             })
           }
-          if(!!onComplete !== false && typeof(onComplete) === 'function') {
+
+          if (!!onComplete !== false && typeof (onComplete) === 'function') {
             onComplete(response)
           }
         }
       },
-      (errors) => {
-        if (!!onError !== false && typeof (onError) === 'function') {
-          onError({
-            errors,
-            status: false,
-            response: false,
-          })
+      () => {
+        if (!!onValidationError !== false && typeof (onValidationError) === 'function') {
+          // tell the developer a validation issue has occurred
+          onValidationError()
         }
       }
     )

@@ -44,6 +44,9 @@ export default class AchForm extends Component {
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
 
+    /** A callable function to fire when an validation error occurs on the form. */
+    onValidationError: PropTypes.func,
+
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
 
@@ -262,7 +265,7 @@ export default class AchForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, } = this.props
+    const { onNext, onValidationError } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -291,7 +294,8 @@ export default class AchForm extends Component {
       {
         onError,
         onComplete,
-        onNext
+        onNext,
+        onValidationError,
       })
   }
 

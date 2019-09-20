@@ -47,6 +47,9 @@ export default class CreditCardForm extends Component {
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
 
+    /** A callable function to fire when an validation error occurs on the form. */
+    onValidationError: PropTypes.func,
+
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
 
@@ -215,7 +218,7 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, } = this.props
+    const { onNext, onValidationError } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -245,7 +248,8 @@ export default class CreditCardForm extends Component {
       {
         onError,
         onComplete,
-        onNext
+        onNext,
+        onValidationError,
       })
   }
 
