@@ -267,7 +267,7 @@ This is the ideal time to capture and extend the data model for your specific ne
 ### `onValidationError`
 This callback returns the form's state when a validation error is detected. Validation errors are handled locally and are not submitted to the server. This is useful in larger workflows where the next step is dependent on the success of the previous one.
 
-Validation Error Properties
+#### Validation Error Properties
 
 | Property | Description |
 |----------|:------------|
@@ -349,9 +349,9 @@ class App extends Component {
     this.setState({error: true, errorMsg}) 
   }
 
-  // This is a great chance save data internally if needed 
-  onComplete = (response) => {
-    console.log(response)
+  // If you'd like to save the data on your own platform in a PII-safe way, use the response object.
+  onComplete = (accountObject) => {
+    console.log(accountObject)
   }
 
   render() {
@@ -465,7 +465,7 @@ class SignupForm extends Component {
 }
 ```
 
-And violá, we can now control the submission process of the `<PaymentMethod />`. When combined with the various callbacks and some custom styling you can make the revops.js components fit into any workflow. 
+Now we can now control the submission process of the `<PaymentMethod />` component from its parent component as one unified workflow. 
 
 ## License
 
