@@ -236,14 +236,13 @@ export default class AchForm extends Component {
 
   onError = (error) => {
     const { onError } = this.props
-    const { status, errors, response } = error
     this.setState({
       errors: {
-        ...errors,
-        ...convertAPIError(status, response),
+        ...error,
+        ...convertAPIError(error.http_status, error),
       },
       status,
-      response,
+      response: error,
       loading: false,
     })
 
