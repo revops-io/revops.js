@@ -82,7 +82,7 @@ class SignupForm extends Component {
   onValidationError = () => {
     console.warn('Validation Error')
   }
-  
+
   onError = (error) => {
     console.error(error)
   }
@@ -174,7 +174,7 @@ Here is an example how to style inputs:
       background: '#ffffff',
       border: `2px solid papayawhip`
     },
-    '&::placeholder': { 
+    '&::placeholder': {
       color: '#ccc',
     },
   }}
@@ -194,7 +194,7 @@ Here is an example how to style inputs:
 | defaultMethod | PropTypes.oneOf(['ach', 'card', 'plaid']) | The payment method shown first.
 | saveRef | PropTypes.shape({ current: PropTypes.any }) | Assign a ref to add an external save button. If assigned, it will hide built-in buttons.
 | styles | PropTypes.object | Inline CSS Style definition to customize the form.
-
+| apiConfig | PropTypes.object | Optional configuration properties that you can use to override a specific environment, or select a different api environment. Example: `apiConfig={{ env: 'sandbox' }}`. See API Configuration for more info. |
 
 
 ## Account Object `<PaymentMethod account={{ ... }} />`
@@ -257,15 +257,39 @@ account = {
 
 
 ## Available Callbacks
-Revops-js provides callbacks that can be used to implement custom validation or error handling. They are particularly useful when you need to keep branding consistent or need to integrate revops-js with an existing application. 
+Revops-js provides callbacks that can be used to implement custom validation or error handling. They are particularly useful when you need to keep branding consistent or need to integrate revops-js with an existing application.
 
-### `onComplete` 
-This callback is triggered when the revops-js component successfully submits its information and returns the [Account Object](#Account-Object-`<PaymentMethod-account={{-...-}}-/>`) that has been created. 
+### `onComplete`
+This callback is triggered when the revops-js component successfully submits its information and returns the [Account Object](#Account-Object-`<PaymentMethod-account={{-...-}}-/>`) that has been created.
 
-This is the ideal time to capture and extend the data model for your specific needs. 
+This is the ideal time to capture and extend the data model for your specific needs.
 
 ### `onValidationError`
 This callback returns the form's state when a validation error is detected. Validation errors are handled locally and are not submitted to the server. This is useful in larger workflows where the next step is dependent on the success of the previous one.
+
+
+## Advanced configurations
+
+If you want to test in a sandbox environment locally, you can enable, we recommend adding `apiConfig` property to `<PaymentMethod />`
+
+**Example**
+To use the `sandbox` mode for integrations like Plaid, set an apiKey and apiConfig to sandbox.
+```jsx
+<PaymentMethod
+  apiKey="pk_sandbox_xxxxxxxxxxxxxxxxxxxxxxxxx"
+  apiConfig={{
+    env: 'sandbox',
+  }}
+/>
+```
+
+### API Configuration `apiConfig={{ }}`
+
+| Prop     |      type      |  Description |  
+|------------------|:--------------:|-------------:|
+| name    | PropTypes.string | RevOps environment name. Options are `sandbox`, `production`. |
+| plaidEnvironment    | PropTypes.string | Options are `sandbox`, `development`, and `production`. See [Plaid environments overview](https://support.plaid.com/hc/en-us/articles/360010407233-Plaid-environments-overview). |
+
 
 #### Validation Error Properties
 
@@ -291,7 +315,7 @@ __Example Validation Error__
     "isValid": false,
     "name": "billing_preferences.cardNumber",
     "elementId": "card-number"
-  }, 
+  },
   /*...*/
 }
 ```
@@ -324,10 +348,10 @@ __Additional HTTP Statuses__
 | 400  | RevOps API bad request.
 | 401  | RevOps API access denied. Update your `publicKey`.
 | 404  | The requested resource doesn't exist.
-| 500s | Server errors, contact [RevOps](https://revops.io) for assistance. 
- 
+| 500s | Server errors, contact [RevOps](https://revops.io) for assistance.
 
-### Callback Example 
+
+### Callback Example
 
 ```jsx
 import React, { Component } from 'react'
@@ -342,11 +366,11 @@ class App extends Component {
 
   // this callback is called when an error occurs in revops-js
   onError = (error) => {
-    let errorMsg =  'Please contact support' 
+    let errorMsg =  'Please contact support'
     if (error.http_status < 500) {
       errorMsg = error.message
     }
-    this.setState({error: true, errorMsg}) 
+    this.setState({error: true, errorMsg})
   }
 
   // If you'd like to save the data on your own platform in a PII-safe way, use the response object.
@@ -387,9 +411,9 @@ class App extends Component {
 ```
 
 ## Using a React Ref to Submit Form
-Let's talk about how to integrate revops.js into a larger workflow using [React Refs](https://reactjs.org/docs/refs-and-the-dom.html) to control the revops child component. First, we need to define the `saveRef` property. This is done in two parts. 
+Let's talk about how to integrate revops.js into a larger workflow using [React Refs](https://reactjs.org/docs/refs-and-the-dom.html) to control the revops child component. First, we need to define the `saveRef` property. This is done in two parts.
 
-First, define the ref to pass down to the component. 
+First, define the ref to pass down to the component.
 ```jsx
 class SignupForm extends Component {
   constructor(props) {
@@ -465,7 +489,8 @@ class SignupForm extends Component {
 }
 ```
 
-Now we can now control the submission process of the `<PaymentMethod />` component from its parent component as one unified workflow. 
+Now we can now control the submission process of the `<PaymentMethod />` component from its parent component as one unified workflow.
+
 
 ## License
 
