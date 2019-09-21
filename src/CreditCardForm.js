@@ -18,8 +18,6 @@ import { linkStyling } from './SharedStyles'
 
 import {
   Field,
-  jsDependencies,
-  addJS,
   configureVault,
 } from './index'
 
@@ -75,11 +73,11 @@ export default class CreditCardForm extends Component {
     /** Color of error text, a valid color name or hex. */
     errorColor: PropTypes.string,
 
-    /** Internal Use-only: Environment string: local, staging, production */
-    env: PropTypes.string,
-
     /** Internal Use-only: Change payment method swaps current payment method state */
     changePaymentMethod: PropTypes.func,
+
+    /** Optional API Options **/
+    apiOptions: PropTypes.object,
   }
 
   static defaultProps = {
@@ -108,10 +106,8 @@ export default class CreditCardForm extends Component {
   }
 
   componentDidMount() {
-    jsDependencies.forEach(js => addJS(js))
-
     configureVault(
-      this.props.env,
+      this.props.apiOptions,
       this.initialize,
     )
   }
@@ -125,8 +121,9 @@ export default class CreditCardForm extends Component {
   initialize = () => {
     const { account } = this.props
 
+    let conf = configure(this.props.apiOptions)
     // eslint-disable-next-line
-    const form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
+    const form = VGSCollect.create(conf.vaultId, function (state) { });
 
     this.initForm('card-name',
       () => form.field("#card-name .field-space", {

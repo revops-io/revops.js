@@ -1,40 +1,13 @@
 import configure from './client/VaultConfig'
 
-export const styleDependencies = [
-  // "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css",
-  // "https://use.fontawesome.com/releases/v5.7.2/css/all.css",
-]
-
-export const jsDependencies = [
-  "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js",
-  "https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js",
-]
-
-export const addStylesheet = (url) => {
-  const link = document.createElement("link")
-  link.href = url
-  link.rel = "stylesheet"
-  link.crossorigin = "anonymous"
-  document.body.appendChild(link);
-}
-
-export const addJS = (url, onload = () => {}) => {
-  const script = document.createElement("script")
-
-  script.src = url
-  script.async = true
-  script.onload = () => {
-    onload()
-  }
-  document.body.appendChild(script);
-}
-
 /* configureVault
  * @param env - string - options are local, staging, production.
  * @param onLoad - function - called when vault is loaded.
  */
 export const configureVault = (
-  env = false,
+  apiOptions = {
+    env: 'production',
+  },
   onLoad: false,
 ) => {
   if (!!window !== true && !!document !== true) {
@@ -42,7 +15,7 @@ export const configureVault = (
   }
 
   const script = document.createElement("script")
-  script.src = configure(env).vaultCollectUrl
+  script.src = configure(apiOptions).vaultCollectUrl
   script.async = true
   script.onload = onLoad
 
