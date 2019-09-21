@@ -194,7 +194,7 @@ Here is an example how to style inputs:
 | defaultMethod | PropTypes.oneOf(['ach', 'card', 'plaid']) | The payment method shown first.
 | saveRef | PropTypes.shape({ current: PropTypes.any }) | Assign a ref to add an external save button. If assigned, it will hide built-in buttons.
 | styles | PropTypes.object | Inline CSS Style definition to customize the form.
-| apiConfig | PropTypes.object | Optional configuration properties that you can use to override a specific environment, or select a different api environment. Example: `apiConfig={{ env: 'sandbox' }}`. See API Configuration for more info. |
+| apiOptions | PropTypes.object | Optional configuration properties that you can use to override a specific environment, or select a different api environment. Example: `apiOptions={{ env: 'sandbox' }}`. See API Configuration for more info. |
 
 
 ## Account Object `<PaymentMethod account={{ ... }} />`
@@ -270,20 +270,20 @@ This callback returns the form's state when a validation error is detected. Vali
 
 ## Advanced configurations
 
-If you want to test in a sandbox environment locally, you can enable, we recommend adding `apiConfig` property to `<PaymentMethod />`
+If you want to test in a sandbox environment locally, you can enable, we recommend adding `apiOptions` property to `<PaymentMethod />`
 
 **Example**
-To use the `sandbox` mode for integrations like Plaid, set an apiKey and apiConfig to sandbox.
+To use the `sandbox` mode for integrations like Plaid, set an publicKey and apiOptions to sandbox.
 ```jsx
 <PaymentMethod
-  apiKey="pk_sandbox_xxxxxxxxxxxxxxxxxxxxxxxxx"
-  apiConfig={{
+  publicKey="pk_sandbox_xxxxxxxxxxxxxxxxxxxxxxxxx"
+  apiOptions={{
     env: 'sandbox',
   }}
 />
 ```
 
-### API Configuration `apiConfig={{ }}`
+### API Configuration `apiOptions={{ }}`
 
 | Prop     |      type      |  Description |  
 |------------------|:--------------:|-------------:|
