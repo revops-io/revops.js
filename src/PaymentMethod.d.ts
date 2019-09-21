@@ -9,6 +9,7 @@ enum PaymentMethods {
 
 export interface PaymentMethodProps {
   static propTypes = {
+
     /** Required RevOps API Public Key **/
     publicKey: string,
 
@@ -53,6 +54,9 @@ export interface PaymentMethodProps {
 
     /** Account object allows preconfigured account options to be set */
     account?: object,
+
+    /** Optional API Options **/
+    apiOptions?: object,
   }
 }
 

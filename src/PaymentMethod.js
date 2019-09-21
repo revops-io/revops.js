@@ -7,8 +7,6 @@ import {
   CreditCardForm,
   PlaidForm,
   AchForm,
-  jsDependencies,
-  addJS,
 } from './index'
 
 import { ButtonGroup } from './ButtonGroup'
@@ -87,6 +85,9 @@ export default class PaymentMethod extends Component {
 
     /** Render customized ACH forms */
     renderAchForms: PropTypes.func,
+
+    /** Optional API Options **/
+    apiOptions: PropTypes.object,
   }
 
 
@@ -131,7 +132,6 @@ export default class PaymentMethod extends Component {
   }
 
   componentDidMount() {
-    jsDependencies.forEach(js => addJS(js))
     this.initializeAccount()
   }
 

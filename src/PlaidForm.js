@@ -15,8 +15,6 @@ import {
   TogglePlaid,
   configureVault,
   configurePlaid,
-  jsDependencies,
-  addJS,
 } from './index'
 
 import configure from './client/VaultConfig'
@@ -69,14 +67,14 @@ export default class PlaidForm extends Component {
     /** Color of error text, a valid color name or hex. */
     errorColor: PropTypes.string,
 
-    /** Internal Use-only: Environment string: local, staging, production */
-    env: PropTypes.string,
-
     /** Internal Use-only: Change payment method swaps current payment method state */
     changePaymentMethod: PropTypes.func,
 
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
+
+    /** Optional API Options **/
+    apiOptions: PropTypes.object,
   }
 
   static defaultProps = {
@@ -104,9 +102,8 @@ export default class PlaidForm extends Component {
   }
 
   componentDidMount() {
-    jsDependencies.forEach(js => addJS(js))
     configureVault(
-      this.props.env,
+      this.props.apiConfig,
       this.initialize,
     )
 

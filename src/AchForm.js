@@ -14,8 +14,6 @@ import {
   Field,
   TogglePlaid,
   configureVault,
-  jsDependencies,
-  addJS,
 } from './index'
 
 import configure from './client/VaultConfig'
@@ -75,9 +73,6 @@ export default class AchForm extends Component {
     /** Color of error text, a valid color name or hex. */
     errorColor: PropTypes.string,
 
-    /** Internal Use-only: Environment string: local, staging, production */
-    env: PropTypes.string,
-
     /** Internal Use-only: Change payment method swaps current payment method state */
     changePaymentMethod: PropTypes.func,
 
@@ -113,9 +108,8 @@ export default class AchForm extends Component {
   }
 
   componentDidMount() {
-    jsDependencies.forEach(js => addJS(js))
     configureVault(
-      this.props.env,
+      this.props.apiConfig,
       this.initialize,
     )
   }
@@ -149,8 +143,10 @@ export default class AchForm extends Component {
     const { account } = this.props
 
     if(!!this.form === false) {
+      let conf = configure(this.props.apiOptions)
+
       // eslint-disable-next-line
-      this.form = VGSCollect.create(configure(this.props.env).vaultId, function () { });
+      this.form = VGSCollect.create(conf.vaultId, function () { });
     }
 
     this.initForm('bank-name',
