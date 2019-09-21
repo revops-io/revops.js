@@ -1,5 +1,3 @@
-
-
 # revops-js
 
 > Official RevOps Javascript Component Library
@@ -79,6 +77,10 @@ class SignupForm extends Component {
 
   onComplete = (response) => {
     console.log(response)
+  }
+
+  onValidationError = () => {
+    console.warn('Validation Error')
   }
   
   onError = (error) => {
@@ -167,10 +169,14 @@ Here is an example how to style inputs:
     outline: 'none',
     transition: 'all .15s ease-in-out 0s',
     border: '2px solid mistyrose',
+    boxSizing: "border-box",
     '&:focus': { // the focus pseudo-class
       background: '#ffffff',
       border: `2px solid papayawhip`
-    }
+    },
+    '&::placeholder': { 
+      color: '#ccc',
+    },
   }}
 />
 ```
@@ -209,8 +215,9 @@ to initial new accounts.
 | email | PropTypes.string.isRequired | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
 | billingContact | PropTypes.object | Object defining `email`, `name`, `phone`, and `title` of the direct billing contact, if it is different than the `account.email` provided.
 | billingPreferences | PropTypes.object | Object defining preferences filled out by RevOps.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
-| onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request.
-| onError({errors, status, response}) | PropTypes.func | This callback returns an error for an unsuccessful HTTP request.
+| onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request. [onComplete](#onComplete)
+| onError(error) | PropTypes.func | Called when revops-js detects an error. See [onError](#onError) for more details.
+| onValidationError() | PropTypes.func | Called when a validation error is detected See [onValidationError](#onValidationError) for more details.
 
 ## BillingPreferences Object
 BillingPreferences can be found on the account object and defaults can be set at runtime by setting the `billingPreferences` property on `account`.
@@ -247,6 +254,218 @@ account = {
 | bankAccountNumber | PropTypes.string | Account Number of Issuing Bank | ✅
 | bankCountry | PropTypes.string | Country of Issuing Bank | ✅
 | plaidLinkToken | PropTypes.string | Link Token of Connected Plaid Bank | ✅
+
+
+## Available Callbacks
+Revops-js provides callbacks that can be used to implement custom validation or error handling. They are particularly useful when you need to keep branding consistent or need to integrate revops-js with an existing application. 
+
+### `onComplete` 
+This callback is triggered when the revops-js component successfully submits its information and returns the [Account Object](#Account-Object-`<PaymentMethod-account={{-...-}}-/>`) that has been created. 
+
+This is the ideal time to capture and extend the data model for your specific needs. 
+
+### `onValidationError`
+This callback returns the form's state when a validation error is detected. Validation errors are handled locally and are not submitted to the server. This is useful in larger workflows where the next step is dependent on the success of the previous one.
+
+#### Validation Error Properties
+
+| Property | Description |
+|----------|:------------|
+| isDirty | Checks if you put any changes to the field
+| isFocused | Shows if the field in focus right now
+| errorMessages | An array of error messages for a specific field
+| isValid | Shows field validity
+| name | Shows field name
+| isEmpty | Determines whether the field is empty
+| elementId | DOM element with validation error
+
+__Example Validation Error__
+``` jsx
+{
+  "billing_preferences.cardNumber": {
+    "isDirty": false,
+    "isFocused": false,
+    "errorMessages": [
+      "is required"
+    ],
+    "isValid": false,
+    "name": "billing_preferences.cardNumber",
+    "elementId": "card-number"
+  }, 
+  /*...*/
+}
+```
+
+### `onError`
+The `onError` callback is called when the form submission process is unsuccessful. This typically indicates a configuration issue or a problem with a network request as validation is handled locally and will not reach the server.
+
+__Example Error__
+```jsx
+{
+  "http_status": 401,
+  "message": "Unauthorized",
+  "code": "invalid_auth"
+}
+```
+
+| Code | Meaning |
+|--------|:--------|
+| invalid_auth | This indicates a problem with authentication. |
+| invalid_param | One or more of the required parameters are missing. |
+| invalid_param_dup | This happens when a duplicate email address is detected. |
+| plaid_timeout | The Plaid authentication has timed out. |
+| unknown | This is is for all unhandled errors on the backend.  |
+
+__Additional HTTP Statuses__
+
+| Status | Meaning |
+|--------|:--------|
+| 200s | OK Everything worked as expected.
+| 400  | RevOps API bad request.
+| 401  | RevOps API access denied. Update your `publicKey`.
+| 404  | The requested resource doesn't exist.
+| 500s | Server errors, contact [RevOps](https://revops.io) for assistance. 
+ 
+
+### Callback Example 
+
+```jsx
+import React, { Component } from 'react'
+
+import {
+  PaymentMethod,
+} from 'revops-js'
+
+import "revops-js/themes/defaultStyles.css"
+
+class App extends Component {
+
+  // this callback is called when an error occurs in revops-js
+  onError = (error) => {
+    let errorMsg =  'Please contact support' 
+    if (error.http_status < 500) {
+      errorMsg = error.message
+    }
+    this.setState({error: true, errorMsg}) 
+  }
+
+  // If you'd like to save the data on your own platform in a PII-safe way, use the response object.
+  onComplete = (accountObject) => {
+    console.log(accountObject)
+  }
+
+  render() {
+    const { email } = this.props
+    return (
+      <div className="ui container">
+        <PaymentMethod
+          publicKey="pk_sandbox"
+          methods={['card', 'ach', 'plaid']}
+          account={{
+            accountId: "100000-3",
+            email,
+          }}
+          onComplete={this.onComplete}
+          onError={this.onError}
+          onValidationError={(validationErrors) => {
+            this.setState({ validationErrors })
+          }}
+        />
+        {this.state.success === true &&
+          <p className="confirmation-msg"> Details Saved! </p>
+        }
+        {this.state.formDirty === true &&
+          <p className="validation-msg"> Form Not Complete </p>
+        }
+        {this.state.error === true &&
+          <p className="error-msg"> {this.state.errorMsg} </p>
+        }
+      </div>
+    )
+  }
+}
+```
+
+## Using a React Ref to Submit Form
+Let's talk about how to integrate revops.js into a larger workflow using [React Refs](https://reactjs.org/docs/refs-and-the-dom.html) to control the revops child component. First, we need to define the `saveRef` property. This is done in two parts. 
+
+First, define the ref to pass down to the component. 
+```jsx
+class SignupForm extends Component {
+  constructor(props) {
+    super(props)
+
+    // define the reference to the component
+    this.saveRef = React.createRef()
+  }
+  render() {
+  const { accountId, email } = this.props
+  return (
+    <div>
+      <form>
+        <label>Email
+          <input type="email" name="email" value={email} />
+        </label>
+        <label>Password
+          <input type="password" name="password" />
+        </label>
+        <PaymentMethod
+          publicKey={publicKey}
+          account={{ accountId, email }}
+          defaultMethod="card"
+          // pass the reference to the revops component
+          saveRef={this.saveRef}
+        />
+        </form>
+      </div>
+    )
+  }
+}
+```
+
+Next, we will call the revops `onSubmit` method using the ref by defining the `submitSecure` method in our component.
+
+```jsx
+class SignupForm extends Component {
+  constructor(props) {
+    super(props)
+
+    // define the reference to the component
+    this.saveRef = React.createRef()
+  }
+
+  submitSecure = (e) => {
+    // only needed if part of a form
+    e.preventDefault()
+
+    // Tell RevOps to create the account.
+    if (!!this.saveRef === true) {
+      this.saveRef.current.onSubmit()
+    }
+  }
+
+  render() {
+  const { accountId, email } = this.props
+  return (
+    <div>
+      <form>
+        {/* ... */}
+        <PaymentMethod
+          publicKey={publicKey}
+          account={{ accountId, email }}
+          defaultMethod="card"
+          saveRef={this.saveRef}
+        />
+        {/* Now we can call it when we submit the entire form */}
+        <input type="submit" onClick={this.submitSecure} />
+        </form>
+      </div>
+    )
+  }
+}
+```
+
+Now we can now control the submission process of the `<PaymentMethod />` component from its parent component as one unified workflow. 
 
 ## License
 
