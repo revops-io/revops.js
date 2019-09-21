@@ -201,6 +201,11 @@ export default class PaymentMethod extends Component {
       renderAchForms,
     } = this.props
 
+    let subProperties = {
+      ...this.props,
+      account: this.state.accountModel,
+    }
+
     return (
       <section className="">
         <br />
@@ -215,7 +220,7 @@ export default class PaymentMethod extends Component {
                 }
                 showACHLink={this.isACHEnabled()}
                 changePaymentMethod={() => this.changePaymentMethodACH()}
-                {...this.props}
+                {...subProperties}
               >
                 {renderCardForms}
               </CreditCardForm>
@@ -229,14 +234,13 @@ export default class PaymentMethod extends Component {
                 hideTogglePlaid={this.isPlaidEnabled() === true?
                   false: true
                 }
-                account={this.state.accountModel}
                 setAccount={(accountProperty, field, value) =>
                   this.setAccount(accountProperty, field, value)
                 }
                 changePaymentMethod={() => this.changePaymentMethodCC()}
                 showCardLink={this.isCardEnabled()}
                 togglePlaidHandler={this.togglePlaidHandler}
-                {...this.props}
+                {...subProperties}
               >
                 {renderAchForms}
               </AchForm>
@@ -253,8 +257,7 @@ export default class PaymentMethod extends Component {
                 }
                 changePaymentMethod={() => this.changePaymentMethodCC()}
                 togglePlaidHandler={this.togglePlaidHandler}
-                {...this.props}
-
+                {...subProperties}
               />
             </div>
         }
