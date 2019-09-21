@@ -20,13 +20,23 @@ export class Account extends EntityModel {
       this._setAttr(attrName, params[attrName])
     )
     this.billingContact = new BillingContact(
-      !!params === true ? params.billingContact : {}
+      !!params === true ? {
+        ...this.billingContact,
+        ...params.billingContact,
+      }
+      : {}
     )
     this.shippingContact = new ShippingContact(
-      !!params === true ? params.shippingContact : {}
+      !!params === true ? {
+        ...this.shippingContact,
+        ...params.shippingContact,
+      }  : {}
     )
     this.billingPreferences = new BillingPreferences(
-      !!params === true ? params.billingPreferences : {}
+      !!params === true ? {
+        ...this.billingPreferences,
+        ...params.billingPreferences,
+      } : {}
     )
   }
 
