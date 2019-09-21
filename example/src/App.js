@@ -26,13 +26,25 @@ export default class App extends Component {
     this.saveRef = React.createRef()
   }
 
-  submitSecure = (e) => {
-    e.preventDefault()
-
+  submitSecure = () => {
     // tell the revops form to submit itself
     if (!!this.saveRef === true) {
       this.saveRef.current.onSubmit()
     }
+  }
+
+  // this callback is called when an error occurs in revops-js
+  onError = ({ message, http_status }) => {
+    if(http_status >= 500){
+      this.setState({error: true, errorMsg: 'Please contact support'})
+    } else {
+      this.setState({error: true, errorMsg: message})
+    }
+  }
+
+  onValidationError = (errors) => {
+    console.warn(errors)
+    this.setState({formDirty: true })
   }
 
   render() {
@@ -52,17 +64,20 @@ export default class App extends Component {
             />
           </label>
           <PaymentMethod
-            publicKey="pk_sandbox_123"
+            publicKey="pk_sandbox_0f7048228ee34af7a727f584a0091ce4"
             methods={['card', 'ach', 'plaid']}
             account={{
               accountId: "100000-3",
               email: this.state.email,
             }}
-            onComplete={(response) => {
-              this.setState({ success: true })
+            onComplete={(accountObject) => {
+              this.setState({ success: true, accountObject })
             }}
-
+            onValidationError={this.onValidationError}
+            onError={this.onError}
+            saveRef={this.saveRef}
           />
+          <input type="submit" onClick={this.submitSecure} />
           {this.state.success === true &&
             <h1>Details Saved!</h1>
           }
