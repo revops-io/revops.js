@@ -5,6 +5,8 @@ import {
   BillingPreferences,
 } from './index'
 
+import _ from 'lodash'
+
 export class Account extends EntityModel {
   accountId = ""
   name = ""
@@ -35,6 +37,7 @@ export class Account extends EntityModel {
       onError,
       onComplete,
       onNext,
+      onValidationError,
     }
   ) {
     if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
@@ -57,35 +60,50 @@ export class Account extends EntityModel {
           if (status === 401) {
             console.warn("[401] RevOps API access denied. Update your `publicKey`.")
           } else if (status === 400) {
-            console.warn("[400]RevOps API bad request:", response)
+            console.warn(`[400] RevOps API bad request:` + response)
           } else {
-            console.error(`[${status}] RevOps API error:`, response)
+            console.error(`[${status}] RevOps API error:` + response)
           }
           if (!!onError !== false && typeof (onError) === 'function') {
-            onError({ status, response })
+            onError(response)
           }
         } else {
           Object.keys(response).map(attrName =>
             this._setAttr(attrName, response[attrName])
           )
 
-          if(!!onNext !== false && typeof(onNext) === 'function') {
+          if (!!onNext !== false && typeof (onNext) === 'function') {
             onNext(status, {
               ...response,
             })
           }
-          if(!!onComplete !== false && typeof(onComplete) === 'function') {
+
+          if (!!onComplete !== false && typeof (onComplete) === 'function') {
             onComplete(response)
           }
         }
       },
       (errors) => {
-        if (!!onError !== false && typeof (onError) === 'function') {
-          onError({
-            errors,
-            status: false,
-            response: false,
+        if (!!onValidationError !== false && typeof (onValidationError) === 'function') {
+          // tell the developer a validation issue has occurred
+          errors = Object.entries(errors).map(([key, value]) => {
+            let elementId = _.kebabCase(key.replace('billing_preferences.', ''))
+            return [key, {
+                ...value,
+                elementId,
+            }]
           })
+          // map back to object
+          errors = errors.reduce((
+            mappedObject,
+            [key, value]) =>
+            ({
+              ...mappedObject,
+              [key]: value
+            }),
+            {}
+          )
+          onValidationError(errors)
         }
       }
     )

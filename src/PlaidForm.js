@@ -44,6 +44,9 @@ export default class PlaidForm extends Component {
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
 
+    /** A callable function to fire when an validation error occurs on the form. */
+    onValidationError: PropTypes.func,
+
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
 
@@ -181,6 +184,18 @@ export default class PlaidForm extends Component {
     )
   }
 
+  onComplete = (response) => {
+    const { onComplete } = this.props
+
+    this.setState({
+      loading: false,
+    })
+
+    if(onComplete !== false && typeof (onComplete) === 'function') {
+      onComplete(response)
+    }
+  }
+
   onError = ({errors}) => {
     const { onError } = this.props
     this.setState({
@@ -192,9 +207,22 @@ export default class PlaidForm extends Component {
     }
   }
 
+  onValidationError = (errors) => {
+    const { onValidationError } = this.props
+    this.setState({
+      errors: {
+        ...errors,
+      },
+    })
+
+    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+      onValidationError(errors)
+    }
+  }
+
   onSubmit = () => {
     const { form } = this
-    const { onNext, onComplete = false } = this.props
+    const { onNext } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -216,9 +244,10 @@ export default class PlaidForm extends Component {
     })
 
     const onError = this.onError
+    const onComplete = this.onComplete
+    const onValidationError = this.onValidationError
 
-    // Attach plaid state to model on submit.
-
+    // Attach plaid state to model on submit
 
     account.saveWithSecureForm(
       this.props.publicKey,
@@ -226,7 +255,8 @@ export default class PlaidForm extends Component {
       {
         onError,
         onComplete,
-        onNext
+        onNext,
+        onValidationError,
       }
     )
   }

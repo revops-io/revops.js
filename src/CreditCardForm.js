@@ -47,6 +47,9 @@ export default class CreditCardForm extends Component {
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
 
+    /** A callable function to fire when an validation error occurs on the form. */
+    onValidationError: PropTypes.func,
+
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
 
@@ -201,31 +204,44 @@ export default class CreditCardForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof(onComplete) === 'function') {
+    if(onComplete !== false && typeof (onComplete) === 'function') {
       onComplete(response)
     }
   }
 
-  onError = ({status, errors, response}) => {
+  onError = (error) => {
     const { onError } = this.props
     this.setState({
       errors: {
-        ...errors,
-        ...convertAPIError(status, response),
+        ...error,
+        ...convertAPIError(error.http_status, error),
       },
       status,
-      response,
+      response: error,
       loading: false,
     })
 
-    if(onError !== false && typeof(onError) === 'function') {
-      onError(errors)
+    if(onError !== false && typeof (onError) === 'function') {
+      onError(error)
+    }
+  }
+
+  onValidationError = (errors) => {
+    const { onValidationError } = this.props
+    this.setState({
+      errors: {
+        ...errors,
+      },
+    })
+
+    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+      onValidationError(errors)
     }
   }
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, } = this.props
+    const { onNext } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -249,13 +265,15 @@ export default class CreditCardForm extends Component {
 
     const onError = this.onError
     const onComplete = this.onComplete
+    const onValidationError = this.onValidationError
     account.saveWithSecureForm(
       this.props.publicKey,
       form,
       {
         onError,
         onComplete,
-        onNext
+        onNext,
+        onValidationError,
       })
   }
 

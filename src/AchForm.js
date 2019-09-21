@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  getErrorText,
-  getClassName,
+  convertAPIError,
   getDefaultValue,
 } from './FormHelpers'
 
@@ -44,6 +43,9 @@ export default class AchForm extends Component {
 
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
+
+    /** A callable function to fire when an validation error occurs on the form. */
+    onValidationError: PropTypes.func,
 
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
@@ -242,14 +244,20 @@ export default class AchForm extends Component {
     )
   }
 
-  onError = ({errors}) => {
+  onError = (error) => {
     const { onError } = this.props
     this.setState({
-      errors
+      errors: {
+        ...error,
+        ...convertAPIError(error.http_status, error),
+      },
+      status,
+      response: error,
+      loading: false,
     })
 
-    if(onError !== false && typeof(onError) === 'function') {
-      onError(errors)
+    if(onError !== false && typeof (onError) === 'function') {
+      onError(error)
     }
   }
 
@@ -264,9 +272,22 @@ export default class AchForm extends Component {
     }
   }
 
+  onValidationError = (errors) => {
+    const { onValidationError } = this.props
+    this.setState({
+      errors: {
+        ...errors,
+      },
+    })
+
+    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+      onValidationError(errors)
+    }
+  }
+
   onSubmit = () => {
     const { form } = this
-    const { onNext, } = this.props
+    const { onNext } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -288,14 +309,16 @@ export default class AchForm extends Component {
     })
 
     const onError = this.onError
-    const onComplete = this.onError
+    const onComplete = this.onComplete
+    const onValidationError = this.onValidationError
     account.saveWithSecureForm(
       this.props.publicKey,
       form,
       {
         onError,
         onComplete,
-        onNext
+        onNext,
+        onValidationError,
       })
   }
 
