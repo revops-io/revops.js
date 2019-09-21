@@ -47,9 +47,6 @@ export default class CreditCardForm extends Component {
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
 
-    /** A callable function to fire when an validation error occurs on the form. */
-    onValidationError: PropTypes.func,
-
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
 
@@ -204,31 +201,31 @@ export default class CreditCardForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof (onComplete) === 'function') {
+    if(onComplete !== false && typeof(onComplete) === 'function') {
       onComplete(response)
     }
   }
 
-  onError = (error) => {
+  onError = ({status, errors, response}) => {
     const { onError } = this.props
     this.setState({
       errors: {
-        ...error,
-        ...convertAPIError(error.http_status, error),
+        ...errors,
+        ...convertAPIError(status, response),
       },
       status,
-      response: error,
+      response,
       loading: false,
     })
 
-    if(onError !== false && typeof (onError) === 'function') {
-      onError(error)
+    if(onError !== false && typeof(onError) === 'function') {
+      onError(errors)
     }
   }
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, onValidationError } = this.props
+    const { onNext, } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -258,8 +255,7 @@ export default class CreditCardForm extends Component {
       {
         onError,
         onComplete,
-        onNext,
-        onValidationError,
+        onNext
       })
   }
 
