@@ -64,7 +64,7 @@ export default class App extends Component {
             />
           </label>
           <PaymentMethod
-            publicKey="pk_sandbox_0f7048228ee34af7a727f584a0091ce4"
+            publicKey="pk_sandbox_<your-sandbox-key>"
             methods={['card', 'ach', 'plaid']}
             account={{
               accountId: "100000-3",
