@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  convertAPIError,
+  getErrorText,
+  getClassName,
   getDefaultValue,
 } from './FormHelpers'
 
@@ -43,9 +44,6 @@ export default class AchForm extends Component {
 
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
-
-    /** A callable function to fire when an validation error occurs on the form. */
-    onValidationError: PropTypes.func,
 
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
@@ -244,20 +242,14 @@ export default class AchForm extends Component {
     )
   }
 
-  onError = (error) => {
+  onError = ({errors}) => {
     const { onError } = this.props
     this.setState({
-      errors: {
-        ...error,
-        ...convertAPIError(error.http_status, error),
-      },
-      status,
-      response: error,
-      loading: false,
+      errors
     })
 
-    if(onError !== false && typeof (onError) === 'function') {
-      onError(error)
+    if(onError !== false && typeof(onError) === 'function') {
+      onError(errors)
     }
   }
 
@@ -274,7 +266,7 @@ export default class AchForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, onValidationError } = this.props
+    const { onNext, } = this.props
     let { account } = this.props
 
     account = makeAccount({
@@ -296,15 +288,14 @@ export default class AchForm extends Component {
     })
 
     const onError = this.onError
-    const onComplete = this.onComplete
+    const onComplete = this.onError
     account.saveWithSecureForm(
       this.props.publicKey,
       form,
       {
         onError,
         onComplete,
-        onNext,
-        onValidationError,
+        onNext
       })
   }
 

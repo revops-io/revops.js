@@ -70,9 +70,6 @@ export default class PaymentMethod extends Component {
     /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
 
-    /** A callable function to fire when an validation error occurs on the form. */
-    onValidationError: PropTypes.func,
-
     /** Toggle for showing/hiding plaid info */
     togglePlaidHandler: PropTypes.func,
 
