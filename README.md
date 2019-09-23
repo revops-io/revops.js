@@ -83,7 +83,7 @@ class SignupForm extends Component {
     console.warn('Validation Error')
   }
 
-  onError = (error) => {
+  onError = ({error}) => {
     console.error(error)
   }
 
@@ -216,7 +216,7 @@ to initial new accounts.
 | billingContact | PropTypes.object | Object defining `email`, `name`, `phone`, and `title` of the direct billing contact, if it is different than the `account.email` provided.
 | billingPreferences | PropTypes.object | Object defining preferences filled out by RevOps.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
 | onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request. [onComplete](#onComplete)
-| onError(error) | PropTypes.func | Called when revops-js detects an error. See [onError](#onError) for more details.
+| onError({error}) | PropTypes.func | Called when revops-js detects an error. See [onError](#onError) for more details.
 | onValidationError() | PropTypes.func | Called when a validation error is detected See [onValidationError](#onValidationError) for more details.
 
 ## BillingPreferences Object
@@ -365,12 +365,12 @@ import "revops-js/themes/defaultStyles.css"
 class App extends Component {
 
   // this callback is called when an error occurs in revops-js
-  onError = (error) => {
-    let errorMsg =  'Please contact support'
+  onError = ({error}) => {
+    let errorMessage =  'Please contact support'
     if (error.http_status < 500) {
-      errorMsg = error.message
+      errorMessage = error.message
     }
-    this.setState({error: true, errorMsg})
+    this.setState({error: true, errorMessage})
   }
 
   // If you'd like to save the data on your own platform in a PII-safe way, use the response object.
