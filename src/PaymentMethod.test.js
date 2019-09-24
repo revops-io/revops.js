@@ -160,4 +160,28 @@ describe('The PaymentMethod Component', () => {
 
     })
   })
+
+  describe('account props should change correctly', () => {
+
+    it('should change to account.email and account.account_id', () => {
+      const mockProps = generateMockProps({
+        account: {
+          account_id: 'new-acct1',
+          email: 'new-email@company.api',
+        }
+      })
+      const wrapper = shallow(<PaymentMethod  {...mockProps} />)
+      expect(wrapper.instance().state.accountModel.email).to.equal('new-email@company.api')
+      expect(wrapper.instance().state.accountModel.accountId).to.equal('new-acct1')
+
+      wrapper.setProps({
+        account: {
+          account_id: 'existing-acct',
+          email: 'existing-email@company.api',
+        }
+      })
+      expect(wrapper.instance().state.accountModel.email).to.equal('existing-email@company.api')
+      expect(wrapper.instance().state.accountModel.accountId).to.equal('existing-acct')
+    })
+  })
 })
