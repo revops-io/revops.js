@@ -137,7 +137,6 @@ export default class PaymentMethod extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    debugger
     if(!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
