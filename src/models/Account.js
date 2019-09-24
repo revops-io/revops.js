@@ -53,7 +53,7 @@ export class Account extends EntityModel {
     if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
       throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
     }
-    form.submit(`/v1/accounts/${this.id}`,
+    form.submit(`/v1/accounts`,
       {
         headers: {
           'X-RevOps-Client': 'RevOps-JS',
