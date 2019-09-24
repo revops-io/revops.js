@@ -79,6 +79,9 @@ export default class AchForm extends Component {
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
 
+    /** Optional API Options **/
+    apiOptions: PropTypes.object,
+
     children: PropTypes.element,
   }
 
@@ -105,6 +108,27 @@ export default class AchForm extends Component {
       errors: false,
     }
     this.form = null
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if(!!prevProps.account !== false &&
+      !!this.props.account !== false &&
+      prevProps.account !== this.props.account
+    ) {
+      this.updateAccount(this.props.account)
+    }
+  }
+
+  updateAccount(account) {
+    this.setAccount(account)
+  }
+
+  setAccount = (account) => {
+    this.setState({
+      account: makeAccount({
+        ...account,
+      })
+    })
   }
 
   componentDidMount() {

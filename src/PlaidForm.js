@@ -116,6 +116,26 @@ export default class PlaidForm extends Component {
     )
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if(!!prevProps.account !== false &&
+      !!this.props.account !== false &&
+      prevProps.account !== this.props.account
+    ) {
+      this.updateAccount(this.props.account)
+    }
+  }
+
+  updateAccount(account) {
+    this.setAccount(account)
+  }
+
+  setAccount = (account) => {
+    this.setState({
+      account: makeAccount({
+        ...account,
+      })
+    })
+  }
 
   onPlaidLoad = (plaidLink) => {
     this.plaidLink = plaidLink

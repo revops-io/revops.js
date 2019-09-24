@@ -12,6 +12,7 @@ const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
 export class Account extends EntityModel {
   accountId = ""
   name = ""
+  email = ""
   billingContact = new BillingContact()
   shippingContact = new ShippingContact()
   billingPreferences = new BillingPreferences()
