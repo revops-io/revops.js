@@ -7,6 +7,8 @@ import {
 
 import _ from 'lodash'
 
+const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
+
 export class Account extends EntityModel {
   accountId = ""
   name = ""
@@ -53,7 +55,7 @@ export class Account extends EntityModel {
     if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
       throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
     }
-    form.submit(`/v1/accounts`,
+    form.submit(ACCOUNTS_LIST_RESOURCE,
       {
         headers: {
           'X-RevOps-Client': 'RevOps-JS',
