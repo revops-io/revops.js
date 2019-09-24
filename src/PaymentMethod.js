@@ -132,11 +132,24 @@ export default class PaymentMethod extends Component {
   }
 
   componentDidMount() {
-    this.initializeAccount()
+    const { account } = this.props
+    this.setAccount(account)
   }
 
-  initializeAccount() {
-    const { account } = this.props
+  componentDidUpdate(prevProps, prevState) {
+    if(!!prevProps.account !== false &&
+      !!this.props.account !== false &&
+      prevProps.account !== this.props.account
+    ) {
+      this.updateAccount(this.props.account)
+    }
+  }
+
+  updateAccount(account) {
+    this.setAccount(account)
+  }
+
+  setAccount = (account) => {
     this.setState({
       accountModel: makeAccount({
         ...account,
