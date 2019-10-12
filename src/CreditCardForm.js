@@ -20,7 +20,14 @@ import {
   Field,
   configureVault,
 } from './index'
+import { InstrumentModel } from './models'
 
+const determinePrefix = (targetModel) => {
+  if (targetModel === 'account' || !!targetModel === false) {
+    return 'billing_preferences.'
+  }
+  return ""
+}
 
 export default class CreditCardForm extends Component {
   static propTypes = {
@@ -78,6 +85,9 @@ export default class CreditCardForm extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
+
+    /** a string that indicated the destination of the operation */
+    targetModel: PropTypes.string
   }
 
   static defaultProps = {
@@ -140,7 +150,7 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const { account } = this.props
+    const { account, targetModel } = this.props
 
     let conf = configure(this.props.apiOptions)
     // eslint-disable-next-line
@@ -150,7 +160,9 @@ export default class CreditCardForm extends Component {
       () => form.field("#card-name .field-space", {
         type: "text",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_name",
+        name: targetModel === 'account'
+          ? 'billing_preferences.card_name'
+          : 'holder_name',
         defaultValue: getDefaultValue(account, 'cardName', ''),
         placeholder: "Florence Izote",
         validations: ["required"],
@@ -162,7 +174,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-number .field-space", {
         type: "card-number",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_number",
+        name: `${determinePrefix(targetModel)}card_number`,
         defaultValue: getDefaultValue(account, 'cardNumber', ''),
         placeholder: "Card number",
         validations: ["required", "validCardNumber"],
@@ -176,7 +188,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-cvc .field-space", {
         type: "card-security-code",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_cvv",
+        name: `${determinePrefix(targetModel)}card_cvv`,
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
         css: this.props.inputStyles,
@@ -186,7 +198,7 @@ export default class CreditCardForm extends Component {
     this.initForm('card-expdate', () =>
       form.field("#card-expdate .field-space", {
         type: "card-expiration-date",
-        name: "billing_preferences.card_expdate",
+        name: `${determinePrefix(targetModel)}card_expdate`,
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
         defaultValue: getDefaultCardExpDate(account, ''),
@@ -205,7 +217,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-postalcode .field-space", {
         type: "zip-code",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_postal_code",
+        name: `${determinePrefix(targetModel)}card_postal_code`,
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -259,8 +271,13 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext } = this.props
+    const { onNext, targetModel } = this.props
     let { account } = this.props
+
+    let instrument = new InstrumentModel({ 
+      accountId: "acct_20bdbc87d3d64abd818957147e2f53bb",
+      method: "credit-card"
+    })
 
     account = makeAccount({
       ...account, // prop state
@@ -284,15 +301,30 @@ export default class CreditCardForm extends Component {
     const onError = this.onError
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
-    account.saveWithSecureForm(
-      this.props.publicKey,
-      form,
-      {
-        onError,
-        onComplete,
-        onNext,
-        onValidationError,
-      })
+
+    if (targetModel === 'account' || !!targetModel === false) {
+      account.saveWithSecureForm(
+        this.props.publicKey,
+        form,
+        {
+          onError,
+          onComplete,
+          onNext,
+          onValidationError,
+        })
+    } else {
+      instrument.saveWithSecureForm(
+        this.props.publicKey,
+        form,
+        {
+          onError,
+          onComplete,
+          onNext,
+          onValidationError,
+        })
+    }
+
+
   }
 
   render() {
