@@ -53,8 +53,11 @@ export class Account extends EntityModel {
       onValidationError,
     }
   ) {
-    if (!!apiKey === false || apiKey.startsWith('pk_') === false) {
+    if (!!apiKey === false) {
       throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
+    }
+    if (apiKey.startsWith('sk_') === true) {
+      throw new Error("Unable to call save. You are attempting to use a secret key.")
     }
     form.submit(ACCOUNTS_LIST_RESOURCE,
       {
