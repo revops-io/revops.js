@@ -17,7 +17,7 @@ export class InstrumentModel extends EntityModel {
     year: ""
   }
   cardNumber = ""
-  cardPostal_Code = ""
+  cardPostalCode = ""
   cardToken = ""
   country = ""
   currency = ""
