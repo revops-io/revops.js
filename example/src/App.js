@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
+  RevOps,
 } from 'revops-js'
 
 import "revops-js/themes/defaultStyles.css"
@@ -35,10 +36,10 @@ export default class App extends Component {
 
   // this callback is called when an error occurs in revops-js
   onError = ({ message, http_status }) => {
-    if(http_status >= 500){
-      this.setState({error: true, errorMsg: 'Please contact support'})
+    if (http_status >= 500) {
+      this.setState({ error: true, errorMsg: 'Please contact support' })
     } else {
-      this.setState({error: true, errorMsg: message})
+      this.setState({ error: true, errorMsg: message })
     }
   }
 
@@ -63,20 +64,26 @@ export default class App extends Component {
               }
             />
           </label>
-          <PaymentMethod
+          <RevOps
             publicKey="pk_sandbox_<your-sandbox-key>"
-            methods={['card', 'ach', 'plaid']}
+            apiOptions={{
+              env: 'sandbox',
+              authorizationUrl: 'http://localhost:5050/token',
+            }}
             account={{
-              accountId: "100000-3",
+              accountId: "",
               email: this.state.email,
-            }}
-            onComplete={(accountObject) => {
-              this.setState({ success: true, accountObject })
-            }}
-            onValidationError={this.onValidationError}
-            onError={this.onError}
-            saveRef={this.saveRef}
-          />
+            }}>
+            <PaymentMethod
+              methods={['card', 'ach', 'plaid']}
+              onComplete={(accountObject) => {
+                this.setState({ success: true, accountObject })
+              }}
+              onValidationError={this.onValidationError}
+              onError={this.onError}
+              saveRef={this.saveRef}
+            />
+          </RevOps>
           <input type="submit" onClick={this.submitSecure} />
           {this.state.success === true &&
             <h1>Details Saved!</h1>

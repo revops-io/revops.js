@@ -275,7 +275,7 @@ export default class CreditCardForm extends Component {
     let { account } = this.props
 
     let instrument = new InstrumentModel({ 
-      accountId: "acct_20bdbc87d3d64abd818957147e2f53bb",
+      accountId: account.accountId,
       method: "credit-card"
     })
 
@@ -304,7 +304,7 @@ export default class CreditCardForm extends Component {
 
     if (targetModel === 'account' || !!targetModel === false) {
       account.saveWithSecureForm(
-        this.props.publicKey,
+        this.props.accessToken,
         form,
         {
           onError,
@@ -314,7 +314,7 @@ export default class CreditCardForm extends Component {
         })
     } else {
       instrument.saveWithSecureForm(
-        this.props.publicKey,
+        this.props.accessToken,
         form,
         {
           onError,
