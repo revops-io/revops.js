@@ -1,7 +1,7 @@
-import React, { Component, Fragment } from "react"
+import React, { Component } from "react"
 import PropTypes from 'prop-types'
 
-export class InstrumentAPI extends Component {
+export class RevOps extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
     publicKey: PropTypes.string.isRequired,
@@ -14,7 +14,7 @@ export class InstrumentAPI extends Component {
   }
 
   static defaultProps = {
-    targetModel: 'instruments',
+    targetModel: 'accounts',
   }
 
   getApiKey = async () => {
@@ -64,4 +64,4 @@ export class InstrumentAPI extends Component {
   }
 }
 
-export default InstrumentAPI
+export default RevOps
