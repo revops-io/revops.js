@@ -20,10 +20,10 @@ import {
   Field,
   configureVault,
 } from './index'
-import { InstrumentModel } from './models'
+import { InstrumentModel, modelTypes } from './models'
 
 const determinePrefix = (targetModel) => {
-  if (targetModel === 'account' || !!targetModel === false) {
+  if (targetModel === modelTypes.ACCOUNT || !!targetModel === false) {
     return 'billing_preferences.'
   }
   return ""
@@ -91,6 +91,8 @@ export default class CreditCardForm extends Component {
 
     /** a token that grants permission to interact with the RevOps API */
     accessToken: PropTypes.string,
+
+    children: PropTypes.element,
   }
 
   static defaultProps = {
@@ -305,7 +307,7 @@ export default class CreditCardForm extends Component {
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
 
-    if (model === 'account' || !!model === false) {
+    if (model === modelTypes.ACCOUNT|| !!model === false) {
       account.saveWithSecureForm(
         this.props.accessToken,
         form,
