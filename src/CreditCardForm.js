@@ -191,9 +191,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-cvc .field-space", {
         type: "card-security-code",
         errorColor: this.props.errorColor,
-        name: model === 'account'
-          ? 'billing_preferences.card_cvv'
-          : 'cvc',
+        name: `${determinePrefix(model)}card_cvv`,
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
         css: this.props.inputStyles,
