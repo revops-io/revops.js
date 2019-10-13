@@ -87,7 +87,10 @@ export default class CreditCardForm extends Component {
     apiOptions: PropTypes.object,
 
     /** a string that indicated the destination of the operation */
-    targetModel: PropTypes.string
+    model: PropTypes.string,
+
+    /** a token that grants permission to interact with the RevOps API */
+    accessToken: PropTypes.string,
   }
 
   static defaultProps = {
@@ -150,7 +153,7 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const { account, targetModel } = this.props
+    const { account, model } = this.props
 
     let conf = configure(this.props.apiOptions)
     // eslint-disable-next-line
@@ -160,7 +163,7 @@ export default class CreditCardForm extends Component {
       () => form.field("#card-name .field-space", {
         type: "text",
         errorColor: this.props.errorColor,
-        name: targetModel === 'account'
+        name: model === 'account'
           ? 'billing_preferences.card_name'
           : 'holder_name',
         defaultValue: getDefaultValue(account, 'cardName', ''),
@@ -174,7 +177,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-number .field-space", {
         type: "card-number",
         errorColor: this.props.errorColor,
-        name: `${determinePrefix(targetModel)}card_number`,
+        name: `${determinePrefix(model)}card_number`,
         defaultValue: getDefaultValue(account, 'cardNumber', ''),
         placeholder: "Card number",
         validations: ["required", "validCardNumber"],
@@ -188,7 +191,9 @@ export default class CreditCardForm extends Component {
       form.field("#card-cvc .field-space", {
         type: "card-security-code",
         errorColor: this.props.errorColor,
-        name: `${determinePrefix(targetModel)}card_cvv`,
+        name: model === 'account'
+          ? 'billing_preferences.card_cvv'
+          : 'cvc',
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
         css: this.props.inputStyles,
@@ -198,7 +203,7 @@ export default class CreditCardForm extends Component {
     this.initForm('card-expdate', () =>
       form.field("#card-expdate .field-space", {
         type: "card-expiration-date",
-        name: `${determinePrefix(targetModel)}card_expdate`,
+        name: `${determinePrefix(model)}card_expdate`,
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
         defaultValue: getDefaultCardExpDate(account, ''),
@@ -217,7 +222,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-postalcode .field-space", {
         type: "zip-code",
         errorColor: this.props.errorColor,
-        name: `${determinePrefix(targetModel)}card_postal_code`,
+        name: `${determinePrefix(model)}card_postal_code`,
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -271,11 +276,11 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, targetModel } = this.props
+    const { onNext, model } = this.props
     let { account } = this.props
 
     let instrument = new InstrumentModel({ 
-      accountId: account.accountId,
+      accountId: account.revopsAcctId,
       method: "credit-card"
     })
 
@@ -302,7 +307,7 @@ export default class CreditCardForm extends Component {
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
 
-    if (targetModel === 'account' || !!targetModel === false) {
+    if (model === 'account' || !!model === false) {
       account.saveWithSecureForm(
         this.props.accessToken,
         form,

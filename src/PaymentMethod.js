@@ -233,7 +233,6 @@ export default class PaymentMethod extends Component {
                 }
                 showACHLink={this.isACHEnabled()}
                 changePaymentMethod={() => this.changePaymentMethodACH()}
-                targetModel={'instrument'}
                 {...subProperties}
               >
                 {renderCardForms}
