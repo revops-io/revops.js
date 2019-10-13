@@ -40,10 +40,14 @@ export class RevOps extends Component {
       let responseOK = response && response.ok
       if (responseOK) {
         let data = await response.json()
-        // do something with data
         if (!!data.access_token === true) {
           // TODO: Set expiration of the token to re-auth if needed
           this.setState({ accessToken: data.access_token })
+        }
+
+        // if a call back is defined call it and pass back the result of the call
+        if (!!apiOptions.callback !== false && typeof (apiOptions.callback) === 'function') {
+          apiOptions.callback(data)
         }
       }
     }
@@ -58,7 +62,7 @@ export class RevOps extends Component {
 
     return !!children !== false &&
       <div>
-        {React.cloneElement(children, {...this.props, ...this.state})}
+        {React.cloneElement(children, { ...this.props, ...this.state })}
       </div>
   }
 }
