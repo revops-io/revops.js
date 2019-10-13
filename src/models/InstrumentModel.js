@@ -100,10 +100,9 @@ export class InstrumentModel extends EntityModel {
         if (!!onValidationError !== false && typeof (onValidationError) === 'function') {
           // tell the developer a validation issue has occurred
           errors = Object.entries(errors).map(([key, value]) => {
-            let elementId = _.kebabCase(key.replace('billing_preferences.', ''))
             return [key, {
               ...value,
-              elementId,
+              key,
             }]
           })
           // map back to object

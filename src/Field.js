@@ -2,6 +2,10 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
+  modelTypes
+} from './models'
+
+import {
   getClassName,
 } from './FormHelpers'
 import { ErrorMessage } from './index'
@@ -30,6 +34,10 @@ export class Field extends Component {
   }
 
   getElementKey = () => {
+    const { model } = this.props
+    if(model === modelTypes.INSTRUMENT){
+      return `${_.snakeCase(this.props.name)}`
+    }
     return `billing_preferences.${_.snakeCase(this.props.name)}`
   }
 

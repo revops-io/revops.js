@@ -332,7 +332,7 @@ export default class CreditCardForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, children } = this.props
+    const { onLast, onCancel, children, model } = this.props
 
     return (
       <section style={this.props.cardWidth}>
@@ -363,6 +363,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(this.props.account, 'cardName', '')}
                   showInlineError={true}
                   errors={errors}
+                  model={model}
                 />
                 <Field
                   id="card-number"
@@ -371,6 +372,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(this.props.account, 'cardNumber', '')}
                   showInlineError={true}
                   errors={errors}
+                  model={model}
                 />
 
                 <Field
@@ -380,6 +382,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(this.props.account, 'cardExpdate', '')}
                   showInlineError={true}
                   errors={errors}
+                  model={model}
                 />
 
                 <Field
@@ -389,6 +392,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(this.props.account, 'cardCvv', '')}
                   showInlineError={true}
                   errors={errors}
+                  model={model}
                 />
 
                 <Field
@@ -398,6 +402,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(this.props.account, 'cardPostalcode', '')}
                   showInlineError={true}
                   errors={errors}
+                  model={model}
                 />
               </React.Fragment>
             }
