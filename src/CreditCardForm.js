@@ -20,7 +20,7 @@ import {
   Field,
   configureVault,
 } from './index'
-import { InstrumentModel, modelTypes } from './models'
+import { InstrumentModel } from './models'
 
 export default class CreditCardForm extends Component {
   static propTypes = {

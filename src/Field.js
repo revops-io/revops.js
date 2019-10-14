@@ -2,10 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import {
-  modelTypes
-} from './models'
-
-import {
   getClassName,
 } from './FormHelpers'
 import { ErrorMessage } from './index'

@@ -98,6 +98,7 @@ export class RevOps extends Component {
 
   render() {
     const { createAccount, children } = this.props
+    const { account } = this.state
 
     return !!children !== false &&
       <div>
@@ -119,9 +120,8 @@ export class RevOps extends Component {
             <button onClick={this.createAccount}>Create Account</button>
           </React.Fragment>
         }
-
         {
-          React.cloneElement(children, { ...this.props, ...this.state })
+          !!account && React.cloneElement(children, { ...this.props, ...this.state })
         }
       </div>
   }

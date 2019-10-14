@@ -1,6 +1,6 @@
-export const modelTypes = {
+export const ModelTypes = {
   INSTRUMENT: 'instrument',
   ACCOUNT: 'account',
 }
 
-export default modelTypes
+export default ModelTypes

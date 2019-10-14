@@ -16,7 +16,7 @@ import {
   configureVault,
 } from './index'
 
-import { InstrumentModel, modelTypes } from './models'
+import { InstrumentModel, ModelTypes } from './models'
 
 import configure from './client/VaultConfig'
 
@@ -349,7 +349,7 @@ export default class AchForm extends Component {
     const onError = this.onError
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
-    if (model === modelTypes.ACCOUNT || !!model === false) {
+    if (model === ModelTypes.ACCOUNT || !!model === false) {
       account.saveWithSecureForm(
         this.props.accessToken,
         form,
