@@ -16,7 +16,7 @@ import {
   configureVault,
 } from './index'
 
-import { InstrumentModel, ModelTypes } from './models'
+import { InstrumentModel } from './models'
 
 import configure from './client/VaultConfig'
 
@@ -85,9 +85,6 @@ export default class AchForm extends Component {
     apiOptions: PropTypes.object,
 
     children: PropTypes.element,
-
-    /** a string that indicated the destination of the operation */
-    model: PropTypes.string,
 
     /** a token that grants permission to interact with the RevOps API */
     accessToken: PropTypes.string,
@@ -318,26 +315,18 @@ export default class AchForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, model } = this.props
-    let { account } = this.props
+    const { onNext, accessToken } = this.props
+    let { account, instrument } = this.props
 
-    let instrument = new InstrumentModel({
-      accountId: account.id,
+    instrument = new InstrumentModel({
+      ...instrument,
+      businessAccountId: account.id,
       isIndividual: true,
       isBusiness: false,
       method: "ach"
     })
 
-    account = makeAccount({
-      ...account, // prop state
-      ...this.state.account, // current component state takes priority
-      status: 'activating', // trigger activating state.
-      billingPreferences: {
-        ...account.billingPreferences,
-        paymentMethod: "ach"
-      }
-    })
-
+    // Clear state
     this.setState({
       account: account,
       errors: false,
@@ -349,9 +338,10 @@ export default class AchForm extends Component {
     const onError = this.onError
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
-    if (model === ModelTypes.ACCOUNT || !!model === false) {
-      account.saveWithSecureForm(
-        this.props.accessToken,
+
+    if(!!accessToken === true){
+      instrument.saveWithSecureForm(
+        accessToken,
         form,
         {
           onError,
@@ -360,15 +350,7 @@ export default class AchForm extends Component {
           onValidationError,
         })
     } else {
-      instrument.saveWithSecureForm(
-        this.props.accessToken,
-        form,
-        {
-          onError,
-          onComplete,
-          onNext,
-          onValidationError,
-        })
+      // TODO: Notifiy auth error
     }
   }
 
@@ -382,7 +364,6 @@ export default class AchForm extends Component {
       onLast,
       onCancel,
       children,
-      model,
       instrument,
     } = this.props
 
@@ -414,17 +395,15 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'bankName', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
 
               <Field
                 id="bank-holder-name"
-                name="bankAccountHolderName"
+                name="holderName"
                 label="Account Holder Name"
                 defaultValue={getDefaultValue(instrument, 'bankAccountHolderName', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
 
               <Field
@@ -434,7 +413,6 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'postalcode', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
 
               <Field
@@ -444,7 +422,6 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'country', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
 
               <Field
@@ -454,7 +431,6 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'accountHolderType', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
 
               <Field
@@ -464,7 +440,6 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'routingNumber', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
 
               <Field
@@ -474,7 +449,6 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'accountNumber', '')}
                 showInlineError={true}
                 errors={errors}
-                model={model}
               />
             </React.Fragment>
           }
