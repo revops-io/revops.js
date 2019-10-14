@@ -34,11 +34,7 @@ export class Field extends Component {
   }
 
   getElementKey = () => {
-    const { model } = this.props
-    if(model === modelTypes.INSTRUMENT){
-      return `${_.snakeCase(this.props.name)}`
-    }
-    return `billing_preferences.${_.snakeCase(this.props.name)}`
+    return `${_.snakeCase(this.props.name)}`
   }
 
   render () {

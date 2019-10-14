@@ -61,11 +61,9 @@ export const convertAPIError = (httpStatus, httpResponse) => {
  * Retrieve existing or default value from account.billingPreferences object
  *
  */
-export const getDefaultValue = (account, billingProp, defaultValue) => {
-  return !!account === true
-    && !!account.billingPreferences === true
-    && !!account.billingPreferences[billingProp] === true
-    ? account.billingPreferences[billingProp]
+export const getDefaultValue = (model, billingProp, defaultValue) => {
+  return !!model === true && !!model[billingProp] === true
+    ? model[billingProp]
     : defaultValue
 }
 
