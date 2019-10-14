@@ -216,7 +216,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-postalcode .field-space", {
         type: "zip-code",
         errorColor: this.props.errorColor,
-        name: 'card_postal_code',
+        name: 'postal_code',
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -270,7 +270,7 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext } = this.props
+    const { onNext, accessToken } = this.props
     let { account, instrument } = this.props
 
     instrument = new InstrumentModel({
@@ -292,15 +292,19 @@ export default class CreditCardForm extends Component {
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
 
-    instrument.saveWithSecureForm(
-      this.props.accessToken,
-      form,
-      {
-        onError,
-        onComplete,
-        onNext,
-        onValidationError,
-      })
+    if(!!accessToken === true){
+      instrument.saveWithSecureForm(
+        accessToken,
+        form,
+        {
+          onError,
+          onComplete,
+          onNext,
+          onValidationError,
+        })
+    } else {
+      // TODO: Notifiy auth error
+    }
   }
 
   render() {
@@ -331,7 +335,7 @@ export default class CreditCardForm extends Component {
               <React.Fragment>
                 <Field
                   id="card-name"
-                  name="cardName"
+                  name="holderName"
                   label="Card Holder"
                   defaultValue={getDefaultValue(instrument, 'cardName', '')}
                   showInlineError={true}
@@ -366,9 +370,9 @@ export default class CreditCardForm extends Component {
 
                 <Field
                   id="card-postalcode"
-                  name="cardPostalCode"
+                  name="postalCode"
                   label="Postal Code"
-                  defaultValue={getDefaultValue(instrument, 'cardPostalcode', '')}
+                  defaultValue={getDefaultValue(instrument, 'postalCode', '')}
                   showInlineError={true}
                   errors={errors}
                 />
