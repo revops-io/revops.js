@@ -8,6 +8,7 @@ const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
 
 export class InstrumentModel extends EntityModel {
   accountId = ""
+  businessAccountId = ""
   id = ""
   uri = ""
   accountNumber = ""
@@ -56,7 +57,8 @@ export class InstrumentModel extends EntityModel {
     if (apiKey.startsWith('sk_') === true) {
       throw new Error("Unable to call save. You are attempting to use a secret key.")
     }
-    form.submit(`${ACCOUNTS_LIST_RESOURCE}/${this.accountId}/instruments`,
+
+    form.submit(`${ACCOUNTS_LIST_RESOURCE}/${this.businessAccountId}/instruments`,
       {
         headers: {
           'X-RevOps-Client': 'RevOps-JS',

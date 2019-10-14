@@ -20,13 +20,6 @@ import { InstrumentModel, modelTypes } from './models'
 
 import configure from './client/VaultConfig'
 
-const determinePrefix = (targetModel) => {
-  if (targetModel === modelTypes.ACCOUNT || !!targetModel === false) {
-    return 'billing_preferences.'
-  }
-  return ""
-}
-
 export default class AchForm extends Component {
   static propTypes = {
 
@@ -98,6 +91,9 @@ export default class AchForm extends Component {
 
     /** a token that grants permission to interact with the RevOps API */
     accessToken: PropTypes.string,
+
+    /** model for of a revops instrument */
+    instrument: PropTypes.object.isRequired,
   }
 
   static defaultProps = {
@@ -179,7 +175,7 @@ export default class AchForm extends Component {
   }
 
   initialize = () => {
-    const { account, model } = this.props
+    const { instrument } = this.props
 
     if (!!this.form === false) {
       let conf = configure(this.props.apiOptions)
@@ -191,8 +187,8 @@ export default class AchForm extends Component {
     this.initForm('bank-name',
       () => this.createFormField(
         "#bank-name .field-space",
-        `${determinePrefix(model)}bank_name`,
-        getDefaultValue(account, 'bankName', ''),
+        'bank_name',
+        getDefaultValue(instrument, 'bankName', ''),
         {
           type: "text",
           placeholder: "Name of Bank Institution",
@@ -202,8 +198,8 @@ export default class AchForm extends Component {
     this.initForm('bank-postalcode',
       () => this.createFormField(
         "#bank-postalcode .field-space",
-        `${determinePrefix(model)}bank_postal_code`,
-        getDefaultValue(account, 'bankpostalcode', ''),
+        `postal_code`,
+        getDefaultValue(instrument, 'postalCode', ''),
         {
           type: "zip-code",
           placeholder: "Postal code",
@@ -213,8 +209,8 @@ export default class AchForm extends Component {
     this.initForm('bank-account-country',
       () => this.createFormField(
         "#bank-account-country .field-space",
-        `${determinePrefix(model)}bank_country`,
-        getDefaultValue(account, 'bankCountry', 'USA'),
+        'country',
+        getDefaultValue(instrument, 'bankCountry', 'USA'),
         {
           type: "dropdown",
           validations: ["required"],
@@ -229,10 +225,8 @@ export default class AchForm extends Component {
     this.initForm('bank-holder-name',
       () => this.createFormField(
         "#bank-holder-name .field-space",
-        model === modelTypes.INSTRUMENT
-          ? 'holder_name'
-          : 'billing_preferences.bank_account_holder_name',
-        getDefaultValue(account, 'bankAccountHolderName', ''),
+        'holder_name',
+        getDefaultValue(instrument, 'holderName', ''),
         {
           type: "text",
           placeholder: "Name on the account",
@@ -243,10 +237,8 @@ export default class AchForm extends Component {
     this.initForm('bank-account-type',
       () => this.createFormField(
         "#bank-account-type .field-space",
-        model === modelTypes.INSTRUMENT
-          ? 'bank_account_holder_type'
-          : 'billing_preferences.bank_account_holder_type',
-        getDefaultValue(account, 'bankAccountHolderType', 'company'),
+        'bank_account_holder_type',
+        getDefaultValue(instrument, 'bankAccountHolderType', 'company'),
         {
           type: "dropdown",
           validations: ["required"],
@@ -260,10 +252,8 @@ export default class AchForm extends Component {
     this.initForm('bank-account-number',
       () => this.createFormField(
         "#bank-account-number .field-space",
-        model === modelTypes.INSTRUMENT
-          ? 'account_number'
-          : 'billing_preferences.bank_account_number',
-        getDefaultValue(account, 'bankAccountNumber', ''),
+        'account_number',
+        getDefaultValue(instrument, 'accountNumber', ''),
         {
           type: "text",
           placeholder: "Enter bank account number",
@@ -274,10 +264,8 @@ export default class AchForm extends Component {
     this.initForm('bank-routing-number', () =>
       this.createFormField(
         "#bank-routing-number .field-space",
-        model === modelTypes.INSTRUMENT
-          ? 'routing_number'
-          : 'billing_preferences.bank_routing_number',
-        getDefaultValue(account, 'bankRoutingNumber', ''),
+        'routing_number',
+        getDefaultValue(instrument, 'routingNumber', ''),
         {
           type: "text",
           placeholder: "Enter bank routing number",
@@ -334,7 +322,7 @@ export default class AchForm extends Component {
     let { account } = this.props
 
     let instrument = new InstrumentModel({
-      accountId: account.revopsAcctId,
+      accountId: account.id,
       isIndividual: true,
       isBusiness: false,
       method: "ach"
@@ -395,6 +383,7 @@ export default class AchForm extends Component {
       onCancel,
       children,
       model,
+      instrument,
     } = this.props
 
     return (
@@ -422,7 +411,7 @@ export default class AchForm extends Component {
                 id="bank-name"
                 name="bankName"
                 label="Bank Name"
-                defaultValue={getDefaultValue(this.props.account, 'bankName', '')}
+                defaultValue={getDefaultValue(instrument, 'bankName', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}
@@ -432,7 +421,7 @@ export default class AchForm extends Component {
                 id="bank-holder-name"
                 name="bankAccountHolderName"
                 label="Account Holder Name"
-                defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderName', '')}
+                defaultValue={getDefaultValue(instrument, 'bankAccountHolderName', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}
@@ -440,9 +429,9 @@ export default class AchForm extends Component {
 
               <Field
                 id="bank-postalcode"
-                name="bankPostalCode"
+                name="postalCode"
                 label="Postal Code"
-                defaultValue={getDefaultValue(this.props.account, 'bankPostalcode', '')}
+                defaultValue={getDefaultValue(instrument, 'postalcode', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}
@@ -450,9 +439,9 @@ export default class AchForm extends Component {
 
               <Field
                 id="bank-account-country"
-                name="bankCountry"
+                name="country"
                 label="Bank Country"
-                defaultValue={getDefaultValue(this.props.account, 'bankCountry', '')}
+                defaultValue={getDefaultValue(instrument, 'country', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}
@@ -462,7 +451,7 @@ export default class AchForm extends Component {
                 id="bank-account-type"
                 name="bankAccountHolderType"
                 label="Account Type"
-                defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderType', '')}
+                defaultValue={getDefaultValue(instrument, 'accountHolderType', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}
@@ -470,9 +459,9 @@ export default class AchForm extends Component {
 
               <Field
                 id="bank-routing-number"
-                name="bankRoutingNumber"
+                name="routingNumber"
                 label="Routing Number"
-                defaultValue={getDefaultValue(this.props.account, 'bankRoutingNumber', '')}
+                defaultValue={getDefaultValue(instrument, 'routingNumber', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}
@@ -480,9 +469,9 @@ export default class AchForm extends Component {
 
               <Field
                 id="bank-account-number"
-                name="bankAccountNumber"
+                name="accountNumber"
                 label="Account Number"
-                defaultValue={getDefaultValue(this.props.account, 'bankAccountNumber', '')}
+                defaultValue={getDefaultValue(instrument, 'accountNumber', '')}
                 showInlineError={true}
                 errors={errors}
                 model={model}

@@ -15,6 +15,7 @@ describe('The PaymentMethod Component', () => {
         PaymentMethods.METHOD_PLAID,
       ],
       defaultMethod: PaymentMethods.METHOD_ACH,
+      instrument: {},
       ...props,
     }
   }

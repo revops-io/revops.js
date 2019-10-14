@@ -1,6 +1,8 @@
 import React, { Component } from "react"
 import PropTypes from 'prop-types'
 
+import { makeAccount } from './actions/AccountActions'
+
 export class RevOps extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
@@ -11,14 +13,26 @@ export class RevOps extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
+
+    /** boolean value that will make the RevOps component create account before authenticating */
+    createAccount: PropTypes.bool,
   }
 
-  static defaultProps = {
-    targetModel: 'account',
+  constructor(props) {
+    super(props)
+    this.state = {
+      email: "",
+    }
   }
 
-  getApiKey = async () => {
-    const { publicKey, account, apiOptions } = this.props
+  getApiKey = async (account = false) => {
+    const { publicKey, apiOptions = {} } = this.props
+
+    // call with props unless calling with an arg
+    account = account === false
+      ? this.props.account
+      : account
+
     if (!!apiOptions.authorizationUrl !== false &&
       apiOptions.authorizationUrl.startsWith('http')) {
       let searchParams = new URLSearchParams({
@@ -54,15 +68,61 @@ export class RevOps extends Component {
   }
 
   componentDidMount() {
-    this.getApiKey()
+    const { createAccount, account } = this.props
+    if (createAccount !== true) {
+      this.getApiKey()
+      this.setState({account: makeAccount({...account})})
+    }
+  }
+
+  createAccount = async () => {
+    const { publicKey, account } = this.props
+    let options = {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${publicKey}`,
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      body: JSON.stringify({ ...this.state.account, email: this.state.email, account_id: account.accountId })
+    };
+    const accountCreationURL = `https://vault.revops.io/v1/accounts`
+
+    let response = await fetch(accountCreationURL, options)
+    let responseOK = response && response.ok
+    if (responseOK) {
+      let data = await response.json()
+      this.getApiKey({ ...data, accountId: data.account_id })
+      this.setState({account: makeAccount({...data})})
+    }
   }
 
   render() {
-    const { children } = this.props
+    const { createAccount, children } = this.props
 
     return !!children !== false &&
       <div>
-        {React.cloneElement(children, { ...this.props, ...this.state })}
+        {
+          createAccount === true &&
+          <React.Fragment>
+            <label>
+              Email
+            <input
+                type="text"
+                name="email"
+                onChange={
+                  (e) => this.setState({
+                    email: e.target.value,
+                  })
+                }
+              />
+            </label>
+            <button onClick={this.createAccount}>Create Account</button>
+          </React.Fragment>
+        }
+
+        {
+          React.cloneElement(children, { ...this.props, ...this.state })
+        }
       </div>
   }
 }

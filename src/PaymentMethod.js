@@ -10,6 +10,7 @@ import {
 } from './index'
 
 import { ButtonGroup } from './ButtonGroup'
+import { InstrumentModel } from './models'
 
 export const PaymentMethods = {
   METHOD_ACH: 'ach',
@@ -80,6 +81,9 @@ export default class PaymentMethod extends Component {
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
 
+    /** Instrument object allows preconfigured account options to be set */
+    instrument: PropTypes.object,
+
     /** Render customized Card forms */
     renderCardForms: PropTypes.func,
 
@@ -132,8 +136,9 @@ export default class PaymentMethod extends Component {
   }
 
   componentDidMount() {
-    const { account } = this.props
+    const { account, instrument = {}} = this.props
     this.setAccount(account)
+    this.setState({instrument: new InstrumentModel(instrument)})
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -217,6 +222,7 @@ export default class PaymentMethod extends Component {
     let subProperties = {
       ...this.props,
       account: this.state.accountModel,
+      instrument: this.state.instrument,
     }
 
     return (
