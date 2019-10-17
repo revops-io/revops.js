@@ -67,15 +67,13 @@ export const getDefaultValue = (model, billingProp, defaultValue) => {
     : defaultValue
 }
 
-export const getDefaultCardExpDate = (account) => {
-  if (!!account === false || !!account.billingPreferences === false) {
+export const getDefaultCardExpDate = (instrument) => {
+  if (!!instrument === false) {
     return ""
   }
 
-  return !!account.billingPreferences.cardExpdate.month
-  || !!account.billingPreferences.cardExpdate.year === true
-  ? account.billingPreferences.cardExpdate.month
-    + '/' +
-    account.billingPreferences.cardExpdate.year
-  : ""
+  return (
+    `${!!instrument.cardExpdate && !!instrument.cardExpdate.month ? instrument.cardExpdate.month : "" }` +
+    `/${!!instrument.cardExpdate && !!instrument.cardExpdate.year ? instrument.cardExpdate.year : "" }`
+  )  
 }

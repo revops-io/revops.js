@@ -14,7 +14,7 @@ import { InstrumentModel } from './models'
 
 export const PaymentMethods = {
   METHOD_ACH: 'ach',
-  METHOD_CARD: 'card',
+  METHOD_CARD: 'credit-card',
   METHOD_PLAID: 'plaid',
 }
 
@@ -26,7 +26,7 @@ export default class PaymentMethod extends Component {
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
 
-     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
     inputStyles: PropTypes.object,
 
     /** Styles for your primary CTA button. */
@@ -49,7 +49,7 @@ export default class PaymentMethod extends Component {
      * that the developer can enable for their customers.
      */
     methods: PropTypes.arrayOf(
-       PropTypes.oneOf(Object.values(PaymentMethods))),
+      PropTypes.oneOf(Object.values(PaymentMethods))),
 
     /** Default payment method property */
     defaultMethod: PropTypes.oneOf(Object.values(PaymentMethods)),
@@ -92,8 +92,11 @@ export default class PaymentMethod extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
-  }
 
+    /** when edit is set to true, load and edit an instrument  */
+    /** will disable changing the PaymentMethods method  */
+    edit: PropTypes.bool
+  }
 
   static defaultProps = {
     styles: {},
@@ -114,14 +117,14 @@ export default class PaymentMethod extends Component {
       loading: false,
 
       /** if a default method isn't provided, default to first method. */
-      method: !!this.props.defaultMethod === false?
+      method: !!this.props.defaultMethod === false ?
         this.props.methods[0] : this.props.defaultMethod,
     }
     this.form = null
   }
 
   validateMethods(props) {
-    if(!!props.defaultMethod === false) {
+    if (!!props.defaultMethod === false) {
       return
     }
 
@@ -132,17 +135,52 @@ export default class PaymentMethod extends Component {
     if (!method) {
       throw new Error('[PaymentMethod.props.defaultMethod missing from `PaymentMethod.props.methods`]')
     }
-
   }
 
   componentDidMount() {
-    const { account, instrument = {}} = this.props
+    const {
+      account,
+      instrument = {},
+      edit = false,
+      getToken,
+    } = this.props
+
     this.setAccount(account)
-    this.setState({instrument: new InstrumentModel(instrument)})
+
+    // If editing an existing instrument, get auth then fetch instrument
+    if (edit === true && !!getToken !== false && typeof (getToken) === 'function') {
+      if(!!instrument.id === false){
+        console.warn("You must provide an instrument id to edit that instrument")
+        return
+      }
+      getToken(account.accountId)
+        .then(accessToken => {
+          InstrumentModel.fetchInstrument(account.id, instrument.id, accessToken)
+            .then(instrument => this.setupInstrument(instrument))
+        })
+        .catch(error => console.error("There was an error retrieving your instrument" + error))
+    }
   }
 
+  // Helper to set the PaymentMethods's method to the method of the incoming instrument
+  setupInstrument = (fetchedInstrument) => {
+    const { instrument = {} } = this.props
+
+    if (!!fetchedInstrument === false || !!fetchedInstrument.method === false) {
+      console.error("Unable to determine instruments method")
+      return
+    }
+    this.setState({
+      instrument, // <== this.props.instrument
+      // use the fetched instrument to choose correct component
+      method: fetchedInstrument.method
+    })
+
+  }
+
+
   componentDidUpdate(prevProps, prevState) {
-    if(!!prevProps.account !== false &&
+    if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
     ) {
@@ -184,30 +222,33 @@ export default class PaymentMethod extends Component {
 
   togglePlaidHandler = () => {
     this.setState({
-      method: this.state.method === PaymentMethods.METHOD_ACH?
+      method: this.state.method === PaymentMethods.METHOD_ACH ?
         PaymentMethods.METHOD_PLAID : PaymentMethods.METHOD_ACH
     })
   }
 
   isPlaidEnabled = () => {
+    const { edit = false } = this.props
     let plaidMethod = this.props.methods.find(
       m => m === PaymentMethods.METHOD_PLAID
     )
-    return !!plaidMethod
+    return !!plaidMethod && edit === false
   }
 
   isACHEnabled = () => {
+    const { edit = false } = this.props
     let achMethod = this.props.methods.find(
       m => m === PaymentMethods.METHOD_ACH
     )
-    return !!achMethod
+    return !!achMethod && edit === false
   }
 
   isCardEnabled = () => {
+    const { edit = false } = this.props
     let cardMethod = this.props.methods.find(
       m => m === PaymentMethods.METHOD_CARD
     )
-    return !!cardMethod
+    return !!cardMethod && edit === false
   }
 
   render() {
@@ -217,6 +258,7 @@ export default class PaymentMethod extends Component {
       onCancel,
       renderCardForms,
       renderAchForms,
+      edit = false,
     } = this.props
 
     let subProperties = {
@@ -225,71 +267,78 @@ export default class PaymentMethod extends Component {
       instrument: this.state.instrument,
     }
 
+    const loadingInstrument = edit === true && !!this.state.instrument === false
+
     return (
       <section className="">
         <br />
-        {
-          method === PaymentMethods.METHOD_CARD &&
-            <div id="cc-info">
-              <CreditCardForm
-                ref={this.props.saveRef}
-                account={this.state.accountModel}
-                setAccount={(accountProperty, field, value) =>
-                  this.setAccount(accountProperty, field, value)
-                }
-                showACHLink={this.isACHEnabled()}
-                changePaymentMethod={() => this.changePaymentMethodACH()}
-                {...subProperties}
-              >
-                {renderCardForms}
-              </CreditCardForm>
-            </div>
-        }
-        {
-          method === PaymentMethods.METHOD_ACH &&
-            <div id="bank-info">
-              <AchForm
-                ref={this.props.saveRef}
-                hideTogglePlaid={this.isPlaidEnabled() === true?
-                  false: true
-                }
-                setAccount={(accountProperty, field, value) =>
-                  this.setAccount(accountProperty, field, value)
-                }
-                changePaymentMethod={() => this.changePaymentMethodCC()}
-                showCardLink={this.isCardEnabled()}
-                togglePlaidHandler={this.togglePlaidHandler}
-                {...subProperties}
-              >
-                {renderAchForms}
-              </AchForm>
-            </div>
-        }
-        {
-          method === PaymentMethods.METHOD_PLAID &&
-            <div id="bank-info">
-              <PlaidForm
-                ref={this.props.saveRef}
-                account={this.state.accountModel}
-                setAccount={(accountProperty, field, value) =>
-                  this.setAccount(accountProperty, field, value)
-                }
-                changePaymentMethod={() => this.changePaymentMethodCC()}
-                togglePlaidHandler={this.togglePlaidHandler}
-                {...subProperties}
+        {loadingInstrument === false
+          ? <React.Fragment>
+            {
+              method === PaymentMethods.METHOD_CARD &&
+              <div id="cc-info">
+                <CreditCardForm
+                  ref={this.props.saveRef}
+                  account={this.state.accountModel}
+                  setAccount={(accountProperty, field, value) =>
+                    this.setAccount(accountProperty, field, value)
+                  }
+                  showACHLink={this.isACHEnabled()}
+                  changePaymentMethod={() => this.changePaymentMethodACH()}
+                  {...subProperties}
+                >
+                  {renderCardForms}
+                </CreditCardForm>
+              </div>
+            }
+            {
+              method === PaymentMethods.METHOD_ACH &&
+              <div id="bank-info">
+                <AchForm
+                  ref={this.props.saveRef}
+                  hideTogglePlaid={this.isPlaidEnabled() === true ?
+                    false : true
+                  }
+                  setAccount={(accountProperty, field, value) =>
+                    this.setAccount(accountProperty, field, value)
+                  }
+                  changePaymentMethod={() => this.changePaymentMethodCC()}
+                  showCardLink={this.isCardEnabled()}
+                  togglePlaidHandler={this.togglePlaidHandler}
+                  {...subProperties}
+                >
+                  {renderAchForms}
+                </AchForm>
+              </div>
+            }
+            {
+              method === PaymentMethods.METHOD_PLAID &&
+              <div id="bank-info">
+                <PlaidForm
+                  ref={this.props.saveRef}
+                  account={this.state.accountModel}
+                  setAccount={(accountProperty, field, value) =>
+                    this.setAccount(accountProperty, field, value)
+                  }
+                  changePaymentMethod={() => this.changePaymentMethodCC()}
+                  togglePlaidHandler={this.togglePlaidHandler}
+                  {...subProperties}
+                />
+              </div>
+            }
+            {method === false && <div className="ui clearing divider"></div>}
+            {method === false &&
+              <ButtonGroup
+                showAccept={false}
+                onLast={onLast}
+                onCancel={onCancel}
+                hideNext={true}
+                buttonStylesPrimary={this.props.buttonStylesPrimary}
+                buttonStylesSecondary={this.props.buttonStylesSecondary}
               />
-            </div>
-        }
-        {method === false && <div className="ui clearing divider"></div>}
-        {method === false &&
-          <ButtonGroup
-            showAccept={false}
-            onLast={onLast}
-            onCancel={onCancel}
-            hideNext={true}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
-          />
+            }
+          </React.Fragment>
+          : <p>Loading instrument, please wait...</p>
         }
       </section>
     )

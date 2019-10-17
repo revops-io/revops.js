@@ -34,6 +34,33 @@ export default class App extends Component {
     }
   }
 
+  // getAccountToken calls the authorization server to get an access token
+  getAccountToken = async ( accountId) => {
+    let searchParams = new URLSearchParams({
+      accountId: accountId,
+    })
+
+    let options = {
+      method: 'GET',
+      mode: 'cors',
+    };
+  
+    // example auth server url
+    const url = `http://localhost:5000/token?${searchParams.toString()}`
+    let response = await fetch(url, options)
+    let responseOK = response && response.ok
+    if (responseOK) {
+      let data = await response.json()
+      if (!!data.access_token === true) {
+        this.setState({accessToken: data.access_token})
+        return data.access_token
+      } else {
+        console.warn("Unable to get token for requested operation.")
+        return false
+      }
+    }
+  }
+
   // this callback is called when an error occurs in revops-js
   onError = ({ message, http_status }) => {
     if (http_status >= 500) {
@@ -45,37 +72,30 @@ export default class App extends Component {
 
   onValidationError = (errors) => {
     console.warn(errors)
-    this.setState({formDirty: true })
+    this.setState({ formDirty: true })
   }
 
   render() {
     return (
       <div style={backgroundStyles} className="revops-demo">
         <div>
-          <label>
-            Email
-            <input
-              type="text"
-              name="email"
-              onChange={
-                (e) => this.setState({
-                  email: e.target.value,
-                })
-              }
-            />
-          </label>
           <RevOps
-            publicKey="pk_sandbox_<your-sandbox-key>"
+            createAccount={false}
+            publicKey="pk_sandbox_<your-public-key"
             apiOptions={{
               env: 'sandbox',
-              authorizationUrl: 'http://localhost:5050/token',
             }}
+            getToken={this.getAccountToken}
             account={{
               accountId: "",
-              email: this.state.email,
+
             }}>
             <PaymentMethod
-              methods={['card', 'ach', 'plaid']}
+              // edit={true}
+              instrument={{
+
+              }}
+              methods={['credit-card', 'ach', 'plaid']}
               onComplete={(accountObject) => {
                 this.setState({ success: true, accountObject })
               }}
@@ -88,7 +108,6 @@ export default class App extends Component {
           {this.state.success === true &&
             <h1>Details Saved!</h1>
           }
-
         </div>
       </div>
     )

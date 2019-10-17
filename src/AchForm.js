@@ -315,12 +315,13 @@ export default class AchForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accessToken } = this.props
+    const { onNext, accessToken, getToken } = this.props
     let { account, instrument } = this.props
 
     instrument = new InstrumentModel({
       ...instrument,
       businessAccountId: account.id,
+      // TODO: make this field dynamic
       isIndividual: true,
       isBusiness: false,
       method: "ach"
@@ -338,19 +339,32 @@ export default class AchForm extends Component {
     const onError = this.onError
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
-
-    if(!!accessToken === true){
-      instrument.saveWithSecureForm(
-        accessToken,
-        form,
-        {
-          onError,
-          onComplete,
-          onNext,
-          onValidationError,
+    if (!!getToken !== false && typeof (getToken) === 'function') {
+      getToken(account.accountId)
+        .then(token => {
+          instrument.saveWithSecureForm(
+            token,
+            form,
+            {
+              onError,
+              onComplete,
+              onNext,
+              onValidationError,
+            })
         })
+        .catch(it => console.error(it))
     } else {
-      // TODO: Notifiy auth error
+      if (!!accessToken === true) {
+        instrument.saveWithSecureForm(
+          accessToken,
+          form,
+          {
+            onError,
+            onComplete,
+            onNext,
+            onValidationError,
+          })
+      }
     }
   }
 

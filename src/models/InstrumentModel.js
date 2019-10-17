@@ -18,7 +18,7 @@ export class InstrumentModel extends EntityModel {
     year: ""
   }
   cardNumber = ""
-  cardPostalCode = ""
+  postalCode = ""
   cardToken = ""
   country = ""
   currency = ""
@@ -41,6 +41,27 @@ export class InstrumentModel extends EntityModel {
     )
   }
 
+  static fetchInstrument = async (accountId, id, token ) => {
+    let options = {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    };
+    const url = `https://vault.revops.io${ACCOUNTS_LIST_RESOURCE}/${accountId}/instruments/${id}`
+    
+    let response = await fetch(url, options)
+    let responseOK = response && response.ok
+    if (responseOK) {
+      let data = await response.json()
+      return new InstrumentModel(data)
+    }
+
+    return undefined
+  }
+
   saveWithSecureForm(
     apiKey,
     form,
@@ -61,8 +82,7 @@ export class InstrumentModel extends EntityModel {
     form.submit(`${ACCOUNTS_LIST_RESOURCE}/${this.businessAccountId}/instruments`,
       {
         headers: {
-          'X-RevOps-Client': 'RevOps-JS',
-          'X-RevOps-API-Version': '1.0.2',
+          'Content-Type': 'application/json;charset=UTF-8',
           'Authorization': `Bearer ${apiKey}`,
         },
         serializer: 'deep',

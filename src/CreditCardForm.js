@@ -4,10 +4,8 @@ import PropTypes from 'prop-types'
 import { makeAccount } from './actions/AccountActions'
 import {
   getErrorText,
-  getClassName,
   convertAPIError,
   getDefaultValue,
-  getDefaultCardExpDate,
 } from './FormHelpers'
 
 import configure from './client/VaultConfig'
@@ -89,6 +87,9 @@ export default class CreditCardForm extends Component {
 
     /** model for of a revops instrument */
     instrument: PropTypes.object.isRequired,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func.isRequired,
   }
 
   static defaultProps = {
@@ -106,12 +107,14 @@ export default class CreditCardForm extends Component {
     errors: false,
     status: false,
     response: false,
+  
   }
 
   constructor(props) {
     super(props)
     this.state = {
       errors: false,
+      isPrimary: true,
     }
     this.form = {};
   }
@@ -155,13 +158,13 @@ export default class CreditCardForm extends Component {
     let conf = configure(this.props.apiOptions)
     // eslint-disable-next-line
     const form = VGSCollect.create(conf.vaultId, function (state) { });
-
+    
     this.initForm('card-name',
       () => form.field("#card-name .field-space", {
         type: "text",
         errorColor: this.props.errorColor,
         name: 'holder_name',
-        defaultValue: getDefaultValue(instrument, 'cardName', ''),
+        defaultValue: getDefaultValue(instrument, 'holderName', ''),
         placeholder: "Florence Izote",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -200,7 +203,7 @@ export default class CreditCardForm extends Component {
         name: 'card_expdate',
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
-        defaultValue: getDefaultCardExpDate(instrument, ''),
+        // defaultValue: getDefaultCardExpDate(instrument, ''),
         serializers: [
           form.SERIALIZERS.separate({
             monthName: 'month',
@@ -216,6 +219,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-postalcode .field-space", {
         type: "zip-code",
         errorColor: this.props.errorColor,
+        defaultValue: getDefaultValue(instrument, 'postalCode', ''),
         name: 'postal_code',
         placeholder: "Postal code",
         validations: ["required"],
@@ -270,13 +274,14 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accessToken } = this.props
+    const { onNext, accessToken, getToken, isPrimary } = this.props
     let { account, instrument } = this.props
 
     instrument = new InstrumentModel({
       ...instrument,
       businessAccountId: account.id,
-      method: "credit-card"
+      method: "credit-card",
+      isPrimary,
     })
 
     // Clear state
@@ -292,24 +297,43 @@ export default class CreditCardForm extends Component {
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
 
-    if(!!accessToken === true){
-      instrument.saveWithSecureForm(
-        accessToken,
-        form,
-        {
-          onError,
-          onComplete,
-          onNext,
-          onValidationError,
+    if (!!getToken !== false && typeof (getToken) === 'function') {
+      getToken(account.accountId)
+        .then(token => {
+          instrument.saveWithSecureForm(
+            token,
+            form,
+            {
+              onError,
+              onComplete,
+              onNext,
+              onValidationError,
+            })
         })
+        .catch(error => console.error("Unable to save the instrument " + error))
     } else {
-      // TODO: Notifiy auth error
+      if (!!accessToken === true) {
+        instrument.saveWithSecureForm(
+          accessToken,
+          form,
+          {
+            onError,
+            onComplete,
+            onNext,
+            onValidationError,
+          })
+      }
     }
   }
 
   render() {
-    const { errors, } = this.state
-    const { onLast, onCancel, children, instrument } = this.props
+    const { errors, isPrimary } = this.state
+    const { 
+      onLast, 
+      onCancel, 
+      children, 
+      instrument, 
+    } = this.props
 
     return (
       <section style={this.props.cardWidth}>
@@ -376,6 +400,13 @@ export default class CreditCardForm extends Component {
                   showInlineError={true}
                   errors={errors}
                 />
+                {
+                  false && 
+                  <label>
+                    Make primary instrument
+                    <input type="checkbox" checked={isPrimary} onChange={this.handleMakePrimaryToggle} />
+                  </label>
+                }
               </React.Fragment>
             }
           </div>

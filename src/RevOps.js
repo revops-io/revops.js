@@ -3,10 +3,31 @@ import PropTypes from 'prop-types'
 
 import { makeAccount } from './actions/AccountActions'
 
+const loader = () => (
+  <div className="loader">
+    <style>
+      {`
+      .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+      }
+      
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }`}
+    </style>
+  </div>
+)
+
 export class RevOps extends Component {
   static propTypes = {
-    /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    /**  RevOps API Public Key is required for creating accounts **/
+    publicKey: PropTypes.string,
 
     /** Required Account object that owns the instrument */
     account: PropTypes.object,
@@ -16,89 +37,92 @@ export class RevOps extends Component {
 
     /** boolean value that will make the RevOps component create account before authenticating */
     createAccount: PropTypes.bool,
+
+    /** react components nested inside of this component */
+    children: PropTypes.element,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func,
   }
 
   constructor(props) {
     super(props)
     this.state = {
-      email: "",
+      email: props.email,
+      account: props.account,
     }
   }
 
-  getApiKey = async (account = false) => {
-    const { publicKey, apiOptions = {} } = this.props
-
-    // call with props unless calling with an arg
-    account = account === false
-      ? this.props.account
-      : account
-
-    if (!!apiOptions.authorizationUrl !== false &&
-      apiOptions.authorizationUrl.startsWith('http')) {
-      let searchParams = new URLSearchParams({
-        accountId: account.accountId,
-      })
-      let options = {
-        method: apiOptions['method'] || 'GET',
-        mode: apiOptions['mode'] || 'cors',
-        headers: apiOptions['headers'] || {
-          'Authorization': 'Bearer ' + publicKey,
-          'X-RevOps-Sandbox': 'true',
-          'Accept': 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8',
-        },
-      };
-
-      let url = apiOptions.authorizationUrl + '?' + searchParams.toString()
-      let response = await fetch(url, options)
-      let responseOK = response && response.ok
-      if (responseOK) {
-        let data = await response.json()
-        if (!!data.access_token === true) {
-          // TODO: Set expiration of the token to re-auth if needed
-          this.setState({ accessToken: data.access_token })
-        }
-
-        // if a call back is defined call it and pass back the result of the call
-        if (!!apiOptions.callback !== false && typeof (apiOptions.callback) === 'function') {
-          apiOptions.callback(data)
-        }
-      }
-    }
-  }
-
-  componentDidMount() {
-    const { createAccount, account } = this.props
+  async componentDidMount() {
+    const { createAccount, account, getToken, publicKey } = this.props
+    // when creating, wait to get token until we have an account
     if (createAccount !== true) {
-      this.getApiKey()
-      this.setState({account: makeAccount({...account})})
+      if (!!getToken !== false && typeof (getToken) === 'function') {
+        getToken(account.accountId)
+          .then(accessToken => this.setState({ accessToken }))
+          .catch(error => console.error(error))
+      }
+      this.setState({ account: makeAccount({ ...account }) })
+    }
+    // create an account automatically create an account if we have enough information
+    // if (createAccount === true && !!account.email === true) {
+    //   this.createAccount()
+    // }
+    if (createAccount === true && publicKey === false) {
+      console.warn("Your public key is required for creating accounts.")
     }
   }
 
+  // componentDidUpdate(prevProps) {
+  //   const { account } = this.props
+  //   if (prevProps.account !== account) {
+  //     this.setState({ account: makeAccount({ ...account }) })
+  //   }
+  // }
+
+  // Use the public key to create the account
+  // then use the account returned to call getToken and send the token info down stream
   createAccount = async () => {
-    const { publicKey, account } = this.props
+    const { publicKey, account, apiOptions } = this.props
+    const accountCreationURL = `https://vault.revops.io/v1/accounts`
+
     let options = {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${publicKey}`,
         'Content-Type': 'application/json;charset=UTF-8',
+        'X-RevOps-Sandbox': 'true',
       },
       body: JSON.stringify({ ...this.state.account, email: this.state.email, account_id: account.accountId })
     };
-    const accountCreationURL = `https://vault.revops.io/v1/accounts`
 
     let response = await fetch(accountCreationURL, options)
     let responseOK = response && response.ok
     if (responseOK) {
       let data = await response.json()
-      this.getApiKey({ ...data, accountId: data.account_id })
-      this.setState({account: makeAccount({...data})})
+      this.setState({
+        account: makeAccount({ ...data }),
+        loading: false,
+        error: false,
+      })
+      if (!!apiOptions.getToken !== false && typeof (apiOptions.getToken) === 'function') {
+        apiOptions.getToken(data.account_id)
+          .then(accessToken => this.setState({ accessToken }))
+          .catch(error => console.error('Unable to get token', error))
+      }
+    } else {
+      console.log('Unable to create account account')
+      this.setState({
+        account: false,
+        loading: false,
+        error: {} // TODO: Match error format
+      })
     }
   }
 
   render() {
     const { createAccount, children } = this.props
-    const { account } = this.state
+    const { loading } = this.state
 
     return !!children !== false &&
       <div>
@@ -121,7 +145,7 @@ export class RevOps extends Component {
           </React.Fragment>
         }
         {
-          !!account && React.cloneElement(children, { ...this.props, ...this.state })
+          !!loading === false && React.cloneElement(children, { ...this.props, ...this.state })
         }
       </div>
   }
