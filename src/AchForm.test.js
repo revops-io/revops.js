@@ -15,6 +15,9 @@ describe('The AchForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
+      instrument: {
+        saveWithSecureForm: jest.fn(),
+      },
       ...props,
     }
   }

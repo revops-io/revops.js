@@ -84,13 +84,19 @@ export default class AchForm extends Component {
     /** Optional API Options **/
     apiOptions: PropTypes.object,
 
-    children: PropTypes.element,
-
     /** a token that grants permission to interact with the RevOps API */
     accessToken: PropTypes.string,
 
+    children: PropTypes.element,
+
     /** model for of a revops instrument */
-    instrument: PropTypes.object.isRequired,
+    instrument: PropTypes.object,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func,
+
+    /** optional property to make the instrument primary */
+    isPrimary: PropTypes.bool,
   }
 
   static defaultProps = {

@@ -86,10 +86,13 @@ export default class CreditCardForm extends Component {
     children: PropTypes.element,
 
     /** model for of a revops instrument */
-    instrument: PropTypes.object.isRequired,
+    instrument: PropTypes.object,
 
     /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
-    getToken: PropTypes.func.isRequired,
+    getToken: PropTypes.func,
+
+    /** optional property to make the instrument primary */
+    isPrimary: PropTypes.bool,
   }
 
   static defaultProps = {
