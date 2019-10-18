@@ -315,7 +315,7 @@ export default class AchForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accessToken, getToken } = this.props
+    const { onNext, accessToken, getToken, publicKey } = this.props
     let { account, instrument } = this.props
 
     instrument = new InstrumentModel({
@@ -354,7 +354,18 @@ export default class AchForm extends Component {
         })
         .catch(it => console.error(it))
     } else {
-      if (!!accessToken === true) {
+      // can use a public API key
+      if(!!publicKey === true){
+        instrument.saveWithSecureForm(
+          publicKey,
+          form,
+          {
+            onError,
+            onComplete,
+            onNext,
+            onValidationError,
+          })
+      } else if (!!accessToken === true) { // or pass accessToken separately
         instrument.saveWithSecureForm(
           accessToken,
           form,

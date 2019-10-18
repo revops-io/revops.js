@@ -274,7 +274,7 @@ export default class CreditCardForm extends Component {
 
   onSubmit = () => {
     const { form } = this
-    const { onNext, accessToken, getToken, isPrimary } = this.props
+    const { onNext, accessToken, getToken, isPrimary, publicKey } = this.props
     let { account, instrument } = this.props
 
     instrument = new InstrumentModel({
@@ -298,6 +298,7 @@ export default class CreditCardForm extends Component {
     const onValidationError = this.onValidationError
 
     if (!!getToken !== false && typeof (getToken) === 'function') {
+      // call reauthorization method when able 
       getToken(account.accountId)
         .then(token => {
           instrument.saveWithSecureForm(
@@ -312,7 +313,18 @@ export default class CreditCardForm extends Component {
         })
         .catch(error => console.error("Unable to save the instrument " + error))
     } else {
-      if (!!accessToken === true) {
+      // can use a public API key
+      if(!!publicKey === true){
+        instrument.saveWithSecureForm(
+          publicKey,
+          form,
+          {
+            onError,
+            onComplete,
+            onNext,
+            onValidationError,
+          })
+      } else if (!!accessToken === true) { // or pass accessToken separately
         instrument.saveWithSecureForm(
           accessToken,
           form,
