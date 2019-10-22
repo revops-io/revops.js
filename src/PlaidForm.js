@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { submitForm, getToken } from './actions/FormActions'
+
 import {
   getErrorText,
   getClassName,
@@ -91,6 +93,9 @@ export default class PlaidForm extends Component {
 
     /** model for of a revops instrument */
     instrument: PropTypes.object,
+
+    /** optional property to make the instrument primary */
+    isPrimary: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -133,7 +138,7 @@ export default class PlaidForm extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if(!!prevProps.account !== false &&
+    if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
     ) {
@@ -174,7 +179,7 @@ export default class PlaidForm extends Component {
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
 
-    if(this.isFormFieldCreated(field) === false) {
+    if (this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
@@ -190,17 +195,17 @@ export default class PlaidForm extends Component {
 
     let defaultBankName = getDefaultValue(account, 'bankName', '')
 
-    if(!!this.state.plaidMetadata !== false &&
+    if (!!this.state.plaidMetadata !== false &&
       !!this.state.plaidMetadata.institution !== false) {
-        defaultBankName = this.state.plaidMetadata.institution.name
+      defaultBankName = this.state.plaidMetadata.institution.name
     }
 
     return defaultBankName
   }
 
   initialize = () => {
-    const { instrument, createAccount = false } = this.props
-    if(!!this.form === false) {
+    const { createAccount = false } = this.props
+    if (!!this.form === false) {
       // eslint-disable-next-line
       this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     }
@@ -225,18 +230,18 @@ export default class PlaidForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof (onComplete) === 'function') {
+    if (onComplete !== false && typeof (onComplete) === 'function') {
       onComplete(response)
     }
   }
 
-  onError = ({errors}) => {
+  onError = ({ errors }) => {
     const { onError } = this.props
     this.setState({
       errors
     })
 
-    if(onError !== false && typeof(onError) === 'function') {
+    if (onError !== false && typeof (onError) === 'function') {
       onError(errors)
     }
   }
@@ -249,22 +254,49 @@ export default class PlaidForm extends Component {
       },
     })
 
-    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+    if (onValidationError !== false && typeof (onValidationError) === 'function') {
       onValidationError(errors)
     }
   }
-  onSubmit = () => {
-    const { form } = this
-    const { onNext, accessToken, getToken, publicKey } = this.props
+
+  // build the payload to submit to the vault
+  getPayload = () => {
+    const { isPrimary, createAccount } = this.props
     let { account, instrument } = this.props
 
-    instrument = new InstrumentModel({
+    // non PCI values are added to the information from the secure fields
+    let payload = new InstrumentModel({
       ...instrument,
       businessAccountId: account.id,
       providerToken: this.state.plaidLinkPublicToken,
       providerId: this.state.plaidAccountId,
-      method: "plaid"
+      method: "plaid",
+      isPrimary,
     })
+
+    // if we are also making an account, nest the instrument in the account payload
+    if (createAccount === true) {
+      payload = new Account({
+        ...account, // add in the account information on the payload
+        instrument: {
+          ...instrument,
+        }
+      })
+    }
+    return payload
+  }
+
+  bindCallbacks = () => {
+    return {
+      onError: this.onError,
+      onComplete: this.onComplete,
+      onValidationError: this.onValidationError,
+    }
+  }
+
+  onSubmit = async () => {
+    const { form } = this
+    const { account } = this.props
 
     // Clear state
     this.setState({
@@ -275,62 +307,19 @@ export default class PlaidForm extends Component {
       response: false,
     })
 
-    const onError = this.onError
-    const onComplete = this.onComplete
-    const onValidationError = this.onValidationError
+    // get all the values we need to submit the form securely
+    const payload = this.getPayload()
+    const callbacks = this.bindCallbacks()
+    const token = await getToken(this.props)
 
-    let targetObject = instrument
-
-    if(this.props.createAccount === true){
-      targetObject = new Account({
-        ...account,
-        instrument: {
-          ...instrument,
-        }
-      })
-    }
-
-    if (!!getToken !== false && typeof (getToken) === 'function') {
-      // call reauthorization method when able 
-      getToken(account.accountId)
-        .then(token => {
-          targetObject.saveWithSecureForm(
-            token,
-            form,
-            {
-              onError,
-              onComplete,
-              onNext,
-              onValidationError,
-            })
-        })
-        .catch(error => console.error("Unable to save the instrument " + error))
-    } else {
-      // can use a public API key
-      if(!!publicKey === true){
-        targetObject.saveWithSecureForm(
-          publicKey,
-          form,
-          {
-            onError,
-            onComplete,
-            onNext,
-            onValidationError,
-          })
-      } else if (!!accessToken === true) { // or pass accessToken separately
-        targetObject.saveWithSecureForm(
-          accessToken,
-          form,
-          {
-            onError,
-            onComplete,
-            onNext,
-            onValidationError,
-          })
-      }
-    }
+    submitForm(
+      payload,
+      token,
+      form,
+      callbacks,
+    )
   }
-  
+
   openPlaid = () => {
     this.plaidLink.open()
   }
@@ -357,12 +346,12 @@ export default class PlaidForm extends Component {
           <div id="plaid-form" >
             <div id="bank-name"
               className={
-               getClassName(
-                 "field",
-                 "billing_preferences.bank_name",
-                 errors
-               )
-             }>
+                getClassName(
+                  "field",
+                  "billing_preferences.bank_name",
+                  errors
+                )
+              }>
               <label>Bank Name</label>
               <span className="field-space"></span>
               <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
