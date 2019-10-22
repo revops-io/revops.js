@@ -10,7 +10,7 @@ export const logInfo = (msg, loggingLevel = "") => {
     loggingLevel === LoggingLevels.Info ||
     loggingLevel === LoggingLevels.Debug
   ) {
-    console.warn(msg)
+    console.log(msg)
   }
 }
 
@@ -25,7 +25,11 @@ export const logWarning = (msg, loggingLevel = "") => {
 }
 
 export const logError = (msg, loggingLevel = "", error = false) => {
-  if (loggingLevel === LoggingLevels.Debug) {
+  if (
+    loggingLevel === LoggingLevels.Warn ||
+    loggingLevel === LoggingLevels.Info ||
+    loggingLevel === LoggingLevels.Debug
+  ) {
     console.error(msg + error)
   }
 }
