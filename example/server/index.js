@@ -19,7 +19,6 @@ app.get('/token', function (req, res, next) {
   })
 
   const url = `https://vault.revops.io/token?${searchParams.toString()}`
-  // const url = `http://localhost:5050/token?${searchParams.toString()}`
 
   let options = {
     url: url,
@@ -34,8 +33,8 @@ app.get('/token', function (req, res, next) {
 
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
-      const r = JSON.parse(body)
-      res.json({token: r.access_token})
+      const token_response = JSON.parse(body)
+      res.json({token: token_response.access_token})
     } else {
       res.json({token: false})
     }
