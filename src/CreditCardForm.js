@@ -290,7 +290,7 @@ export default class CreditCardForm extends Component {
 
   // build the payload to submit to the vault
   getPayload = () => {
-    const { isPrimary } = this.props
+    const { isPrimary, createAccount } = this.props
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
@@ -302,7 +302,7 @@ export default class CreditCardForm extends Component {
     })
 
     // if we are also making an account, nest the instrument in the account payload
-    if (this.props.createAccount === true) {
+    if (createAccount === true) {
       payload = new Account({
         ...account, // add in the account information on the payload
         instrument: {
@@ -378,6 +378,7 @@ export default class CreditCardForm extends Component {
                   showInlineError={true}
                   errors={errors}
                 />
+                
                 <Field
                   id="card-number"
                   name="cardNumber"
