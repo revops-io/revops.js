@@ -106,7 +106,6 @@ describe('Account Model', () => {
   it("AccountModel should generate uuid on new objects", () => {
     let account = new Account()
     expect(account.id).to.equal('00000000-0000-0000-0000-000000000000')
-    expect(account.billingPreferences.id).to.equal('00000000-0000-0000-0000-000000000000')
     expect(account.billingContact.id).to.equal('00000000-0000-0000-0000-000000000000')
     expect(account.shippingContact.id).to.equal('00000000-0000-0000-0000-000000000000')
   })
