@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { submitForm, getToken } from './actions/FormActions'
 
 import {
   convertAPIError,
@@ -323,19 +324,43 @@ export default class AchForm extends Component {
     }
   }
 
-  onSubmit = () => {
-    const { form } = this
-    const { onNext, accessToken, getToken, publicKey } = this.props
+  bindCallbacks = () => {
+    return {
+      onError: this.onError,
+      onComplete: this.onComplete,
+      onValidationError: this.onValidationError,
+    }
+  }
+
+  getPayload = () => {
+    const { isPrimary, createAccount } = this.props
     let { account, instrument } = this.props
 
-    instrument = new InstrumentModel({
+    // non PCI values are added to the information from the secure fields
+    let payload =new InstrumentModel({
       ...instrument,
       businessAccountId: account.id,
-      // TODO: make this field dynamic
       isIndividual: true,
       isBusiness: false,
-      method: "ach"
+      method: "ach",
+      isPrimary, // boolean if RevOps should try to make this the primary payment
     })
+
+    // if we are also making an account, nest the instrument in the account payload
+    if (createAccount === true) {
+      payload = new Account({
+        ...account, // add in the account information on the payload
+        instrument: {
+          ...instrument,
+        }
+      })
+    }
+    return payload
+  }
+
+  onSubmit = async () => {
+    const { form } = this
+    const { account } = this.props
 
     // Clear state
     this.setState({
@@ -346,60 +371,17 @@ export default class AchForm extends Component {
       response: false,
     })
 
-    const onError = this.onError
-    const onComplete = this.onComplete
-    const onValidationError = this.onValidationError
+    // get all the values we need to submit the form securely
+    const payload = this.getPayload()
+    const callbacks = this.bindCallbacks()
+    const token = await getToken(this.props)
 
-        let targetObject = instrument
-
-    if(this.props.createAccount === true){
-      targetObject = new Account({
-        ...account,
-        instrument: {
-          ...instrument,
-        }
-      })
-    }
-
-    if (!!getToken !== false && typeof (getToken) === 'function') {
-      // call reauthorization method when able 
-      getToken(account.accountId)
-        .then(token => {
-          targetObject.saveWithSecureForm(
-            token,
-            form,
-            {
-              onError,
-              onComplete,
-              onNext,
-              onValidationError,
-            })
-        })
-        .catch(error => console.error("Unable to save the instrument " + error))
-    } else {
-      // can use a public API key
-      if(!!publicKey === true){
-        targetObject.saveWithSecureForm(
-          publicKey,
-          form,
-          {
-            onError,
-            onComplete,
-            onNext,
-            onValidationError,
-          })
-      } else if (!!accessToken === true) { // or pass accessToken separately
-        targetObject.saveWithSecureForm(
-          accessToken,
-          form,
-          {
-            onError,
-            onComplete,
-            onNext,
-            onValidationError,
-          })
-      }
-    }
+    submitForm(
+      payload,
+      token,
+      form,
+      callbacks,
+    )
   }
 
   openPlaid = () => {
