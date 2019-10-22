@@ -34,8 +34,8 @@ export default class App extends Component {
     }
   }
 
-  // getAccountToken calls the authorization server to get an access token
-  getAccountToken = async ( accountId) => {
+  // getAccountToken calls the authorization server to get an access
+  getAccountToken = async (accountId) => {
     let searchParams = new URLSearchParams({
       accountId: accountId,
     })
@@ -44,16 +44,15 @@ export default class App extends Component {
       method: 'GET',
       mode: 'cors',
     };
-  
-    // example auth server url
+
     const url = `http://localhost:5000/token?${searchParams.toString()}`
     let response = await fetch(url, options)
     let responseOK = response && response.ok
     if (responseOK) {
       let data = await response.json()
-      if (!!data.access_token === true) {
-        this.setState({accessToken: data.access_token})
-        return data.access_token
+      if (!!data.token === true) {
+        this.setState({ accessToken: data.token })
+        return data.token
       } else {
         console.warn("Unable to get token for requested operation.")
         return false
@@ -79,23 +78,26 @@ export default class App extends Component {
     return (
       <div style={backgroundStyles} className="revops-demo">
         <div>
+          <label>
+            Email
+            <input
+              type="text"
+              name="email"
+              onChange={
+                (e) => this.setState({
+                  email: e.target.value,
+                })
+              }
+            />
+          </label>
           <RevOps
-            createAccount={false}
-            publicKey="pk_sandbox_<your-public-key"
-            apiOptions={{
-              env: 'sandbox',
-            }}
             getToken={this.getAccountToken}
             account={{
-              accountId: "",
-
+              accountId: "100000-3",
+              email: this.state.email,
             }}>
             <PaymentMethod
-              // edit={true}
-              instrument={{
-
-              }}
-              methods={['credit-card', 'ach', 'plaid']}
+              methods={['card', 'ach', 'plaid']}
               onComplete={(accountObject) => {
                 this.setState({ success: true, accountObject })
               }}
