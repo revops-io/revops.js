@@ -2,7 +2,7 @@ import {
   EntityModel,
   BillingContact,
   ShippingContact,
-  BillingPreferences,
+  InstrumentModel,
 } from './index'
 
 import _ from 'lodash'
@@ -15,7 +15,8 @@ export class Account extends EntityModel {
   email = ""
   billingContact = new BillingContact()
   shippingContact = new ShippingContact()
-  billingPreferences = new BillingPreferences()
+  // billingPreferences = new BillingPreferences()
+  instrument = new InstrumentModel()
 
   constructor(params = {}) {
     super(params)
@@ -27,18 +28,18 @@ export class Account extends EntityModel {
         ...this.billingContact,
         ...params.billingContact,
       }
-      : {}
+        : {}
     )
     this.shippingContact = new ShippingContact(
       !!params === true ? {
         ...this.shippingContact,
         ...params.shippingContact,
-      }  : {}
+      } : {}
     )
-    this.billingPreferences = new BillingPreferences(
+    this.instrument = new InstrumentModel(
       !!params === true ? {
-        ...this.billingPreferences,
-        ...params.billingPreferences,
+        ...this.instrument,
+        ...params.instrument,
       } : {}
     )
   }
@@ -101,15 +102,16 @@ export class Account extends EntityModel {
       },
       (errors) => {
         if (!!onValidationError !== false && typeof (onValidationError) === 'function') {
-          // tell the developer a validation issue has occurred
+
+          // lift up instrument data and remove the prefix 
           errors = Object.entries(errors).map(([key, value]) => {
-            let elementId = _.kebabCase(key.replace('billing_preferences.', ''))
-            return [key, {
-                ...value,
-                elementId,
+            const keyName = key.replace('instrument.', '')
+            return [keyName, {
+              ...value,
+              elementId: keyName
             }]
           })
-          // map back to object
+
           errors = errors.reduce((
             mappedObject,
             [key, value]) =>

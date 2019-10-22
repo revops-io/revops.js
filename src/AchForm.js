@@ -16,7 +16,7 @@ import {
   configureVault,
 } from './index'
 
-import { InstrumentModel } from './models'
+import { InstrumentModel, Account } from './models'
 
 import configure from './client/VaultConfig'
 
@@ -97,6 +97,9 @@ export default class AchForm extends Component {
 
     /** optional property to make the instrument primary */
     isPrimary: PropTypes.bool,
+
+    /** tells the component to create an account with the instrument */
+    createAccount: PropTypes.bool
   }
 
   static defaultProps = {
@@ -178,7 +181,7 @@ export default class AchForm extends Component {
   }
 
   initialize = () => {
-    const { instrument } = this.props
+    const { instrument, createAccount = false } = this.props
 
     if (!!this.form === false) {
       let conf = configure(this.props.apiOptions)
@@ -186,11 +189,12 @@ export default class AchForm extends Component {
       // eslint-disable-next-line
       this.form = VGSCollect.create(conf.vaultId, function () { });
     }
+    const prefix = createAccount === true ? "instrument." : ""
 
     this.initForm('bank-name',
       () => this.createFormField(
         "#bank-name .field-space",
-        'bank_name',
+        prefix + 'bank_name',
         getDefaultValue(instrument, 'bankName', ''),
         {
           type: "text",
@@ -201,7 +205,7 @@ export default class AchForm extends Component {
     this.initForm('bank-postalcode',
       () => this.createFormField(
         "#bank-postalcode .field-space",
-        `postal_code`,
+        prefix + `postal_code`,
         getDefaultValue(instrument, 'postalCode', ''),
         {
           type: "zip-code",
@@ -212,7 +216,7 @@ export default class AchForm extends Component {
     this.initForm('bank-account-country',
       () => this.createFormField(
         "#bank-account-country .field-space",
-        'country',
+        prefix + 'country',
         getDefaultValue(instrument, 'bankCountry', 'USA'),
         {
           type: "dropdown",
@@ -228,7 +232,7 @@ export default class AchForm extends Component {
     this.initForm('bank-holder-name',
       () => this.createFormField(
         "#bank-holder-name .field-space",
-        'holder_name',
+        prefix + 'holder_name',
         getDefaultValue(instrument, 'holderName', ''),
         {
           type: "text",
@@ -240,7 +244,7 @@ export default class AchForm extends Component {
     this.initForm('bank-account-type',
       () => this.createFormField(
         "#bank-account-type .field-space",
-        'bank_account_holder_type',
+        prefix + 'bank_account_holder_type',
         getDefaultValue(instrument, 'bankAccountHolderType', 'company'),
         {
           type: "dropdown",
@@ -255,7 +259,7 @@ export default class AchForm extends Component {
     this.initForm('bank-account-number',
       () => this.createFormField(
         "#bank-account-number .field-space",
-        'account_number',
+        prefix + 'account_number',
         getDefaultValue(instrument, 'accountNumber', ''),
         {
           type: "text",
@@ -267,7 +271,7 @@ export default class AchForm extends Component {
     this.initForm('bank-routing-number', () =>
       this.createFormField(
         "#bank-routing-number .field-space",
-        'routing_number',
+        prefix + 'routing_number',
         getDefaultValue(instrument, 'routingNumber', ''),
         {
           type: "text",
@@ -345,10 +349,23 @@ export default class AchForm extends Component {
     const onError = this.onError
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
+
+        let targetObject = instrument
+
+    if(this.props.createAccount === true){
+      targetObject = new Account({
+        ...account,
+        instrument: {
+          ...instrument,
+        }
+      })
+    }
+
     if (!!getToken !== false && typeof (getToken) === 'function') {
+      // call reauthorization method when able 
       getToken(account.accountId)
         .then(token => {
-          instrument.saveWithSecureForm(
+          targetObject.saveWithSecureForm(
             token,
             form,
             {
@@ -358,11 +375,11 @@ export default class AchForm extends Component {
               onValidationError,
             })
         })
-        .catch(it => console.error(it))
+        .catch(error => console.error("Unable to save the instrument " + error))
     } else {
       // can use a public API key
       if(!!publicKey === true){
-        instrument.saveWithSecureForm(
+        targetObject.saveWithSecureForm(
           publicKey,
           form,
           {
@@ -372,7 +389,7 @@ export default class AchForm extends Component {
             onValidationError,
           })
       } else if (!!accessToken === true) { // or pass accessToken separately
-        instrument.saveWithSecureForm(
+        targetObject.saveWithSecureForm(
           accessToken,
           form,
           {

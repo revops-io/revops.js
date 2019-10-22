@@ -18,7 +18,7 @@ import {
   Field,
   configureVault,
 } from './index'
-import { InstrumentModel } from './models'
+import { InstrumentModel, Account } from './models'
 
 export default class CreditCardForm extends Component {
   static propTypes = {
@@ -93,6 +93,9 @@ export default class CreditCardForm extends Component {
 
     /** optional property to make the instrument primary */
     isPrimary: PropTypes.bool,
+
+    /** tells the component to create an account with the instrument */
+    createAccount: PropTypes.bool
   }
 
   static defaultProps = {
@@ -157,16 +160,16 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const { instrument } = this.props
+    const { instrument, createAccount = false } = this.props
     let conf = configure(this.props.apiOptions)
     // eslint-disable-next-line
     const form = VGSCollect.create(conf.vaultId, function (state) { });
-    
+    const prefix = createAccount === true ? "instrument." : ""
     this.initForm('card-name',
       () => form.field("#card-name .field-space", {
         type: "text",
         errorColor: this.props.errorColor,
-        name: 'holder_name',
+        name: prefix + 'holder_name',
         defaultValue: getDefaultValue(instrument, 'holderName', ''),
         placeholder: "Florence Izote",
         validations: ["required"],
@@ -178,7 +181,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-number .field-space", {
         type: "card-number",
         errorColor: this.props.errorColor,
-        name: 'card_number',
+        name: prefix + 'card_number',
         defaultValue: getDefaultValue(instrument, 'cardNumber', ''),
         placeholder: "Card number",
         validations: ["required", "validCardNumber"],
@@ -192,7 +195,7 @@ export default class CreditCardForm extends Component {
       form.field("#card-cvc .field-space", {
         type: "card-security-code",
         errorColor: this.props.errorColor,
-        name: 'card_cvv',
+        name: prefix + 'card_cvv',
         defaultValue: getDefaultValue(instrument, 'cardCvv', ''),
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
@@ -203,7 +206,7 @@ export default class CreditCardForm extends Component {
     this.initForm('card-expdate', () =>
       form.field("#card-expdate .field-space", {
         type: "card-expiration-date",
-        name: 'card_expdate',
+        name: prefix + 'card_expdate',
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
         // defaultValue: getDefaultCardExpDate(instrument, ''),
@@ -223,7 +226,7 @@ export default class CreditCardForm extends Component {
         type: "zip-code",
         errorColor: this.props.errorColor,
         defaultValue: getDefaultValue(instrument, 'postalCode', ''),
-        name: 'postal_code',
+        name: prefix + 'postal_code',
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -300,11 +303,23 @@ export default class CreditCardForm extends Component {
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
 
+    let targetObject = instrument
+
+    if(this.props.createAccount === true){
+      targetObject = new Account({
+        ...account,
+        instrument: {
+          ...instrument,
+        }
+      })
+    }
+
     if (!!getToken !== false && typeof (getToken) === 'function') {
+      debugger
       // call reauthorization method when able 
       getToken(account.accountId)
         .then(token => {
-          instrument.saveWithSecureForm(
+          targetObject.saveWithSecureForm(
             token,
             form,
             {
@@ -318,7 +333,7 @@ export default class CreditCardForm extends Component {
     } else {
       // can use a public API key
       if(!!publicKey === true){
-        instrument.saveWithSecureForm(
+        targetObject.saveWithSecureForm(
           publicKey,
           form,
           {
@@ -328,7 +343,7 @@ export default class CreditCardForm extends Component {
             onValidationError,
           })
       } else if (!!accessToken === true) { // or pass accessToken separately
-        instrument.saveWithSecureForm(
+        targetObject.saveWithSecureForm(
           accessToken,
           form,
           {

@@ -17,6 +17,8 @@ import {
   configurePlaid,
 } from './index'
 
+import { InstrumentModel, Account } from './models'
+
 import configure from './client/VaultConfig'
 
 export default class PlaidForm extends Component {
@@ -75,6 +77,20 @@ export default class PlaidForm extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
+
+    /** tells the component to create an account with the instrument */
+    createAccount: PropTypes.bool,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func,
+
+    /** a token that grants permission to interact with the RevOps API */
+    accessToken: PropTypes.string,
+
+    children: PropTypes.element,
+
+    /** model for of a revops instrument */
+    instrument: PropTypes.object,
   }
 
   static defaultProps = {
@@ -183,6 +199,7 @@ export default class PlaidForm extends Component {
   }
 
   initialize = () => {
+    const { instrument, createAccount = false } = this.props
     if(!!this.form === false) {
       // eslint-disable-next-line
       this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
@@ -190,7 +207,7 @@ export default class PlaidForm extends Component {
 
     this.createFormField(
       "#bank-name .field-space",
-      'billing_preferences.bank_name',
+      createAccount === true ? "instrument." : "" + 'bank_name',
       this.getBankName(),
       {
         type: "text",
@@ -236,48 +253,84 @@ export default class PlaidForm extends Component {
       onValidationError(errors)
     }
   }
-
   onSubmit = () => {
     const { form } = this
-    const { onNext } = this.props
-    let { account } = this.props
+    const { onNext, accessToken, getToken, publicKey } = this.props
+    let { account, instrument } = this.props
 
-    account = makeAccount({
-      ...account, // prop state
-      ...this.state.account, // current component state takes priority
-      status: 'activating', // trigger activating state.
-      billingPreferences: {
-        ...account.billingPreferences,
-        plaidLinkPublicToken: this.state.plaidLinkPublicToken,
-        plaidAccountId: this.state.plaidAccountId,
-        paymentMethod: "plaid",
-      }
+    instrument = new InstrumentModel({
+      ...instrument,
+      businessAccountId: account.id,
+      providerToken: this.state.plaidLinkPublicToken,
+      providerId: this.state.plaidAccountId,
+      method: "plaid"
     })
 
+    // Clear state
     this.setState({
       account: account,
       errors: false,
       loading: true,
+      status: false,
+      response: false,
     })
 
     const onError = this.onError
     const onComplete = this.onComplete
     const onValidationError = this.onValidationError
 
-    // Attach plaid state to model on submit
+    let targetObject = instrument
 
-    account.saveWithSecureForm(
-      this.props.publicKey,
-      form,
-      {
-        onError,
-        onComplete,
-        onNext,
-        onValidationError,
+    if(this.props.createAccount === true){
+      targetObject = new Account({
+        ...account,
+        instrument: {
+          ...instrument,
+        }
+      })
+    }
+
+    if (!!getToken !== false && typeof (getToken) === 'function') {
+      // call reauthorization method when able 
+      getToken(account.accountId)
+        .then(token => {
+          targetObject.saveWithSecureForm(
+            token,
+            form,
+            {
+              onError,
+              onComplete,
+              onNext,
+              onValidationError,
+            })
+        })
+        .catch(error => console.error("Unable to save the instrument " + error))
+    } else {
+      // can use a public API key
+      if(!!publicKey === true){
+        targetObject.saveWithSecureForm(
+          publicKey,
+          form,
+          {
+            onError,
+            onComplete,
+            onNext,
+            onValidationError,
+          })
+      } else if (!!accessToken === true) { // or pass accessToken separately
+        targetObject.saveWithSecureForm(
+          accessToken,
+          form,
+          {
+            onError,
+            onComplete,
+            onNext,
+            onValidationError,
+          })
       }
-    )
+    }
   }
-
+  
   openPlaid = () => {
     this.plaidLink.open()
   }

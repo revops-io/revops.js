@@ -140,11 +140,15 @@ export default class PaymentMethod extends Component {
   componentDidMount() {
     const {
       account,
-      instrument = {},
+      instrument,
       edit = false,
       getToken,
     } = this.props
 
+    // if we don't have a RevOps id, indicate we need to make the account
+    if(!!account.id === false){
+      this.setState({createAccount: true})
+    }
     this.setAccount(account)
 
     // If editing an existing instrument, get auth then fetch instrument
@@ -159,6 +163,11 @@ export default class PaymentMethod extends Component {
             .then(instrument => this.setupInstrument(instrument))
         })
         .catch(error => console.error("There was an error retrieving your instrument" + error))
+    }
+
+
+    if(!!instrument === false){
+      this.setState({instrument: new InstrumentModel({})})
     }
   }
 
@@ -264,6 +273,7 @@ export default class PaymentMethod extends Component {
     let subProperties = {
       ...this.props,
       account: this.state.accountModel,
+      createAccount: this.state.createAccount,
       instrument: this.state.instrument,
     }
 
@@ -275,7 +285,7 @@ export default class PaymentMethod extends Component {
         {loadingInstrument === false
           ? <React.Fragment>
             {
-              method === PaymentMethods.METHOD_CARD &&
+             (method === 'card' || method === PaymentMethods.METHOD_CARD) &&
               <div id="cc-info">
                 <CreditCardForm
                   ref={this.props.saveRef}
