@@ -1,3 +1,4 @@
+import { logError, logWarning } from '../helpers/Logger'
 
 export const submitForm = (object, token, form, callbacks) => {
   object.saveWithSecureForm(token, form, callbacks)
@@ -8,8 +9,9 @@ export const getToken = async ({
   accessToken, 
   getToken, 
   publicKey,
-  apiOptions, 
+  apiOptions = {}, 
 }) => {
+  const { loggingLevel = "" } = apiOptions
 
   if(!!accessToken === true){
     return accessToken
@@ -21,9 +23,7 @@ export const getToken = async ({
       const token = await getToken(account.accountId)
       return token
     } catch(error) {
-      if(apiOptions.env == 'sandbox'){
-        console.error("getToken() token failed to get a token" + error)
-      }
+      logError("getToken() token failed to get a token", loggingLevel )
     }
   }
 
@@ -33,8 +33,5 @@ export const getToken = async ({
   }
 
   // print the error to the console if we are using a sandbox
-  if(apiOptions.env == 'sandbox'){
-    console.warn("Unable to the authorize the request")
-  }
-
+  logWarning("Unable to the authorize the request", loggingLevel)
 }
