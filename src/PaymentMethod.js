@@ -12,6 +12,8 @@ import {
 import { ButtonGroup } from './ButtonGroup'
 import { InstrumentModel } from './models'
 
+import { getToken } from './actions/FormActions'
+
 export const PaymentMethods = {
   METHOD_ACH: 'ach',
   METHOD_CARD: 'credit-card',
@@ -137,37 +139,30 @@ export default class PaymentMethod extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const {
       account,
-      instrument,
       edit = false,
-      getToken,
+      instrument,
     } = this.props
 
     // if we don't have a RevOps id, indicate we need to make the account
     if(!!account.id === false){
       this.setState({createAccount: true})
     }
+
     this.setAccount(account)
-
-    // If editing an existing instrument, get auth then fetch instrument
-    if (edit === true && !!getToken !== false && typeof (getToken) === 'function') {
-      if(!!instrument.id === false){
-        console.warn("You must provide an instrument id to edit that instrument")
-        return
-      }
-      getToken(account.accountId)
-        .then(accessToken => {
-          InstrumentModel.fetchInstrument(account.id, instrument.id, accessToken)
-            .then(instrument => this.setupInstrument(instrument))
-        })
-        .catch(error => console.error("There was an error retrieving your instrument" + error))
-    }
-
 
     if(!!instrument === false){
       this.setState({instrument: new InstrumentModel({})})
+    } else {
+      this.setState({instrument: new InstrumentModel(instrument)})
+    }
+    
+    if(edit === true){
+      const token = await getToken(this.props)
+      const fetchedInstrument = await InstrumentModel.fetchInstrument(account.id, instrument.id, token)
+      this.setupInstrument(fetchedInstrument)
     }
   }
 
@@ -182,11 +177,9 @@ export default class PaymentMethod extends Component {
     this.setState({
       instrument, // <== this.props.instrument
       // use the fetched instrument to choose correct component
-      method: fetchedInstrument.method
+      method: fetchedInstrument.method,
     })
-
   }
-
 
   componentDidUpdate(prevProps, prevState) {
     if (!!prevProps.account !== false &&
