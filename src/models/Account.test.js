@@ -136,7 +136,7 @@ describe('Account Model', () => {
       submit: jest.fn()
     }
 
-    account.saveWithSecureForm(apiKey, form, {})
+    account.saveWithSecureForm(apiKey, form, {}, {})
     expect(form.submit.mock.calls.length).to.equal(1)
   })
 
@@ -147,7 +147,7 @@ describe('Account Model', () => {
       submit: jest.fn()
     }
     expect(() => {
-      account.saveWithSecureForm(apiKey, form, {})
+      account.saveWithSecureForm(apiKey, form, {}, { loggingLevel: ""})
     }).to.throw(Error)
     expect(form.submit.mock.calls.length).to.equal(0)
   })
