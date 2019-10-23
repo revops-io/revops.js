@@ -5,6 +5,8 @@ import {
   InstrumentModel,
 } from './index'
 
+import { logError, logWarning } from '../helpers/Logger'
+
 import _ from 'lodash'
 
 const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
@@ -15,7 +17,6 @@ export class Account extends EntityModel {
   email = ""
   billingContact = new BillingContact()
   shippingContact = new ShippingContact()
-  // billingPreferences = new BillingPreferences()
   instrument = new InstrumentModel()
 
   constructor(params = {}) {
@@ -52,8 +53,11 @@ export class Account extends EntityModel {
       onComplete,
       onNext,
       onValidationError,
-    }
+    },
+    apiOptions,
   ) {
+    const { loggingLevel = "" } = apiOptions
+
     if (!!apiKey === false) {
       throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
     }
@@ -75,11 +79,11 @@ export class Account extends EntityModel {
       (status, response) => {
         if (status >= 400) {
           if (status === 401) {
-            console.warn("[401] RevOps API access denied. Update your `publicKey`.")
+            logWarning("[401] RevOps API access denied. Update your `publicKey`.", loggingLevel)
           } else if (status === 400) {
-            console.warn(`[400] RevOps API bad request:` + response)
+            logWarning("[400] RevOps API bad request:", loggingLevel, response)
           } else {
-            console.error(`[${status}] RevOps API error:` + response)
+            logError(`[${status}] RevOps API error:`, loggingLevel, response)
           }
           if (!!onError !== false && typeof (onError) === 'function') {
             onError(response)

@@ -4,32 +4,30 @@ export const LoggingLevels = {
   Debug: "debug",
 }
 
-export const logInfo = (msg, loggingLevel = "") => {
+// extraInfo allows for passing an object to be printed to the console
+export const logInfo = (msg, loggingLevel = "", extraInfo = "") => {
   if (
-    loggingLevel === LoggingLevels.Warn ||
     loggingLevel === LoggingLevels.Info ||
+    loggingLevel === LoggingLevels.Warn ||
     loggingLevel === LoggingLevels.Debug
   ) {
-    console.log(msg)
+    console.log(msg + extraInfo)
   }
 }
 
-export const logWarning = (msg, loggingLevel = "") => {
+export const logWarning = (msg, loggingLevel = "", extraInfo = "") => {
   if (
     loggingLevel === LoggingLevels.Warn ||
-    loggingLevel === LoggingLevels.Info ||
     loggingLevel === LoggingLevels.Debug
   ) {
-    console.warn(msg)
+    console.warn(msg + extraInfo)
   }
 }
 
-export const logError = (msg, loggingLevel = "", error = false) => {
+export const logError = (msg, loggingLevel = "", extraInfo = "") => {
   if (
-    loggingLevel === LoggingLevels.Warn ||
-    loggingLevel === LoggingLevels.Info ||
     loggingLevel === LoggingLevels.Debug
   ) {
-    console.error(msg + error)
+    console.error(msg + extraInfo)
   }
 }

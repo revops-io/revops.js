@@ -1,7 +1,7 @@
 import { logError, logWarning } from '../helpers/Logger'
 
-export const submitForm = (object, token, form, callbacks) => {
-  object.saveWithSecureForm(token, form, callbacks)
+export const submitForm = (object, token, form, callbacks, apiOptions = {}) => {
+  object.saveWithSecureForm(token, form, callbacks, apiOptions)
 }
 
 export const getToken = async ({
