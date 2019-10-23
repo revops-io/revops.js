@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 
 import {
   PaymentMethod,
-  RevOps,
+  RevOpsAuth,
 } from 'revops-js'
 
 import "revops-js/themes/defaultStyles.css"
@@ -34,7 +34,11 @@ export default class App extends Component {
     }
   }
 
-  // getAccountToken calls the authorization server to get an access
+  /**
+   * getAccountToken() calls our example auth server with an accountId 
+   * to produce an authorization token that can be used to view and 
+   * manipulate the account
+   */
   getAccountToken = async (accountId) => {
     let searchParams = new URLSearchParams({
       accountId: accountId,
@@ -46,6 +50,32 @@ export default class App extends Component {
     };
 
     const url = `http://localhost:5000/token?${searchParams.toString()}`
+    let response = await fetch(url, options)
+    let responseOK = response && response.ok
+    if (responseOK) {
+      let data = await response.json()
+      if (!!data.token === true) {
+        this.setState({ accessToken: data.token })
+        return data.token
+      } else {
+        console.warn("Unable to get token for requested operation.")
+        return false
+      }
+    }
+  }
+
+   /**
+   * getPublicToken() calls our example auth server without an accountId 
+   * to produce an authorization token that can be used to create a new 
+   * account or instrument
+   */
+  getPublicToken = async () => {  
+    let options = {
+      method: 'GET',
+      mode: 'cors',
+    };
+
+    const url = `http://localhost:5000/token`
     let response = await fetch(url, options)
     let responseOK = response && response.ok
     if (responseOK) {
@@ -90,12 +120,12 @@ export default class App extends Component {
               }
             />
           </label>
-          <RevOps
-            getToken={this.getAccountToken}
+          <RevOpsAuth
+            getToken={this.getPublicToken} // or this.getAccountToken
             account={{
-              accountId: "100000-3",
-              email: this.state.email,
-            }}>
+             accountId: "100000-3",
+             email: this.state.email,
+           }}>
             <PaymentMethod
               methods={['card', 'ach', 'plaid']}
               onComplete={(accountObject) => {
@@ -105,7 +135,7 @@ export default class App extends Component {
               onError={this.onError}
               saveRef={this.saveRef}
             />
-          </RevOps>
+          </RevOpsAuth>
           <input type="submit" onClick={this.submitSecure} />
           {this.state.success === true &&
             <h1>Details Saved!</h1>
