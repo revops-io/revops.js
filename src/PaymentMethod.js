@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { logError } from './helpers/Logger'
+
 import { makeAccount } from './actions/AccountActions'
 
 import {
@@ -23,7 +25,7 @@ export const PaymentMethods = {
 export default class PaymentMethod extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** PaymentMethod can have custom styles,
      ** these styles are passed onto children components */
@@ -96,7 +98,7 @@ export default class PaymentMethod extends Component {
     apiOptions: PropTypes.object,
 
     /** when edit is set to true, load and edit an instrument  */
-    /** will disable changing the PaymentMethods method  */
+    /** when true it will disable changing the PaymentMethods method  */
     edit: PropTypes.bool
   }
 
@@ -144,34 +146,39 @@ export default class PaymentMethod extends Component {
       account,
       edit = false,
       instrument,
+      apiOptions = {}
     } = this.props
 
     // if we don't have a RevOps id, indicate we need to make the account
-    if(!!account.id === false){
-      this.setState({createAccount: true})
+    if (!!account.id === false) {
+      this.setState({ createAccount: true })
     }
 
     this.setAccount(account)
 
-    if(!!instrument === false){
-      this.setState({instrument: new InstrumentModel({})})
+    if (!!instrument === false) {
+      this.setState({ instrument: new InstrumentModel({}) })
     } else {
-      this.setState({instrument: new InstrumentModel(instrument)})
+      this.setState({ instrument: new InstrumentModel(instrument) })
     }
-    
-    if(edit === true){
-      const token = await getToken(this.props)
-      const fetchedInstrument = await InstrumentModel.fetchInstrument(account.id, instrument.id, token)
-      this.setupInstrument(fetchedInstrument)
+
+    if (edit === true) {
+      if (!!account.id === true && !!instrument.id === true) {
+        const token = await getToken(this.props)
+        const fetchedInstrument = await InstrumentModel.fetchInstrument(account.id, instrument.id, token)
+        this.setupInstrument(fetchedInstrument)
+      } else {
+        logError("Unable to fetch instruments", apiOptions.loggingLevel)
+      }
     }
   }
 
   // Helper to set the PaymentMethods's method to the method of the incoming instrument
   setupInstrument = (fetchedInstrument) => {
-    const { instrument = {} } = this.props
+    const { instrument = {}, apiOptions = {} } = this.props
 
     if (!!fetchedInstrument === false || !!fetchedInstrument.method === false) {
-      console.error("Unable to determine instruments method")
+      logError("Unable to determine instruments method", apiOptions.loggingLevel)
       return
     }
     this.setState({
@@ -182,11 +189,21 @@ export default class PaymentMethod extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!!prevProps.account !== false &&
-      !!this.props.account !== false &&
-      prevProps.account !== this.props.account
+    const { account, instrument } = this.props
+    if (
+      !!prevProps.account !== false && 
+      !!account !== false &&
+      prevProps.account !== account
     ) {
       this.updateAccount(this.props.account)
+    }
+
+    if (
+      !!prevProps.instrument !== false && 
+      !!instrument !== false &&
+      prevProps.instrument !== instrument
+    ) {
+      this.setState({ instrument: new InstrumentModel(instrument) })
     }
   }
 
@@ -278,7 +295,7 @@ export default class PaymentMethod extends Component {
         {loadingInstrument === false
           ? <React.Fragment>
             {
-             (method === 'card' || method === PaymentMethods.METHOD_CARD) &&
+              (method === 'card' || method === PaymentMethods.METHOD_CARD) &&
               <div id="cc-info">
                 <CreditCardForm
                   ref={this.props.saveRef}
