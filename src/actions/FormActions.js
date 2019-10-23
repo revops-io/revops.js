@@ -24,14 +24,14 @@ export const getToken = async ({
       return token
     } catch(error) {
       logError("getToken() token failed to get a token", loggingLevel )
+      return false
+    }
+  } else {
+    // if we do not have a way to get a token use the public key
+    if(!!publicKey === true){
+      return publicKey
     }
   }
 
-  // if we do not have a way to get a token use the public key
-  if(!!publicKey === true){
-    return publicKey
-  }
-
-  // print the error to the console if we are using a sandbox
   logWarning("Unable to the authorize the request", loggingLevel)
 }
