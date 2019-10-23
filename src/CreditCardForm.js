@@ -306,7 +306,7 @@ export default class CreditCardForm extends Component {
       payload = new Account({
         ...account, // add in the account information on the payload
         instrument: {
-          ...instrument,
+          ...payload,
         }
       })
     }

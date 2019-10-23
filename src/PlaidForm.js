@@ -279,7 +279,7 @@ export default class PlaidForm extends Component {
       payload = new Account({
         ...account, // add in the account information on the payload
         instrument: {
-          ...instrument,
+          ...payload,
         }
       })
     }

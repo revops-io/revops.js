@@ -337,7 +337,7 @@ export default class AchForm extends Component {
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
-    let payload =new InstrumentModel({
+    let payload = new InstrumentModel({
       ...instrument,
       businessAccountId: account.id,
       isIndividual: true,
@@ -351,7 +351,7 @@ export default class AchForm extends Component {
       payload = new Account({
         ...account, // add in the account information on the payload
         instrument: {
-          ...instrument,
+          ...payload,
         }
       })
     }
