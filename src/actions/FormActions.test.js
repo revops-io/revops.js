@@ -71,7 +71,7 @@ describe('should use getToken() to get a token', () => {
       }
     }
     const result = await getToken(mockProps)
-    expect(result).to.equal(undefined)
+    expect(result).to.equal(false)
     expect(console.error.mock.calls.length).to.equal(1)
   })
 
