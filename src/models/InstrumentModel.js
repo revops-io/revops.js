@@ -25,6 +25,7 @@ export class InstrumentModel extends EntityModel {
   holderName = ""
   isBusiness = ""
   isIndividual = ""
+  isPrimary = ""
   last4 = ""
   method = ""
   provider = ""
@@ -42,6 +43,7 @@ export class InstrumentModel extends EntityModel {
   }
 
   static fetchInstrument = async (accountId, id, token ) => {
+
     let options = {
       method: 'GET',
       mode: 'cors',
@@ -50,6 +52,7 @@ export class InstrumentModel extends EntityModel {
         'Content-Type': 'application/json;charset=UTF-8',
       },
     };
+    
     const url = `https://vault.revops.io${ACCOUNTS_LIST_RESOURCE}/${accountId}/instruments/${id}`
     
     let response = await fetch(url, options)
@@ -72,6 +75,7 @@ export class InstrumentModel extends EntityModel {
       onValidationError,
     }
   ) {
+
     if (!!apiKey === false) {
       throw new Error("Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop.")
     }
