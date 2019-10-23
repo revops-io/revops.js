@@ -5,12 +5,12 @@ var request = require('request')
 
 const port = 5000
 
-const sk = process.env.SK 
+const key = process.env.KEY 
 
 app.use(cors())
 app.get('/token', function (req, res, next) {
 
-  if(!!sk === false){
+  if(!!key === false){
     console.warn("Cannot get token. Secret key is not set.")
   }
 
@@ -25,7 +25,7 @@ app.get('/token', function (req, res, next) {
     method: 'GET',
     mode: 'cors',
     headers: {
-      'Authorization': 'Bearer ' + sk,
+      'Authorization': 'Bearer ' + key,
       'Accept': 'application/json',
       'Content-Type': 'application/json;charset=UTF-8',
     },
