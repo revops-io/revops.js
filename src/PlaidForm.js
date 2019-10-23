@@ -296,7 +296,7 @@ export default class PlaidForm extends Component {
 
   onSubmit = async () => {
     const { form } = this
-    const { account } = this.props
+    const { account, apiOptions } = this.props
 
     // Clear state
     this.setState({
@@ -317,6 +317,7 @@ export default class PlaidForm extends Component {
       token,
       form,
       callbacks,
+      apiOptions,
     )
   }
 
