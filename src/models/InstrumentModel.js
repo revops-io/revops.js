@@ -48,7 +48,7 @@ export class InstrumentModel extends EntityModel {
     )
   }
 
-  static fetchInstrument = async (accountId, id, token ) => {
+  static fetchInstrument = async (accountId, id, token, apiOptions = {} ) => {
 
     let options = {
       method: 'GET',
@@ -60,12 +60,15 @@ export class InstrumentModel extends EntityModel {
     };
     
     const url = `https://vault.revops.io${ACCOUNTS_LIST_RESOURCE}/${accountId}/instruments/${id}`
-    
-    let response = await fetch(url, options)
-    let responseOK = response && response.ok
-    if (responseOK) {
-      let data = await response.json()
-      return new InstrumentModel(data)
+    try {
+      let response = await fetch(url, options)
+      let responseOK = response && response.ok
+      if (responseOK) {
+        let data = await response.json()
+        return new InstrumentModel(data)
+      }
+    } catch(err){
+      logError("Unable to fetch instruments", apiOptions.loggingLevel, err)
     }
 
     return undefined

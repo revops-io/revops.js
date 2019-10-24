@@ -165,7 +165,7 @@ export default class PaymentMethod extends Component {
     if (edit === true) {
       if (!!account.id === true && !!instrument.id === true) {
         const token = await getToken(this.props)
-        const fetchedInstrument = await InstrumentModel.fetchInstrument(account.id, instrument.id, token)
+        const fetchedInstrument = await InstrumentModel.fetchInstrument(account.id, instrument.id, token, apiOptions)
         this.setupInstrument(fetchedInstrument)
       } else {
         logError("Unable to fetch instruments", apiOptions.loggingLevel)
