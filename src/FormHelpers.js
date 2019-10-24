@@ -73,7 +73,22 @@ export const getDefaultCardExpDate = (instrument) => {
   }
 
   return (
-    `${!!instrument.cardExpdate && !!instrument.cardExpdate.month ? instrument.cardExpdate.month : "" }` +
-    `/${!!instrument.cardExpdate && !!instrument.cardExpdate.year ? instrument.cardExpdate.year : "" }`
+    `
+      ${
+        !!instrument.cardExpdate === true && 
+        !!instrument.cardExpdate.month === true 
+          ? instrument.cardExpdate.month 
+          : "" 
+      }
+    ` 
+    + '/' +
+    `
+      ${
+        !!instrument.cardExpdate === true && 
+        !!instrument.cardExpdate.year === true
+          ? instrument.cardExpdate.year 
+          : "" 
+      }
+    `
   )  
 }
