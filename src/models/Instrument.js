@@ -59,7 +59,7 @@ export class Instrument extends EntityModel {
       },
     };
     
-    const url = `https://vault.revops.io${ACCOUNTS_LIST_RESOURCE}/${accountId}/instruments/${id}`
+    const url = `https://vault.revops.io${INSTRUMENTS_LIST_RESOURCE(accountId)}/${id}`
     try {
       let response = await fetch(url, options)
       let responseOK = response && response.ok
