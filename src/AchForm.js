@@ -17,7 +17,7 @@ import {
   configureVault,
 } from './index'
 
-import { InstrumentModel, Account } from './models'
+import { Instrument, Account } from './models'
 
 import configure from './client/VaultConfig'
 
@@ -150,8 +150,10 @@ export default class AchForm extends Component {
   }
 
   componentDidMount() {
+    const conf = configure(this.props.apiOptions)
+
     configureVault(
-      this.props.apiConfig,
+      conf,
       this.initialize,
     )
   }
@@ -337,7 +339,7 @@ export default class AchForm extends Component {
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
-    let payload = new InstrumentModel({
+    let payload = new Instrument({
       ...instrument,
       businessAccountId: account.id,
       isIndividual: true,

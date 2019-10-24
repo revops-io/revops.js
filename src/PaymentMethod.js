@@ -12,7 +12,7 @@ import {
 } from './index'
 
 import { ButtonGroup } from './ButtonGroup'
-import { InstrumentModel } from './models'
+import { Instrument } from './models'
 
 import { getToken } from './actions/FormActions'
 
@@ -157,15 +157,15 @@ export default class PaymentMethod extends Component {
     this.setAccount(account)
 
     if (!!instrument === false) {
-      this.setState({ instrument: new InstrumentModel({}) })
+      this.setState({ instrument: new Instrument({}) })
     } else {
-      this.setState({ instrument: new InstrumentModel(instrument) })
+      this.setState({ instrument: new Instrument(instrument) })
     }
 
     if (edit === true) {
       if (!!account.id === true && !!instrument.id === true) {
         const token = await getToken(this.props)
-        const fetchedInstrument = await InstrumentModel.fetchInstrument(account.id, instrument.id, token, apiOptions)
+        const fetchedInstrument = await Instrument.fetchInstrument(account.id, instrument.id, token, apiOptions)
         this.setupInstrument(fetchedInstrument)
       } else {
         logError("Unable to fetch instruments", apiOptions.loggingLevel)
@@ -203,7 +203,7 @@ export default class PaymentMethod extends Component {
       !!instrument !== false &&
       prevProps.instrument !== instrument
     ) {
-      this.setState({ instrument: new InstrumentModel(instrument) })
+      this.setState({ instrument: new Instrument(instrument) })
     }
   }
 

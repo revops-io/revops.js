@@ -6,13 +6,14 @@ import { logError, logWarning } from '../helpers/Logger'
 
 import _ from 'lodash'
 
-const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
+
+const INSTRUMENTS_LIST_RESOURCE = (account_id) => `/v1/accounts/${account_id}/instruments`
 
 /**
  * Instruments are methods of payment
  * See more at https://www.revops.io/docs/rest-api/instruments
  */
-export class InstrumentModel extends EntityModel {
+export class Instrument extends EntityModel {
   accountId = ""
   businessAccountId = ""
   id = ""
@@ -49,7 +50,6 @@ export class InstrumentModel extends EntityModel {
   }
 
   static fetchInstrument = async (accountId, id, token, apiOptions = {} ) => {
-
     let options = {
       method: 'GET',
       mode: 'cors',
@@ -65,7 +65,7 @@ export class InstrumentModel extends EntityModel {
       let responseOK = response && response.ok
       if (responseOK) {
         let data = await response.json()
-        return new InstrumentModel(data)
+        return new Instrument(data)
       }
     } catch(err){
       logError("Unable to fetch instruments", apiOptions.loggingLevel, err)
@@ -94,10 +94,11 @@ export class InstrumentModel extends EntityModel {
       throw new Error("Unable to call save. You are attempting to use a secret key.")
     }
 
-    form.submit(`${ACCOUNTS_LIST_RESOURCE}/${this.businessAccountId}/instruments`,
+    form.submit(INSTRUMENTS_LIST_RESOURCE(this.businessAccountId),
       {
         headers: {
-          'Content-Type': 'application/json;charset=UTF-8',
+          'X-RevOps-Client': 'RevOps-JS',
+          'X-RevOps-API-Version': '1.0.2',
           'Authorization': `Bearer ${apiKey}`,
         },
         serializer: 'deep',

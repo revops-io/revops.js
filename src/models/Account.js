@@ -2,7 +2,7 @@ import {
   EntityModel,
   BillingContact,
   ShippingContact,
-  InstrumentModel,
+  Instrument,
 } from './index'
 
 import { logError, logWarning } from '../helpers/Logger'
@@ -17,7 +17,7 @@ export class Account extends EntityModel {
   email = ""
   billingContact = new BillingContact()
   shippingContact = new ShippingContact()
-  instrument = new InstrumentModel()
+  instrument = new Instrument()
 
   constructor(params = {}) {
     super(params)
@@ -37,7 +37,7 @@ export class Account extends EntityModel {
         ...params.shippingContact,
       } : {}
     )
-    this.instrument = new InstrumentModel(
+    this.instrument = new Instrument(
       !!params === true ? {
         ...this.instrument,
         ...params.instrument,

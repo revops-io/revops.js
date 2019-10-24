@@ -21,7 +21,7 @@ import {
   Field,
   configureVault,
 } from './index'
-import { InstrumentModel, Account } from './models'
+import { Instrument, Account } from './models'
 
 export default class CreditCardForm extends Component {
   static propTypes = {
@@ -165,6 +165,7 @@ export default class CreditCardForm extends Component {
   initialize = () => {
     const { instrument, createAccount = false } = this.props
     let conf = configure(this.props.apiOptions)
+
     // eslint-disable-next-line
     const form = VGSCollect.create(conf.vaultId, function (state) { });
     const prefix = createAccount === true ? "instrument." : ""
@@ -295,7 +296,7 @@ export default class CreditCardForm extends Component {
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
-    let payload = new InstrumentModel({
+    let payload = new Instrument({
       ...instrument,
       businessAccountId: account.id,
       method: "credit-card",

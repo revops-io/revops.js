@@ -19,7 +19,7 @@ import {
   configurePlaid,
 } from './index'
 
-import { InstrumentModel, Account } from './models'
+import { Instrument, Account } from './models'
 
 import configure from './client/VaultConfig'
 
@@ -123,13 +123,16 @@ export default class PlaidForm extends Component {
   }
 
   componentDidMount() {
+    const conf = configure(this.props.apiOptions)
+
     configureVault(
-      this.props.apiConfig,
+      conf,
       this.initialize,
     )
 
+    if(this.props.apiOptions)
     configurePlaid(
-      this.props.env,
+      conf.env,
       (plaidLink) => {
         this.onPlaidLoad(plaidLink)
       },
@@ -265,7 +268,7 @@ export default class PlaidForm extends Component {
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
-    let payload = new InstrumentModel({
+    let payload = new Instrument({
       ...instrument,
       businessAccountId: account.id,
       providerToken: this.state.plaidLinkPublicToken,
