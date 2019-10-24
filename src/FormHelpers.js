@@ -22,7 +22,7 @@ export const getClassName = (className, errorKey, errors) => {
 export const createErrorMessage = (errorKey, errorMessage) => {
   return {
     [errorKey]: {
-      'errorMessages' : [errorMessage]
+      'errorMessages': [errorMessage]
     }
   }
 }
@@ -31,7 +31,7 @@ export const convertAPIError = (httpStatus, httpResponse) => {
   if (httpStatus !== false && httpStatus >= 400) {
     if (!!httpResponse.error !== false && !!httpResponse.error.param !== false) {
       let param = ''
-      switch(httpResponse.error.param) {
+      switch (httpResponse.error.param) {
         case 'exp_year':
         case 'exp_month':
           param = 'billing_preferences.card_expdate'
@@ -67,28 +67,28 @@ export const getDefaultValue = (model, billingProp, defaultValue) => {
     : defaultValue
 }
 
+const getExpMonth = (instrument) => {
+  return (
+    !!instrument.cardExpdate === true &&
+      !!instrument.cardExpdate.month === true
+      ? instrument.cardExpdate.month
+      : ""
+  )
+}
+
+const getExpYear = (instrument) => {
+  return (
+    !!instrument.cardExpdate === true &&
+      !!instrument.cardExpdate.year === true
+      ? instrument.cardExpdate.year
+      : ""
+  )
+}
+
 export const getDefaultCardExpDate = (instrument) => {
   if (!!instrument === false) {
     return ""
   }
 
-  return (
-    `
-      ${
-        !!instrument.cardExpdate === true && 
-        !!instrument.cardExpdate.month === true 
-          ? instrument.cardExpdate.month 
-          : "" 
-      }
-    ` 
-    + '/' +
-    `
-      ${
-        !!instrument.cardExpdate === true && 
-        !!instrument.cardExpdate.year === true
-          ? instrument.cardExpdate.year 
-          : "" 
-      }
-    `
-  )  
+  return `${getExpMonth(instrument)}/${getExpYear(instrument)}`
 }

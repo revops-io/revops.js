@@ -8,6 +8,7 @@ import {
   getErrorText,
   convertAPIError,
   getDefaultValue,
+  getDefaultCardExpDate,
 } from './FormHelpers'
 
 import configure from './client/VaultConfig'
@@ -211,7 +212,7 @@ export default class CreditCardForm extends Component {
         name: prefix + 'card_expdate',
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
-        // defaultValue: getDefaultCardExpDate(instrument, ''),
+        defaultValue: getDefaultCardExpDate(instrument),
         serializers: [
           form.SERIALIZERS.separate({
             monthName: 'month',
