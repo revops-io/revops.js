@@ -69,8 +69,7 @@ export const getDefaultValue = (model, billingProp, defaultValue) => {
 
 const getExpMonth = (instrument) => {
   return (
-    !!instrument.cardExpdate === true &&
-      !!instrument.cardExpdate.month === true
+    !!instrument.cardExpdate.month === true
       ? instrument.cardExpdate.month
       : ""
   )
@@ -78,15 +77,19 @@ const getExpMonth = (instrument) => {
 
 const getExpYear = (instrument) => {
   return (
-    !!instrument.cardExpdate === true &&
-      !!instrument.cardExpdate.year === true
+    !!instrument.cardExpdate.year === true
       ? instrument.cardExpdate.year
       : ""
   )
 }
 
 export const getDefaultCardExpDate = (instrument) => {
-  if (!!instrument === false) {
+  if (
+    !!instrument === false || 
+    !!instrument.cardExpdate === false || 
+    !!instrument.cardExpdate.year === false ||
+    !!instrument.cardExpdate.month === false
+  ) {
     return ""
   }
 
