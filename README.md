@@ -491,6 +491,83 @@ class SignupForm extends Component {
 
 Now we can now control the submission process of the `<PaymentMethod />` component from its parent component as one unified workflow.
 
+## RevOpsAuth Component
+When using more than one RevOps component at a time it can be cumbersome to provide authentication or account information to each component. In this case we recommend using the `<RevOpsAuth />` component to wrap the other components. It can be used to authenticate all of the children at the same time and passes __ALL__ properties to its children. 
+
+__Note:__ You are able to override the public key or `getToken()` by supplying it directly to the child components. 
+
+``` jsx
+<RevOpsAuth
+  getToken={this.getToken}
+  account={{
+    accountId: "100000-3", 
+    email: "example@email.com",
+  }}
+  onValidationError={this.onValidationError}
+  onError={this.onError}
+  saveRef={this.saveRef}>
+  {
+    this.state.primaryInstrument &&
+    <PaymentMethod
+      isPrimary={true}
+      methods={['credit-card', 'ach', 'plaid']}
+      onComplete={(accountObject) => {
+        this.setState({ success: true, accountObject })
+      }}
+
+    />
+  }
+  {
+    this.state.primaryInstrument === false &&
+    <PaymentMethod
+      isPrimary={false}
+      methods={['credit-card', 'ach', 'plaid']}
+      onComplete={(accountObject) => {
+        this.setState({ success: true, accountObject })
+      }}
+    />
+  }
+</RevOpsAuth>
+```
+
+## Using a Token to Authenticate 
+RevOps also supports a token based authentication workflow using your public or secret key. In our example directory, you can see an example of what this might look like. That README contains additionally information you may find helpful. 
+
+In this example, we are using the `<RevOpsAuth />` component to authenticate the `<PaymentMethod />` using the `getToken` property. This is a function that you are able to define and we will call for you. This removes the need to pass the public token to the client and is essential for secured operations using your secret key.
+
+``` jsx
+// this function should return a token or false
+getToken = async () => {
+  token = await callToYourServer()
+  return token
+}
+
+<RevOpsAuth
+  getToken={this.getToken}
+  account={{
+    accountId: "100000-3", 
+    email: "example@email.com",
+  }}>
+  <PaymentMethod
+    methods={['credit-card', 'ach', 'plaid']}
+    onComplete={(accountObject) => {
+      this.setState({ success: true, accountObject })
+    }}
+    onValidationError={this.onValidationError}
+    onError={this.onError}
+    saveRef={this.saveRef}
+  />
+</RevOpsAuth>
+```
+
+## Logging Levels
+By default, RevOps.js will not output to the console but we offer three different to control the messages that will be outputted.
+
+| Level | Meaning |
+|--------|:--------|
+| info | enables all console messages. i.e. console.log, console.warn and console.error |
+| warning | enables both console.warn and console.error |
+| error | enables only console.error |
 
 ## License
 
