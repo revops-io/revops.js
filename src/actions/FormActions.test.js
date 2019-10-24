@@ -49,7 +49,7 @@ describe('should use getToken() to get a token', () => {
       getToken: false,
       publicKey: false,
       apiOptions: {
-        loggingLevel: "debug"
+        loggingLevel: "error"
       }
     }
     const result = await getToken(mockProps)
@@ -67,7 +67,7 @@ describe('should use getToken() to get a token', () => {
       }),
       publicKey: false,
       apiOptions: {
-        loggingLevel: "debug"
+        loggingLevel: "error"
       }
     }
     const result = await getToken(mockProps)
