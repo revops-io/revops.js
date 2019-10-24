@@ -90,7 +90,7 @@ export default class AchForm extends Component {
 
     children: PropTypes.element,
 
-    /** model for of a revops instrument */
+    /** model for of a revops payment instrument */
     instrument: PropTypes.object,
 
     /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */

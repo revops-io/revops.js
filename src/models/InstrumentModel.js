@@ -8,6 +8,10 @@ import _ from 'lodash'
 
 const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
 
+/**
+ * Instruments are methods of payment
+ * See more at https://www.revops.io/docs/rest-api/instruments
+ */
 export class InstrumentModel extends EntityModel {
   accountId = ""
   businessAccountId = ""

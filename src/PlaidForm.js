@@ -91,7 +91,7 @@ export default class PlaidForm extends Component {
 
     children: PropTypes.element,
 
-    /** model for of a revops instrument */
+    /** model for of a revops payment instrument */
     instrument: PropTypes.object,
 
     /** optional property to make the instrument primary */
