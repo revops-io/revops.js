@@ -1,7 +1,7 @@
 import { logError, logWarning } from '../helpers/Logger'
 
-export const submitForm = (object, token, form, callbacks, apiOptions = {}) => {
-  object.saveWithSecureForm(token, form, callbacks, apiOptions)
+export const submitForm = (object, token, form, callbacks, apiOptions = {}, isUpdate) => {
+  object.saveWithSecureForm(token, form, callbacks, apiOptions, isUpdate)
 }
 
 export const getToken = async ({
@@ -9,18 +9,25 @@ export const getToken = async ({
   accessToken, 
   getToken, 
   publicKey,
-  apiOptions = {}, 
+  apiOptions = {},
+  isUpdate = false,
 }) => {
   const { loggingLevel = "" } = apiOptions
 
-  if(!!accessToken === true){
+  if(!!accessToken === true && isUpdate === false){
     return accessToken
   }
 
-  // if we have a method to get the token, use it for the token
+  // if editing an instance, get a new token before request
   if (!!getToken !== false && typeof (getToken) === 'function') {
     try {
-      const token = await getToken(account.accountId)
+      
+      // need to get a specific account token when updating an instance
+      const token = await getToken(
+        isUpdate === true  && !!account.accountId === true 
+          ? account.accountId 
+          : "*"
+      )
       return token
     } catch(error) {
       logError("getToken() token failed to get a token", loggingLevel )

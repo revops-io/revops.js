@@ -8,6 +8,9 @@ import _ from 'lodash'
 
 
 const INSTRUMENTS_LIST_RESOURCE = (account_id) => `/v1/accounts/${account_id}/instruments`
+const INSTRUMENTS_INSTANCE_RESOURCE = (account_id, instrument_id) => {
+  return `/v1/accounts/${account_id}/instruments/${instrument_id}`
+}
 
 /**
  * Instruments are methods of payment
@@ -84,6 +87,7 @@ export class Instrument extends EntityModel {
       onValidationError,
     },
     apiOptions,
+    isUpdate = false
   ) {
     const { loggingLevel = "" } = apiOptions
 
@@ -94,7 +98,11 @@ export class Instrument extends EntityModel {
       throw new Error("Unable to call save. You are attempting to use a secret key.")
     }
 
-    form.submit(INSTRUMENTS_LIST_RESOURCE(this.businessAccountId),
+    const url = isUpdate === true && !!this.id === true
+      ? INSTRUMENTS_INSTANCE_RESOURCE(this.businessAccountId, this.id)
+      : INSTRUMENTS_LIST_RESOURCE(this.businessAccountId)
+
+    form.submit(url,
       {
         headers: {
           'X-RevOps-Client': 'RevOps-JS',

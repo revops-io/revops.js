@@ -100,7 +100,7 @@ export default class AchForm extends Component {
     isPrimary: PropTypes.bool,
 
     /** tells the component to create an account with the instrument */
-    createAccount: PropTypes.bool
+    createAccount: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -362,7 +362,8 @@ export default class AchForm extends Component {
 
   onSubmit = async () => {
     const { form } = this
-    const { account, apiOptions } = this.props
+    const { account, apiOptions, instrument = {} } = this.props
+    const isUpdate = !!instrument.id === true
 
     // Clear state
     this.setState({
@@ -376,7 +377,7 @@ export default class AchForm extends Component {
     // get all the values we need to submit the form securely
     const payload = this.getPayload()
     const callbacks = this.bindCallbacks()
-    const token = await getToken(this.props)
+    const token = await getToken({ ...this.props, isUpdate })
 
     submitForm(
       payload,
@@ -384,6 +385,7 @@ export default class AchForm extends Component {
       form,
       callbacks,
       apiOptions,
+      isUpdate,
     )
   }
 

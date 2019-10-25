@@ -96,10 +96,6 @@ export default class PaymentMethod extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
-
-    /** when edit is set to true, load and edit an instrument  */
-    /** when true it will disable changing the PaymentMethods method  */
-    edit: PropTypes.bool
   }
 
   static defaultProps = {
@@ -144,17 +140,18 @@ export default class PaymentMethod extends Component {
   async componentDidMount() {
     const {
       account,
-      edit = false,
       instrument,
       apiOptions = {}
     } = this.props
+
+    const isUpdate = !!instrument.id === true
 
     // if we don't have a RevOps id, indicate we need to make the account
     if (!!account.id === false) {
       this.setState({ createAccount: true })
     }
 
-    this.setAccount(account)
+    this.setAccount(account, isUpdate)
 
     if (!!instrument === false) {
       this.setState({ instrument: new Instrument({}) })
@@ -162,7 +159,7 @@ export default class PaymentMethod extends Component {
       this.setState({ instrument: new Instrument(instrument) })
     }
 
-    if (edit === true) {
+    if (isUpdate === true) {
       if (!!account.id === true && !!instrument.id === true) {
         const token = await getToken(this.props)
         const fetchedInstrument = await Instrument.fetchInstrument(account.id, instrument.id, token, apiOptions)
@@ -247,37 +244,36 @@ export default class PaymentMethod extends Component {
   }
 
   isPlaidEnabled = () => {
-    const { edit = false } = this.props
+    const { isUpdate = false } = this.state
     let plaidMethod = this.props.methods.find(
       m => m === PaymentMethods.METHOD_PLAID
     )
-    return !!plaidMethod && edit === false
+    return !!plaidMethod && isUpdate === false
   }
 
   isACHEnabled = () => {
-    const { edit = false } = this.props
+    const { isUpdate = false } = this.state
     let achMethod = this.props.methods.find(
       m => m === PaymentMethods.METHOD_ACH
     )
-    return !!achMethod && edit === false
+    return !!achMethod && isUpdate === false
   }
 
   isCardEnabled = () => {
-    const { edit = false } = this.props
+    const { isUpdate = false } = this.state
     let cardMethod = this.props.methods.find(
       m => m === PaymentMethods.METHOD_CARD
     )
-    return !!cardMethod && edit === false
+    return !!cardMethod && isUpdate === false
   }
 
   render() {
-    const { method } = this.state
+    const { method, isUpdate = false } = this.state
     const {
       onLast,
       onCancel,
       renderCardForms,
       renderAchForms,
-      edit = false,
     } = this.props
 
     let subProperties = {
@@ -287,7 +283,7 @@ export default class PaymentMethod extends Component {
       instrument: this.state.instrument,
     }
 
-    const loadingInstrument = edit === true && !!this.state.instrument === false
+    const loadingInstrument = isUpdate === true && !!this.state.instrument === false
 
     return (
       <section className="">
