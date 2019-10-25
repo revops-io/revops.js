@@ -93,9 +93,6 @@ export default class PlaidForm extends Component {
 
     /** model for of a revops payment instrument */
     instrument: PropTypes.object,
-
-    /** optional property to make the instrument primary */
-    isPrimary: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -264,7 +261,7 @@ export default class PlaidForm extends Component {
 
   // build the payload to submit to the vault
   getPayload = () => {
-    const { isPrimary, createAccount } = this.props
+    const { createAccount } = this.props
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
@@ -274,7 +271,6 @@ export default class PlaidForm extends Component {
       providerToken: this.state.plaidLinkPublicToken,
       providerId: this.state.plaidAccountId,
       method: "plaid",
-      isPrimary,
     })
 
     // if we are also making an account, nest the instrument in the account payload

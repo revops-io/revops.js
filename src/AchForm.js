@@ -96,9 +96,6 @@ export default class AchForm extends Component {
     /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
     getToken: PropTypes.func,
 
-    /** optional property to make the instrument primary */
-    isPrimary: PropTypes.bool,
-
     /** tells the component to create an account with the instrument */
     createAccount: PropTypes.bool,
   }
@@ -335,7 +332,7 @@ export default class AchForm extends Component {
   }
 
   getPayload = () => {
-    const { isPrimary, createAccount } = this.props
+    const { createAccount } = this.props
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
@@ -345,7 +342,6 @@ export default class AchForm extends Component {
       isIndividual: true,
       isBusiness: false,
       method: "ach",
-      isPrimary, // boolean if RevOps should try to make this the primary payment
     })
 
     // if we are also making an account, nest the instrument in the account payload

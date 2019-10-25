@@ -94,9 +94,6 @@ export default class CreditCardForm extends Component {
     /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
     getToken: PropTypes.func,
 
-    /** optional property to make the instrument primary */
-    isPrimary: PropTypes.bool,
-
     /** tells the component to create an account with the instrument */
     createAccount: PropTypes.bool,
 
@@ -124,7 +121,6 @@ export default class CreditCardForm extends Component {
     super(props)
     this.state = {
       errors: false,
-      isPrimary: true,
     }
     this.form = {};
   }
@@ -293,7 +289,7 @@ export default class CreditCardForm extends Component {
 
   // build the payload to submit to the vault
   getPayload = () => {
-    const { isPrimary, createAccount } = this.props
+    const { createAccount } = this.props
     let { account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
@@ -301,7 +297,6 @@ export default class CreditCardForm extends Component {
       ...instrument,
       businessAccountId: account.id,
       method: "credit-card",
-      isPrimary, // boolean if RevOps should try to make this the primary payment
     })
 
     // if we are also making an account, nest the instrument in the account payload
@@ -346,7 +341,7 @@ export default class CreditCardForm extends Component {
   }
 
   render() {
-    const { errors, isPrimary } = this.state
+    const { errors } = this.state
     const {
       onLast,
       onCancel,
@@ -420,13 +415,6 @@ export default class CreditCardForm extends Component {
                   showInlineError={true}
                   errors={errors}
                 />
-                {
-                  false &&
-                  <label>
-                    Make primary instrument
-                    <input type="checkbox" checked={isPrimary} onChange={this.handleMakePrimaryToggle} />
-                  </label>
-                }
               </React.Fragment>
             }
           </div>
