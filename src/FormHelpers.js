@@ -97,8 +97,8 @@ export const getDefaultCardExpDate = (instrument) => {
 }
 
 export const isInstrumentUpdate = (instrument) => {
-  if(!!instrument === false){
+  if(!!instrument === false ||!!instrument.id === false ){
     return false
   }
-  return !!instrument.id === true
+  return instrument.id.startsWith('inst_') === true
 }
