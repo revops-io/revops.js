@@ -3,7 +3,10 @@ import {
   getClassName,
   createErrorMessage,
   convertAPIError,
+  isInstrumentUpdate,
 } from './FormHelpers'
+
+import { Instrument } from './models'
 
 describe('Formhelper methods', () => {
   describe('getErrorText', () => {
@@ -72,6 +75,25 @@ describe('Formhelper methods', () => {
           "errorMessages": ["Please try again. If this persists, contact support."]
         });
     })
+
+  })
+})
+
+describe('isInstrumentUpdate', () => {
+  it('should NOT be an update', () => {
+    expect(isInstrumentUpdate()).to.equal(false)
+    expect(isInstrumentUpdate({})).to.equal(false)
+    expect(isInstrumentUpdate({id: "cust_123"})).to.equal(false)
+    expect(isInstrumentUpdate("")).to.equal(false)
+  })
+  
+  it('should be an update', () => {
+    expect(
+      isInstrumentUpdate({id: "inst_123123"}))
+      .to.equal(true)
+    expect(
+      isInstrumentUpdate(new Instrument({id: "inst_123123"})))
+      .to.equal(true)
 
   })
 })

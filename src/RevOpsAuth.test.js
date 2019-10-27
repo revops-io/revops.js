@@ -31,6 +31,6 @@ describe('RevOpsAuth', () => {
     shallow(<RevOpsAuth  {...mockProps} ><span></span></RevOpsAuth>)
     
     expect(mockProps.getToken.mock.calls.length).to.equal(1)
-    expect(mockProps.getToken.mock.calls[0][0]).to.equal(mockProps.account.accountId)
+    expect(mockProps.getToken.mock.calls[0][0]).to.equal("*")
   })
 })
