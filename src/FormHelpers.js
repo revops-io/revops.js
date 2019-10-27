@@ -95,3 +95,10 @@ export const getDefaultCardExpDate = (instrument) => {
 
   return `${getExpMonth(instrument)}/${getExpYear(instrument)}`
 }
+
+export const isInstrumentUpdate = (instrument) => {
+  if(!!instrument === false){
+    return false
+  }
+  return !!instrument.id === true
+}

@@ -16,6 +16,10 @@ import { Instrument } from './models'
 
 import { getToken } from './actions/FormActions'
 
+import {
+  isInstrumentUpdate,
+} from './FormHelpers'
+
 export const PaymentMethods = {
   METHOD_ACH: 'ach',
   METHOD_CARD: 'credit-card',
@@ -144,14 +148,17 @@ export default class PaymentMethod extends Component {
       apiOptions = {}
     } = this.props
 
-    const isUpdate = !!instrument.id === true
+    const isUpdate = isInstrumentUpdate(instrument)
 
     // if we don't have a RevOps id, indicate we need to make the account
     if (!!account.id === false) {
       this.setState({ createAccount: true })
     }
 
-    this.setAccount(account, isUpdate)
+    this.setAccount(account)
+
+    this.setState({ isUpdate })
+    
 
     if (!!instrument === false) {
       this.setState({ instrument: new Instrument({}) })

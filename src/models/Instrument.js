@@ -2,6 +2,10 @@ import {
   EntityModel,
 } from './index'
 
+import {
+  isInstrumentUpdate,
+} from '../FormHelpers'
+
 import { logError, logWarning } from '../helpers/Logger'
 
 import _ from 'lodash'
@@ -87,7 +91,6 @@ export class Instrument extends EntityModel {
       onValidationError,
     },
     apiOptions,
-    isUpdate = false
   ) {
     const { loggingLevel = "" } = apiOptions
 
@@ -98,7 +101,7 @@ export class Instrument extends EntityModel {
       throw new Error("Unable to call save. You are attempting to use a secret key.")
     }
 
-    const url = isUpdate === true && !!this.id === true
+    const url = isInstrumentUpdate(this)
       ? INSTRUMENTS_INSTANCE_RESOURCE(this.businessAccountId, this.id)
       : INSTRUMENTS_LIST_RESOURCE(this.businessAccountId)
 

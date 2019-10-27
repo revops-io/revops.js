@@ -9,6 +9,7 @@ import {
   convertAPIError,
   getDefaultValue,
   getDefaultCardExpDate,
+  isInstrumentUpdate,
 } from './FormHelpers'
 
 import configure from './client/VaultConfig'
@@ -314,7 +315,7 @@ export default class CreditCardForm extends Component {
   onSubmit = async () => {
     const { form } = this
     const { account, apiOptions, instrument = {} } = this.props
-    const isUpdate = !!instrument.id === true 
+    const isUpdate = isInstrumentUpdate(instrument)
 
     // Clear state
     this.setState({
@@ -336,7 +337,6 @@ export default class CreditCardForm extends Component {
       form,
       callbacks,
       apiOptions,
-      isUpdate,
     )
   }
 

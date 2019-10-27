@@ -29,7 +29,7 @@ describe('should use getToken() to get a token', () => {
       publicKey: false,
     }
     await getToken(mockProps)
-    expect(mockProps.getToken.mock.calls.length).to.equal(0)
+    expect(mockProps.getToken.mock.calls.length).to.equal(1)
   })
 
   it('Should return the publicKey', async () => {

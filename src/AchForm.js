@@ -5,6 +5,7 @@ import { submitForm, getToken } from './actions/FormActions'
 import {
   convertAPIError,
   getDefaultValue,
+  isInstrumentUpdate,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
@@ -359,7 +360,7 @@ export default class AchForm extends Component {
   onSubmit = async () => {
     const { form } = this
     const { account, apiOptions, instrument = {} } = this.props
-    const isUpdate = !!instrument.id === true
+    const isUpdate = isInstrumentUpdate(instrument)
 
     // Clear state
     this.setState({
@@ -381,7 +382,6 @@ export default class AchForm extends Component {
       form,
       callbacks,
       apiOptions,
-      isUpdate,
     )
   }
 
