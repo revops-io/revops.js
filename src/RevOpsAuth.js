@@ -52,7 +52,7 @@ export class RevOpsAuth extends Component {
       <div>
         {
           // pass the generated state to the children like props
-          React.cloneElement(children, { ...this.props, ...this.state })
+          [].concat(children).map(children => React.cloneElement(children, { ...this.props, ...this.state }))
         }
       </div>
   }
