@@ -27,7 +27,7 @@ import configure from './client/VaultConfig'
 export default class PlaidForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
@@ -87,7 +87,10 @@ export default class PlaidForm extends Component {
     /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
     getToken: PropTypes.func,
 
-    /** a token that grants permission to interact with the RevOps API */
+    /** 
+     * a token that grants permission to interact with the RevOps API 
+     * takes the place of the public key when performing secure operations 
+    */
     accessToken: PropTypes.string,
 
     children: PropTypes.element,

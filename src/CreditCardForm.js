@@ -27,7 +27,7 @@ import { Instrument, Account } from './models'
 export default class CreditCardForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** Boolean prop for showing/hiding ACH Link */
     showACHLink: PropTypes.bool,
@@ -80,11 +80,11 @@ export default class CreditCardForm extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
-
-    /** a string that indicated the destination of the operation */
-    model: PropTypes.string,
-
-    /** a token that grants permission to interact with the RevOps API */
+    
+    /** 
+     * a token that grants permission to interact with the RevOps API 
+     * takes the place of the public key when performing secure operations 
+    */
     accessToken: PropTypes.string,
 
     children: PropTypes.element,
@@ -110,18 +110,14 @@ export default class CreditCardForm extends Component {
     errorColor: SharedStyles.errorColor,
   }
 
-  state = {
-    account: {},
-    errors: false,
-    status: false,
-    response: false,
-
-  }
-
   constructor(props) {
     super(props)
     this.state = {
+      account: {},
       errors: false,
+      status: false,
+      response: false,
+  
     }
     this.form = {};
   }

@@ -26,7 +26,7 @@ export default class AchForm extends Component {
   static propTypes = {
 
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
@@ -86,7 +86,10 @@ export default class AchForm extends Component {
     /** Optional API Options **/
     apiOptions: PropTypes.object,
 
-    /** a token that grants permission to interact with the RevOps API */
+    /** 
+     * a token that grants permission to interact with the RevOps API 
+     * takes the place of the public key when performing secure operations 
+    */
     accessToken: PropTypes.string,
 
     children: PropTypes.element,
