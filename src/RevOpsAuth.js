@@ -24,7 +24,7 @@ export class RevOpsAuth extends Component {
     })
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
@@ -52,7 +52,9 @@ export class RevOpsAuth extends Component {
       <div>
         {
           // pass the generated state to the children like props
-          [].concat(children).map(children => React.cloneElement(children, { ...this.props, ...this.state }))
+          [].concat(children).map((children, i) => {
+            return React.cloneElement(children, { ...this.props, ...this.state, key: i })
+          })
         }
       </div>
   }
