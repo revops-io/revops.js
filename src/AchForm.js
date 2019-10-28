@@ -342,6 +342,8 @@ export default class AchForm extends Component {
     let payload = new Instrument({
       ...instrument,
       businessAccountId: account.id,
+      isIndividual: false,
+      isBusiness: true,
       method: "ach",
     })
 
