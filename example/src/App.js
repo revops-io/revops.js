@@ -35,11 +35,12 @@ export default class App extends Component {
   }
 
   /**
-   * getAccountToken() calls our example auth server with an accountId 
+   * getToken() calls our example auth server with an accountId 
    * to produce an authorization token that can be used to view and 
-   * manipulate the account
+   * manipulate the account. The RevOps components will make the 
+   * appropriate calls to it using the accountId or '*' when necessary.
    */
-  getAccountToken = async (accountId) => {
+  getToken = async (accountId) => {
     let searchParams = new URLSearchParams({
       accountId: accountId,
     })
@@ -50,32 +51,6 @@ export default class App extends Component {
     };
 
     const url = `http://localhost:5000/token?${searchParams.toString()}`
-    let response = await fetch(url, options)
-    let responseOK = response && response.ok
-    if (responseOK) {
-      let data = await response.json()
-      if (!!data.token === true) {
-        this.setState({ accessToken: data.token })
-        return data.token
-      } else {
-        console.warn("Unable to get token for requested operation.")
-        return false
-      }
-    }
-  }
-
-   /**
-   * getPublicToken() calls our example auth server without an accountId 
-   * to produce an authorization token that can be used to create a new 
-   * account or instrument
-   */
-  getPublicToken = async () => {  
-    let options = {
-      method: 'GET',
-      mode: 'cors',
-    };
-
-    const url = `http://localhost:5000/token`
     let response = await fetch(url, options)
     let responseOK = response && response.ok
     if (responseOK) {
@@ -121,15 +96,20 @@ export default class App extends Component {
             />
           </label>
           <RevOpsAuth
-            getToken={this.getPublicToken} // or this.getAccountToken
+            getToken={this.getToken}
+            apiOptions={{
+              loggingLevel: "error", // "warning" // "log"
+            }}
             account={{
-             accountId: "100000-3",
-             email: this.state.email,
-           }}>
+              accountId: "your-account-id",
+            }}>
             <PaymentMethod
-              methods={['card', 'ach', 'plaid']}
+              methods={['credit-card', 'ach', 'plaid']}
               onComplete={(accountObject) => {
                 this.setState({ success: true, accountObject })
+              }}
+              instrument={{ 
+                isPrimary: true, // make instrument primary
               }}
               onValidationError={this.onValidationError}
               onError={this.onError}

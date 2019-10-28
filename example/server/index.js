@@ -8,10 +8,15 @@ const port = 5000
 const key = process.env.KEY 
 
 app.use(cors())
+
+/**
+ * This defines an endpoint that we can request from the application to get an
+ * access token. This token can be used to access RevOps resources.
+ */
 app.get('/token', function (req, res, next) {
 
   if(!!key === false){
-    console.warn("Cannot get token. Secret key is not set.")
+    console.warn("Cannot get token. No key is set.")
   }
 
   let searchParams = new URLSearchParams({
