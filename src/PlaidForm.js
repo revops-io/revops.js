@@ -141,7 +141,7 @@ export default class PlaidForm extends Component {
     )
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
@@ -265,8 +265,7 @@ export default class PlaidForm extends Component {
 
   // build the payload to submit to the vault
   getPayload = () => {
-    const { createAccount } = this.props
-    let { account, instrument } = this.props
+    const { createAccount, account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
     let payload = new Instrument({

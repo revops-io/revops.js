@@ -129,7 +129,7 @@ export default class CreditCardForm extends Component {
     )
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
@@ -286,8 +286,7 @@ export default class CreditCardForm extends Component {
 
   // build the payload to submit to the vault
   getPayload = () => {
-    const { createAccount } = this.props
-    let { account, instrument } = this.props
+    const { createAccount, account, instrument } = this.props
 
     // non PCI values are added to the information from the secure fields
     let payload = new Instrument({
@@ -347,7 +346,6 @@ export default class CreditCardForm extends Component {
 
     return (
       <section style={this.props.cardWidth}>
-
         <label className="h3">Paying by credit card</label>
         {this.props.showACHLink === true &&
           <a
