@@ -55,9 +55,9 @@ export default class App extends Component {
     let responseOK = response && response.ok
     if (responseOK) {
       let data = await response.json()
-      if (!!data.token === true) {
-        this.setState({ accessToken: data.token })
-        return data.token
+      if (!!data.access_token === true) {
+        this.setState({ accessToken: data.access_token })
+        return data.access_token
       } else {
         console.warn("Unable to get token for requested operation.")
         return false
@@ -102,6 +102,7 @@ export default class App extends Component {
             }}
             account={{
               accountId: "your-account-id",
+              email: this.state.email,
             }}>
             <PaymentMethod
               methods={['credit-card', 'ach', 'plaid']}

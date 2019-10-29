@@ -1,11 +1,15 @@
 var express = require('express')
 var cors = require('cors')
-var app = express()
 var request = require('request')
 
+
+// We use port 5000 for the example but this is completely up to you
 const port = 5000
 
+// KEY is an environment variable we set at runtime.
 const key = process.env.KEY 
+
+let app = express()
 
 app.use(cors())
 
@@ -19,13 +23,13 @@ app.get('/token', function (req, res, next) {
     console.warn("Cannot get token. No key is set.")
   }
 
-  let searchParams = new URLSearchParams({
+  const searchParams = new URLSearchParams({
     accountId: req.query.accountId,
   })
 
   const url = `https://vault.revops.io/token?${searchParams.toString()}`
 
-  let options = {
+  const options = {
     url: url,
     method: 'GET',
     mode: 'cors',
@@ -39,9 +43,9 @@ app.get('/token', function (req, res, next) {
   request(options, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       const token_response = JSON.parse(body)
-      res.json({token: token_response.access_token})
+      res.json({access_token: token_response.access_token})
     } else {
-      res.json({token: false})
+      res.json({access_token: false})
     }
   });
 })
