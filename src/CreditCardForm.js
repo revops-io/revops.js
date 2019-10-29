@@ -1,13 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { submitForm, getToken } from './actions/FormActions'
+
 import { makeAccount } from './actions/AccountActions'
 import {
   getErrorText,
-  getClassName,
   convertAPIError,
   getDefaultValue,
   getDefaultCardExpDate,
+  isInstrumentUpdate,
 } from './FormHelpers'
 
 import configure from './client/VaultConfig'
@@ -20,12 +22,12 @@ import {
   Field,
   configureVault,
 } from './index'
-
+import { Instrument, Account } from './models'
 
 export default class CreditCardForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** Boolean prop for showing/hiding ACH Link */
     showACHLink: PropTypes.bool,
@@ -78,6 +80,24 @@ export default class CreditCardForm extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
+    
+    /** 
+     * a token that grants permission to interact with the RevOps API 
+     * takes the place of the public key when performing secure operations 
+    */
+    accessToken: PropTypes.string,
+
+    children: PropTypes.element,
+
+    /** model for of a revops payment instrument */
+    instrument: PropTypes.object,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func,
+
+    /** tells the component to create an account with the instrument */
+    createAccount: PropTypes.bool,
+
   }
 
   static defaultProps = {
@@ -90,17 +110,14 @@ export default class CreditCardForm extends Component {
     errorColor: SharedStyles.errorColor,
   }
 
-  state = {
-    account: {},
-    errors: false,
-    status: false,
-    response: false,
-  }
-
   constructor(props) {
     super(props)
     this.state = {
+      account: {},
       errors: false,
+      status: false,
+      response: false,
+  
     }
     this.form = {};
   }
@@ -112,8 +129,8 @@ export default class CreditCardForm extends Component {
     )
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if(!!prevProps.account !== false &&
+  componentDidUpdate(prevProps) {
+    if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
     ) {
@@ -134,24 +151,24 @@ export default class CreditCardForm extends Component {
   }
 
   initForm(id, fieldRender) {
-    if(document.getElementById(id)) {
+    if (document.getElementById(id)) {
       fieldRender()
     }
   }
 
   initialize = () => {
-    const { account } = this.props
-
+    const { instrument, createAccount = false } = this.props
     let conf = configure(this.props.apiOptions)
+
     // eslint-disable-next-line
     const form = VGSCollect.create(conf.vaultId, function (state) { });
-
+    const prefix = createAccount === true ? "instrument." : ""
     this.initForm('card-name',
       () => form.field("#card-name .field-space", {
         type: "text",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_name",
-        defaultValue: getDefaultValue(account, 'cardName', ''),
+        name: prefix + 'holder_name',
+        defaultValue: getDefaultValue(instrument, 'holderName', ''),
         placeholder: "Florence Izote",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -162,8 +179,8 @@ export default class CreditCardForm extends Component {
       form.field("#card-number .field-space", {
         type: "card-number",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_number",
-        defaultValue: getDefaultValue(account, 'cardNumber', ''),
+        name: prefix + 'card_number',
+        defaultValue: getDefaultValue(instrument, 'cardNumber', ''),
         placeholder: "Card number",
         validations: ["required", "validCardNumber"],
         showCardIcon: true,
@@ -176,7 +193,8 @@ export default class CreditCardForm extends Component {
       form.field("#card-cvc .field-space", {
         type: "card-security-code",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_cvv",
+        name: prefix + 'card_cvv',
+        defaultValue: getDefaultValue(instrument, 'cardCvv', ''),
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
         css: this.props.inputStyles,
@@ -186,10 +204,10 @@ export default class CreditCardForm extends Component {
     this.initForm('card-expdate', () =>
       form.field("#card-expdate .field-space", {
         type: "card-expiration-date",
-        name: "billing_preferences.card_expdate",
+        name: prefix + 'card_expdate',
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
-        defaultValue: getDefaultCardExpDate(account, ''),
+        defaultValue: getDefaultCardExpDate(instrument),
         serializers: [
           form.SERIALIZERS.separate({
             monthName: 'month',
@@ -205,7 +223,8 @@ export default class CreditCardForm extends Component {
       form.field("#card-postalcode .field-space", {
         type: "zip-code",
         errorColor: this.props.errorColor,
-        name: "billing_preferences.card_postal_code",
+        defaultValue: getDefaultValue(instrument, 'postalCode', ''),
+        name: prefix + 'postal_code',
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
@@ -222,7 +241,7 @@ export default class CreditCardForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof (onComplete) === 'function') {
+    if (onComplete !== false && typeof (onComplete) === 'function') {
       onComplete(response)
     }
   }
@@ -239,7 +258,7 @@ export default class CreditCardForm extends Component {
       loading: false,
     })
 
-    if(onError !== false && typeof (onError) === 'function') {
+    if (onError !== false && typeof (onError) === 'function') {
       onError(error)
     }
   }
@@ -252,25 +271,46 @@ export default class CreditCardForm extends Component {
       },
     })
 
-    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+    if (onValidationError !== false && typeof (onValidationError) === 'function') {
       onValidationError(errors)
     }
   }
 
-  onSubmit = () => {
-    const { form } = this
-    const { onNext } = this.props
-    let { account } = this.props
+  bindCallbacks = () => {
+    return {
+      onError: this.onError,
+      onComplete: this.onComplete,
+      onValidationError: this.onValidationError,
+    }
+  }
 
-    account = makeAccount({
-      ...account, // prop state
-      ...this.state.account, // current component state takes priority
-      status: 'activating', // trigger activating state.
-      billingPreferences: {
-        ...account.billingPreferences,
-        paymentMethod: "credit-card"
-      }
+  // build the payload to submit to the vault
+  getPayload = () => {
+    const { createAccount, account, instrument } = this.props
+
+    // non PCI values are added to the information from the secure fields
+    let payload = new Instrument({
+      ...instrument,
+      businessAccountId: account.id,
+      method: "credit-card",
     })
+
+    // if we are also making an account, nest the instrument in the account payload
+    if (createAccount === true) {
+      payload = new Account({
+        ...account, // add in the account information on the payload
+        instrument: {
+          ...payload,
+        }
+      })
+    }
+    return payload
+  }
+
+  onSubmit = async () => {
+    const { form } = this
+    const { account, apiOptions, instrument = {} } = this.props
+    const isUpdate = isInstrumentUpdate(instrument)
 
     // Clear state
     this.setState({
@@ -281,27 +321,31 @@ export default class CreditCardForm extends Component {
       response: false,
     })
 
-    const onError = this.onError
-    const onComplete = this.onComplete
-    const onValidationError = this.onValidationError
-    account.saveWithSecureForm(
-      this.props.publicKey,
+    // get all the values we need to submit the form securely
+    const payload = this.getPayload()
+    const callbacks = this.bindCallbacks()
+    const token = await getToken({ ...this.props, isUpdate })
+
+    submitForm(
+      payload,
+      token,
       form,
-      {
-        onError,
-        onComplete,
-        onNext,
-        onValidationError,
-      })
+      callbacks,
+      apiOptions,
+    )
   }
 
   render() {
-    const { errors, } = this.state
-    const { onLast, onCancel, children } = this.props
+    const { errors } = this.state
+    const {
+      onLast,
+      onCancel,
+      children,
+      instrument,
+    } = this.props
 
     return (
       <section style={this.props.cardWidth}>
-
         <label className="h3">Paying by credit card</label>
         {this.props.showACHLink === true &&
           <a
@@ -323,17 +367,18 @@ export default class CreditCardForm extends Component {
               <React.Fragment>
                 <Field
                   id="card-name"
-                  name="cardName"
+                  name="holderName"
                   label="Card Holder"
-                  defaultValue={getDefaultValue(this.props.account, 'cardName', '')}
+                  defaultValue={getDefaultValue(instrument, 'cardName', '')}
                   showInlineError={true}
                   errors={errors}
                 />
+                
                 <Field
                   id="card-number"
                   name="cardNumber"
                   label="Card Number"
-                  defaultValue={getDefaultValue(this.props.account, 'cardNumber', '')}
+                  defaultValue={getDefaultValue(instrument, 'cardNumber', '')}
                   showInlineError={true}
                   errors={errors}
                 />
@@ -342,7 +387,7 @@ export default class CreditCardForm extends Component {
                   id="card-expdate"
                   name="cardExpdate"
                   label="Expiration"
-                  defaultValue={getDefaultValue(this.props.account, 'cardExpdate', '')}
+                  defaultValue={getDefaultValue(instrument, 'cardExpdate', '')}
                   showInlineError={true}
                   errors={errors}
                 />
@@ -351,16 +396,16 @@ export default class CreditCardForm extends Component {
                   id="card-cvc"
                   name="cardCvv"
                   label="CVC/CVV"
-                  defaultValue={getDefaultValue(this.props.account, 'cardCvv', '')}
+                  defaultValue={getDefaultValue(instrument, 'cardCvv', '')}
                   showInlineError={true}
                   errors={errors}
                 />
 
                 <Field
                   id="card-postalcode"
-                  name="cardPostalCode"
+                  name="postalCode"
                   label="Postal Code"
-                  defaultValue={getDefaultValue(this.props.account, 'cardPostalcode', '')}
+                  defaultValue={getDefaultValue(instrument, 'postalCode', '')}
                   showInlineError={true}
                   errors={errors}
                 />

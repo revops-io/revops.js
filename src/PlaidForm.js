@@ -1,10 +1,13 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import { submitForm, getToken } from './actions/FormActions'
+
 import {
   getErrorText,
   getClassName,
   getDefaultValue,
+  isInstrumentUpdate,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
@@ -17,12 +20,14 @@ import {
   configurePlaid,
 } from './index'
 
+import { Instrument, Account } from './models'
+
 import configure from './client/VaultConfig'
 
 export default class PlaidForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
@@ -75,6 +80,23 @@ export default class PlaidForm extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
+
+    /** tells the component to create an account with the instrument */
+    createAccount: PropTypes.bool,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func,
+
+    /** 
+     * a token that grants permission to interact with the RevOps API 
+     * takes the place of the public key when performing secure operations 
+    */
+    accessToken: PropTypes.string,
+
+    children: PropTypes.element,
+
+    /** model for of a revops payment instrument */
+    instrument: PropTypes.object,
   }
 
   static defaultProps = {
@@ -102,13 +124,16 @@ export default class PlaidForm extends Component {
   }
 
   componentDidMount() {
+    const conf = configure(this.props.apiOptions)
+
     configureVault(
-      this.props.apiConfig,
+      conf,
       this.initialize,
     )
 
+    if(this.props.apiOptions)
     configurePlaid(
-      this.props.env,
+      conf.env,
       (plaidLink) => {
         this.onPlaidLoad(plaidLink)
       },
@@ -116,8 +141,8 @@ export default class PlaidForm extends Component {
     )
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if(!!prevProps.account !== false &&
+  componentDidUpdate(prevProps) {
+    if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
     ) {
@@ -158,7 +183,7 @@ export default class PlaidForm extends Component {
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
 
-    if(this.isFormFieldCreated(field) === false) {
+    if (this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
@@ -174,23 +199,24 @@ export default class PlaidForm extends Component {
 
     let defaultBankName = getDefaultValue(account, 'bankName', '')
 
-    if(!!this.state.plaidMetadata !== false &&
+    if (!!this.state.plaidMetadata !== false &&
       !!this.state.plaidMetadata.institution !== false) {
-        defaultBankName = this.state.plaidMetadata.institution.name
+      defaultBankName = this.state.plaidMetadata.institution.name
     }
 
     return defaultBankName
   }
 
   initialize = () => {
-    if(!!this.form === false) {
+    const { createAccount = false } = this.props
+    if (!!this.form === false) {
       // eslint-disable-next-line
       this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
     }
 
     this.createFormField(
       "#bank-name .field-space",
-      'billing_preferences.bank_name',
+      createAccount === true ? "instrument." : "" + 'bank_name',
       this.getBankName(),
       {
         type: "text",
@@ -208,18 +234,18 @@ export default class PlaidForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof (onComplete) === 'function') {
+    if (onComplete !== false && typeof (onComplete) === 'function') {
       onComplete(response)
     }
   }
 
-  onError = ({errors}) => {
+  onError = ({ errors }) => {
     const { onError } = this.props
     this.setState({
       errors
     })
 
-    if(onError !== false && typeof(onError) === 'function') {
+    if (onError !== false && typeof (onError) === 'function') {
       onError(errors)
     }
   }
@@ -232,49 +258,69 @@ export default class PlaidForm extends Component {
       },
     })
 
-    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+    if (onValidationError !== false && typeof (onValidationError) === 'function') {
       onValidationError(errors)
     }
   }
 
-  onSubmit = () => {
-    const { form } = this
-    const { onNext } = this.props
-    let { account } = this.props
+  // build the payload to submit to the vault
+  getPayload = () => {
+    const { createAccount, account, instrument } = this.props
 
-    account = makeAccount({
-      ...account, // prop state
-      ...this.state.account, // current component state takes priority
-      status: 'activating', // trigger activating state.
-      billingPreferences: {
-        ...account.billingPreferences,
-        plaidLinkPublicToken: this.state.plaidLinkPublicToken,
-        plaidAccountId: this.state.plaidAccountId,
-        paymentMethod: "plaid",
-      }
+    // non PCI values are added to the information from the secure fields
+    let payload = new Instrument({
+      ...instrument,
+      businessAccountId: account.id,
+      providerToken: this.state.plaidLinkPublicToken,
+      providerId: this.state.plaidAccountId,
+      method: "plaid",
     })
 
+    // if we are also making an account, nest the instrument in the account payload
+    if (createAccount === true) {
+      payload = new Account({
+        ...account, // add in the account information on the payload
+        instrument: {
+          ...payload,
+        }
+      })
+    }
+    return payload
+  }
+
+  bindCallbacks = () => {
+    return {
+      onError: this.onError,
+      onComplete: this.onComplete,
+      onValidationError: this.onValidationError,
+    }
+  }
+
+  onSubmit = async () => {
+    const { form } = this
+    const { account, apiOptions, instrument = {} } = this.props
+    const isUpdate = isInstrumentUpdate(instrument)
+
+    // Clear state
     this.setState({
       account: account,
       errors: false,
       loading: true,
+      status: false,
+      response: false,
     })
 
-    const onError = this.onError
-    const onComplete = this.onComplete
-    const onValidationError = this.onValidationError
+    // get all the values we need to submit the form securely
+    const payload = this.getPayload()
+    const callbacks = this.bindCallbacks()
+    const token = await getToken({ ...this.props, isUpdate })
 
-    // Attach plaid state to model on submit
-
-    account.saveWithSecureForm(
-      this.props.publicKey,
+    submitForm(
+      payload,
+      token,
       form,
-      {
-        onError,
-        onComplete,
-        onNext,
-        onValidationError,
-      }
+      callbacks,
+      apiOptions,
     )
   }
 
@@ -304,12 +350,12 @@ export default class PlaidForm extends Component {
           <div id="plaid-form" >
             <div id="bank-name"
               className={
-               getClassName(
-                 "field",
-                 "billing_preferences.bank_name",
-                 errors
-               )
-             }>
+                getClassName(
+                  "field",
+                  "billing_preferences.bank_name",
+                  errors
+                )
+              }>
               <label>Bank Name</label>
               <span className="field-space"></span>
               <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>

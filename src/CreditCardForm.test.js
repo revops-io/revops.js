@@ -65,6 +65,9 @@ describe('The CreditCardForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
         email: 'slujibu2@cool.api'
+      },
+      instrument: {
+        saveWithSecureForm: jest.fn(),
       }
     })
     wrapper.setState({
@@ -73,7 +76,7 @@ describe('The CreditCardForm Component', () => {
       status: null,
       response: null,
     })
-
+    
     wrapper.instance().onSubmit()
     expect(wrapper.instance().state.account.email).to.equal('slujibu2@cool.api')
     expect(wrapper.instance().state.errors).to.equal(false)

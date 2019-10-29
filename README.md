@@ -214,7 +214,7 @@ to initial new accounts.
 | accountId |    PropTypes.string.isRequired   |  The customer `accountId` to connect with a RevOps Account. |
 | email | PropTypes.string.isRequired | The customer's `email` address. This is a unique value in RevOps. If an email already exists, the API will return a `400 BAD REQUEST`.
 | billingContact | PropTypes.object | Object defining `email`, `name`, `phone`, and `title` of the direct billing contact, if it is different than the `account.email` provided.
-| billingPreferences | PropTypes.object | Object defining preferences filled out by RevOps.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
+| billingPreferences | PropTypes.object | Object defining preferences filled out by revops.js `<PaymentMethod />`. See `BillingPreferences` object for more info.
 | onComplete(response) | PropTypes.func | This callback returns the response of a successful HTTP request. [onComplete](#onComplete)
 | onError({error}) | PropTypes.func | Called when revops-js detects an error. See [onError](#onError) for more details.
 | onValidationError() | PropTypes.func | Called when a validation error is detected See [onValidationError](#onValidationError) for more details.
@@ -491,6 +491,102 @@ class SignupForm extends Component {
 
 Now we can now control the submission process of the `<PaymentMethod />` component from its parent component as one unified workflow.
 
+## RevOpsAuth Component
+When using more than one revops.js component at a time it can be cumbersome to provide authentication or account information to each component. In this case, we recommend using the `<RevOpsAuth />` component to wrap the other components. It can be used to authenticate all of the children at the same time and passes the access token to the children. Additionally, `RevOpsAuth` will also pass along any properties you provide to its children. This helps eliminate the need to duplicate 
+
+``` jsx
+<RevOpsAuth
+  getToken={this.getToken}
+  account={{
+    accountId: "100000-3", 
+    email: "example@email.com",
+  }}
+  onValidationError={this.onValidationError}
+  onError={this.onError}
+  saveRef={this.saveRef}>
+  {
+    // collect the primary payment instrument
+    this.state.primaryInstrument === true &&
+    <PaymentMethod
+      methods={['credit-card', 'ach', 'plaid']}
+      onComplete={(accountObject) => {
+        this.setState({ success: true, accountObject })
+      }}
+
+    />
+  }
+  {
+    // then collect a backup payment instrument
+    this.state.primaryInstrument === false &&
+    <PaymentMethod
+      methods={['credit-card', 'ach', 'plaid']}
+      onComplete={(accountObject) => {
+        this.setState({ success: true, accountObject })
+      }}
+    />
+  }
+</RevOpsAuth>
+```
+
+__Note:__ You are able to override properties for the individual component. This could be useful if you want to retrieve an account-specific token later in the workflow after the initial account creation.
+
+## Using a Token to Authenticate 
+RevOps also supports a token based authentication workflow using your public or secret key. In our example directory, you can see an example of what this might look like. That README contains additionally information you may find helpful. 
+
+In this example, we are using the `<RevOpsAuth />` component to authenticate the `<PaymentMethod />` using the `getToken` property. This is a function that you are able to define and we will call for you. This removes the need to pass the public token to the client and is essential for secured operations using your secret key.
+
+``` jsx
+// this function should return a token or false
+getToken = async () => {
+  token = await callToYourServer()
+  return token
+}
+
+<RevOpsAuth
+  getToken={this.getToken}
+  account={{
+    accountId: "100000-3", 
+    email: "example@email.com",
+  }}>
+  <PaymentMethod
+    methods={['credit-card', 'ach', 'plaid']}
+    onComplete={(accountObject) => {
+      this.setState({ success: true, accountObject })
+    }}
+    onValidationError={this.onValidationError}
+    onError={this.onError}
+    saveRef={this.saveRef}
+  />
+</RevOpsAuth>
+```
+
+## Logging Levels
+By default, revops.js will not output to the console but we offer three different to control the messages that will be outputted. These values are set in the `apiOptions` property that can be passed to the component. 
+
+__Example Usage:__
+``` jsx
+<RevOpsAuth
+  apiOptions={{
+    loggingLevel: "error", // "warning" // "log"
+  }}
+  publicKey={publicKey}
+  account={{
+    accountId: "100000-3", 
+    email: "example@email.com",
+  }}>
+  <PaymentMethod
+    methods={['credit-card', 'ach', 'plaid']}
+  />
+</RevOpsAuth>
+
+```
+
+__Logging Levels__
+| Level | Meaning |
+|--------|:--------|
+| info | enables all console messages. i.e. console.log, console.warn and console.error |
+| warning | enables both console.warn and console.error |
+| error | enables only console.error |
 
 ## License
 

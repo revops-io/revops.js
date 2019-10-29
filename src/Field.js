@@ -30,7 +30,7 @@ export class Field extends Component {
   }
 
   getElementKey = () => {
-    return `billing_preferences.${_.snakeCase(this.props.name)}`
+    return `${_.snakeCase(this.props.name)}`
   }
 
   render () {

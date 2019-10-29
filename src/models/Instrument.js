@@ -1,48 +1,84 @@
 import {
   EntityModel,
-  BillingContact,
-  ShippingContact,
-  Instrument,
 } from './index'
+
+import {
+  isInstrumentUpdate,
+} from '../FormHelpers'
 
 import { logError, logWarning } from '../helpers/Logger'
 
 import _ from 'lodash'
 
-const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
 
-export class Account extends EntityModel {
+const INSTRUMENTS_LIST_RESOURCE = (account_id) => `/v1/accounts/${account_id}/instruments`
+const INSTRUMENTS_INSTANCE_RESOURCE = (account_id, instrument_id) => {
+  return `/v1/accounts/${account_id}/instruments/${instrument_id}`
+}
+
+/**
+ * Instruments are methods of payment
+ * See more at https://www.revops.io/docs/rest-api/instruments
+ */
+export class Instrument extends EntityModel {
   accountId = ""
-  name = ""
-  email = ""
-  billingContact = new BillingContact()
-  shippingContact = new ShippingContact()
-  instrument = new Instrument()
+  businessAccountId = ""
+  id = ""
+  uri = ""
+  accountNumber = ""
+  cardCvv = ""
+  cardExpdate = {
+    month: "",
+    year: ""
+  }
+  cardNumber = ""
+  postalCode = ""
+  cardToken = ""
+  country = ""
+  currency = ""
+  holderName = ""
+  isBusiness = ""
+  isIndividual = ""
+  isPrimary = ""
+  last4 = ""
+  method = ""
+  provider = ""
+  providerFingerprint = ""
+  providerId = ""
+  providerToken = ""
+  routingNumber = ""
+  status = ""
 
   constructor(params = {}) {
     super(params)
     Object.keys(params).map(attrName =>
       this._setAttr(attrName, params[attrName])
     )
-    this.billingContact = new BillingContact(
-      !!params === true ? {
-        ...this.billingContact,
-        ...params.billingContact,
+  }
+
+  static fetchInstrument = async (accountId, id, token, apiOptions = {} ) => {
+    let options = {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+    };
+    
+    const url = `https://vault.revops.io${INSTRUMENTS_LIST_RESOURCE(accountId)}/${id}`
+    try {
+      let response = await fetch(url, options)
+      let responseOK = response && response.ok
+      if (responseOK) {
+        let data = await response.json()
+        return new Instrument(data)
       }
-        : {}
-    )
-    this.shippingContact = new ShippingContact(
-      !!params === true ? {
-        ...this.shippingContact,
-        ...params.shippingContact,
-      } : {}
-    )
-    this.instrument = new Instrument(
-      !!params === true ? {
-        ...this.instrument,
-        ...params.instrument,
-      } : {}
-    )
+    } catch(err){
+      logError("Unable to fetch instruments", apiOptions.loggingLevel, err)
+    }
+
+    return undefined
   }
 
   saveWithSecureForm(
@@ -64,7 +100,12 @@ export class Account extends EntityModel {
     if (apiKey.startsWith('sk_') === true) {
       throw new Error("Unable to call save. You are attempting to use a secret key.")
     }
-    form.submit(ACCOUNTS_LIST_RESOURCE,
+
+    const url = isInstrumentUpdate(this)
+      ? INSTRUMENTS_INSTANCE_RESOURCE(this.businessAccountId, this.id)
+      : INSTRUMENTS_LIST_RESOURCE(this.businessAccountId)
+
+    form.submit(url,
       {
         headers: {
           'X-RevOps-Client': 'RevOps-JS',
@@ -106,16 +147,14 @@ export class Account extends EntityModel {
       },
       (errors) => {
         if (!!onValidationError !== false && typeof (onValidationError) === 'function') {
-
-          // lift up instrument data and remove the prefix 
+          // tell the developer a validation issue has occurred
           errors = Object.entries(errors).map(([key, value]) => {
-            const keyName = key.replace('instrument.', '')
-            return [keyName, {
+            return [key, {
               ...value,
-              elementId: keyName
+              key,
             }]
           })
-
+          // map back to object
           errors = errors.reduce((
             mappedObject,
             [key, value]) =>

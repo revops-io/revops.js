@@ -15,6 +15,12 @@ describe('The PaymentMethod Component', () => {
         PaymentMethods.METHOD_PLAID,
       ],
       defaultMethod: PaymentMethods.METHOD_ACH,
+      instrument: {},
+      account: {
+        id: "test",
+        billingPreferences: {},
+        saveWithSecureForm: jest.fn(),
+      },
       ...props,
     }
   }

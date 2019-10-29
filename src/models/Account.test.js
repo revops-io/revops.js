@@ -106,7 +106,6 @@ describe('Account Model', () => {
   it("AccountModel should generate uuid on new objects", () => {
     let account = new Account()
     expect(account.id).to.equal('00000000-0000-0000-0000-000000000000')
-    expect(account.billingPreferences.id).to.equal('00000000-0000-0000-0000-000000000000')
     expect(account.billingContact.id).to.equal('00000000-0000-0000-0000-000000000000')
     expect(account.shippingContact.id).to.equal('00000000-0000-0000-0000-000000000000')
   })
@@ -137,7 +136,7 @@ describe('Account Model', () => {
       submit: jest.fn()
     }
 
-    account.saveWithSecureForm(apiKey, form, {})
+    account.saveWithSecureForm(apiKey, form, {}, {})
     expect(form.submit.mock.calls.length).to.equal(1)
   })
 
@@ -148,7 +147,7 @@ describe('Account Model', () => {
       submit: jest.fn()
     }
     expect(() => {
-      account.saveWithSecureForm(apiKey, form, {})
+      account.saveWithSecureForm(apiKey, form, {}, { loggingLevel: ""})
     }).to.throw(Error)
     expect(form.submit.mock.calls.length).to.equal(0)
   })

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { submitForm, getToken } from './actions/FormActions'
 
 import {
   convertAPIError,
   getDefaultValue,
+  isInstrumentUpdate,
 } from './FormHelpers'
 
 import { makeAccount } from './actions/AccountActions'
@@ -16,13 +18,15 @@ import {
   configureVault,
 } from './index'
 
+import { Instrument, Account } from './models'
+
 import configure from './client/VaultConfig'
 
 export default class AchForm extends Component {
   static propTypes = {
 
     /** Required RevOps API Public Key **/
-    publicKey: PropTypes.string.isRequired,
+    publicKey: PropTypes.string,
 
     /** Account object allows preconfigured account options to be set */
     account: PropTypes.object,
@@ -82,7 +86,22 @@ export default class AchForm extends Component {
     /** Optional API Options **/
     apiOptions: PropTypes.object,
 
+    /** 
+     * a token that grants permission to interact with the RevOps API 
+     * takes the place of the public key when performing secure operations 
+    */
+    accessToken: PropTypes.string,
+
     children: PropTypes.element,
+
+    /** model for of a revops payment instrument */
+    instrument: PropTypes.object,
+
+    /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
+    getToken: PropTypes.func,
+
+    /** tells the component to create an account with the instrument */
+    createAccount: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -110,8 +129,8 @@ export default class AchForm extends Component {
     this.form = null
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if(!!prevProps.account !== false &&
+  componentDidUpdate(prevProps) {
+    if (!!prevProps.account !== false &&
       !!this.props.account !== false &&
       prevProps.account !== this.props.account
     ) {
@@ -132,8 +151,10 @@ export default class AchForm extends Component {
   }
 
   componentDidMount() {
+    const conf = configure(this.props.apiOptions)
+
     configureVault(
-      this.props.apiConfig,
+      conf,
       this.initialize,
     )
   }
@@ -146,7 +167,7 @@ export default class AchForm extends Component {
   }
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
-    if(this.isFormFieldCreated(field) === false) {
+    if (this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
         defaultValue: defaultValue,
@@ -158,103 +179,104 @@ export default class AchForm extends Component {
   }
 
   initForm(id, fieldRender) {
-    if(document.getElementById(id)) {
+    if (document.getElementById(id)) {
       fieldRender()
     }
   }
 
   initialize = () => {
-    const { account } = this.props
+    const { instrument, createAccount = false } = this.props
 
-    if(!!this.form === false) {
+    if (!!this.form === false) {
       let conf = configure(this.props.apiOptions)
 
       // eslint-disable-next-line
       this.form = VGSCollect.create(conf.vaultId, function () { });
     }
+    const prefix = createAccount === true ? "instrument." : ""
 
     this.initForm('bank-name',
       () => this.createFormField(
-      "#bank-name .field-space",
-      'billing_preferences.bank_name',
-      getDefaultValue(account, 'bankName', ''),
-      {
-        type: "text",
-        placeholder: "Name of Bank Institution",
-        validations: ["required"],
-      }
-    ))
+        "#bank-name .field-space",
+        prefix + 'bank_name',
+        getDefaultValue(instrument, 'bankName', ''),
+        {
+          type: "text",
+          placeholder: "Name of Bank Institution",
+          validations: ["required"],
+        }
+      ))
     this.initForm('bank-postalcode',
       () => this.createFormField(
-      "#bank-postalcode .field-space",
-      'billing_preferences.bank_postal_code',
-      getDefaultValue(account, 'bankpostalcode', ''),
-      {
-        type: "zip-code",
-        placeholder: "Postal code",
-        validations: ["required"],
-      }
-    ))
+        "#bank-postalcode .field-space",
+        prefix + `postal_code`,
+        getDefaultValue(instrument, 'postalCode', ''),
+        {
+          type: "zip-code",
+          placeholder: "Postal code",
+          validations: ["required"],
+        }
+      ))
     this.initForm('bank-account-country',
       () => this.createFormField(
-      "#bank-account-country .field-space",
-      'billing_preferences.bank_country',
-      getDefaultValue(account, 'bankCountry', 'USA'),
-      {
-        type: "dropdown",
-        validations: ["required"],
-        options: [
-          { value: 'USA', text: 'United States of America' },
-          { value: 'Canada', text: 'Canada' },
-          { value: 'Mexico', text: 'Mexico' },
-        ],
-      })
+        "#bank-account-country .field-space",
+        prefix + 'country',
+        getDefaultValue(instrument, 'bankCountry', 'USA'),
+        {
+          type: "dropdown",
+          validations: ["required"],
+          options: [
+            { value: 'USA', text: 'United States of America' },
+            { value: 'Canada', text: 'Canada' },
+            { value: 'Mexico', text: 'Mexico' },
+          ],
+        })
     )
 
     this.initForm('bank-holder-name',
       () => this.createFormField(
-      "#bank-holder-name .field-space",
-      "billing_preferences.bank_account_holder_name",
-      getDefaultValue(account, 'bankAccountHolderName', ''),
-      {
-        type: "text",
-        placeholder: "Name on the account",
-        validations: ["required"],
-      }
-    ))
+        "#bank-holder-name .field-space",
+        prefix + 'holder_name',
+        getDefaultValue(instrument, 'holderName', ''),
+        {
+          type: "text",
+          placeholder: "Name on the account",
+          validations: ["required"],
+        }
+      ))
 
     this.initForm('bank-account-type',
       () => this.createFormField(
-      "#bank-account-type .field-space",
-      "billing_preferences.bank_account_holder_type",
-      getDefaultValue(account, 'bankAccountHolderType', 'company'),
-      {
-        type: "dropdown",
-        validations: ["required"],
-        options: [
-          { value: 'company', text: 'Company' },
-          { value: 'individual', text: 'Individual' },
-        ],
-      }
-    ))
+        "#bank-account-type .field-space",
+        prefix + 'bank_account_holder_type',
+        getDefaultValue(instrument, 'bankAccountHolderType', 'company'),
+        {
+          type: "dropdown",
+          validations: ["required"],
+          options: [
+            { value: 'company', text: 'Company' },
+            { value: 'individual', text: 'Individual' },
+          ],
+        }
+      ))
 
     this.initForm('bank-account-number',
       () => this.createFormField(
-      "#bank-account-number .field-space",
-      "billing_preferences.bank_account_number",
-      getDefaultValue(account, 'bankAccountNumber', ''),
-      {
-        type: "text",
-        placeholder: "Enter bank account number",
-        validations: ["required"],
-      }
-    ))
+        "#bank-account-number .field-space",
+        prefix + 'account_number',
+        getDefaultValue(instrument, 'accountNumber', ''),
+        {
+          type: "text",
+          placeholder: "Enter bank account number",
+          validations: ["required"],
+        }
+      ))
 
     this.initForm('bank-routing-number', () =>
       this.createFormField(
         "#bank-routing-number .field-space",
-        "billing_preferences.bank_routing_number",
-        getDefaultValue(account, 'bankRoutingNumber', ''),
+        prefix + 'routing_number',
+        getDefaultValue(instrument, 'routingNumber', ''),
         {
           type: "text",
           placeholder: "Enter bank routing number",
@@ -276,7 +298,7 @@ export default class AchForm extends Component {
       loading: false,
     })
 
-    if(onError !== false && typeof (onError) === 'function') {
+    if (onError !== false && typeof (onError) === 'function') {
       onError(error)
     }
   }
@@ -287,7 +309,7 @@ export default class AchForm extends Component {
       loading: false,
     })
 
-    if(onComplete !== false && typeof(onComplete) === 'function') {
+    if (onComplete !== false && typeof (onComplete) === 'function') {
       onComplete(response)
     }
   }
@@ -300,26 +322,49 @@ export default class AchForm extends Component {
       },
     })
 
-    if(onValidationError !== false && typeof (onValidationError) === 'function') {
+    if (onValidationError !== false && typeof (onValidationError) === 'function') {
       onValidationError(errors)
     }
   }
 
-  onSubmit = () => {
-    const { form } = this
-    const { onNext } = this.props
-    let { account } = this.props
+  bindCallbacks = () => {
+    return {
+      onError: this.onError,
+      onComplete: this.onComplete,
+      onValidationError: this.onValidationError,
+    }
+  }
 
-    account = makeAccount({
-      ...account, // prop state
-      ...this.state.account, // current component state takes priority
-      status: 'activating', // trigger activating state.
-      billingPreferences: {
-        ...account.billingPreferences,
-        paymentMethod: "ach"
-      }
+  getPayload = () => {
+    const { createAccount, account, instrument } = this.props
+
+    // non PCI values are added to the information from the secure fields
+    let payload = new Instrument({
+      ...instrument,
+      businessAccountId: account.id,
+      isIndividual: false,
+      isBusiness: true,
+      method: "ach",
     })
 
+    // if we are also making an account, nest the instrument in the account payload
+    if (createAccount === true) {
+      payload = new Account({
+        ...account, // add in the account information on the payload
+        instrument: {
+          ...payload,
+        }
+      })
+    }
+    return payload
+  }
+
+  onSubmit = async () => {
+    const { form } = this
+    const { account, apiOptions, instrument = {} } = this.props
+    const isUpdate = isInstrumentUpdate(instrument)
+
+    // Clear state
     this.setState({
       account: account,
       errors: false,
@@ -328,18 +373,18 @@ export default class AchForm extends Component {
       response: false,
     })
 
-    const onError = this.onError
-    const onComplete = this.onComplete
-    const onValidationError = this.onValidationError
-    account.saveWithSecureForm(
-      this.props.publicKey,
+    // get all the values we need to submit the form securely
+    const payload = this.getPayload()
+    const callbacks = this.bindCallbacks()
+    const token = await getToken({ ...this.props, isUpdate })
+
+    submitForm(
+      payload,
+      token,
       form,
-      {
-        onError,
-        onComplete,
-        onNext,
-        onValidationError,
-      })
+      callbacks,
+      apiOptions,
+    )
   }
 
   openPlaid = () => {
@@ -352,6 +397,7 @@ export default class AchForm extends Component {
       onLast,
       onCancel,
       children,
+      instrument,
     } = this.props
 
     return (
@@ -379,34 +425,34 @@ export default class AchForm extends Component {
                 id="bank-name"
                 name="bankName"
                 label="Bank Name"
-                defaultValue={getDefaultValue(this.props.account, 'bankName', '')}
+                defaultValue={getDefaultValue(instrument, 'bankName', '')}
                 showInlineError={true}
                 errors={errors}
               />
 
               <Field
                 id="bank-holder-name"
-                name="bankAccountHolderName"
+                name="holderName"
                 label="Account Holder Name"
-                defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderName', '')}
+                defaultValue={getDefaultValue(instrument, 'bankAccountHolderName', '')}
                 showInlineError={true}
                 errors={errors}
               />
 
               <Field
                 id="bank-postalcode"
-                name="bankPostalCode"
+                name="postalCode"
                 label="Postal Code"
-                defaultValue={getDefaultValue(this.props.account, 'bankPostalcode', '')}
+                defaultValue={getDefaultValue(instrument, 'postalcode', '')}
                 showInlineError={true}
                 errors={errors}
               />
 
               <Field
                 id="bank-account-country"
-                name="bankCountry"
+                name="country"
                 label="Bank Country"
-                defaultValue={getDefaultValue(this.props.account, 'bankCountry', '')}
+                defaultValue={getDefaultValue(instrument, 'country', '')}
                 showInlineError={true}
                 errors={errors}
               />
@@ -415,25 +461,25 @@ export default class AchForm extends Component {
                 id="bank-account-type"
                 name="bankAccountHolderType"
                 label="Account Type"
-                defaultValue={getDefaultValue(this.props.account, 'bankAccountHolderType', '')}
+                defaultValue={getDefaultValue(instrument, 'accountHolderType', '')}
                 showInlineError={true}
                 errors={errors}
               />
 
               <Field
                 id="bank-routing-number"
-                name="bankRoutingNumber"
+                name="routingNumber"
                 label="Routing Number"
-                defaultValue={getDefaultValue(this.props.account, 'bankRoutingNumber', '')}
+                defaultValue={getDefaultValue(instrument, 'routingNumber', '')}
                 showInlineError={true}
                 errors={errors}
               />
 
               <Field
                 id="bank-account-number"
-                name="bankAccountNumber"
+                name="accountNumber"
                 label="Account Number"
-                defaultValue={getDefaultValue(this.props.account, 'bankAccountNumber', '')}
+                defaultValue={getDefaultValue(instrument, 'accountNumber', '')}
                 showInlineError={true}
                 errors={errors}
               />

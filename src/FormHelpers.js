@@ -22,7 +22,7 @@ export const getClassName = (className, errorKey, errors) => {
 export const createErrorMessage = (errorKey, errorMessage) => {
   return {
     [errorKey]: {
-      'errorMessages' : [errorMessage]
+      'errorMessages': [errorMessage]
     }
   }
 }
@@ -31,7 +31,7 @@ export const convertAPIError = (httpStatus, httpResponse) => {
   if (httpStatus !== false && httpStatus >= 400) {
     if (!!httpResponse.error !== false && !!httpResponse.error.param !== false) {
       let param = ''
-      switch(httpResponse.error.param) {
+      switch (httpResponse.error.param) {
         case 'exp_year':
         case 'exp_month':
           param = 'billing_preferences.card_expdate'
@@ -61,23 +61,44 @@ export const convertAPIError = (httpStatus, httpResponse) => {
  * Retrieve existing or default value from account.billingPreferences object
  *
  */
-export const getDefaultValue = (account, billingProp, defaultValue) => {
-  return !!account === true
-    && !!account.billingPreferences === true
-    && !!account.billingPreferences[billingProp] === true
-    ? account.billingPreferences[billingProp]
+export const getDefaultValue = (model, billingProp, defaultValue) => {
+  return !!model === true && !!model[billingProp] === true
+    ? model[billingProp]
     : defaultValue
 }
 
-export const getDefaultCardExpDate = (account) => {
-  if (!!account === false || !!account.billingPreferences === false) {
+const getExpMonth = (instrument) => {
+  return (
+    !!instrument.cardExpdate.month === true
+      ? instrument.cardExpdate.month
+      : ""
+  )
+}
+
+const getExpYear = (instrument) => {
+  return (
+    !!instrument.cardExpdate.year === true
+      ? instrument.cardExpdate.year
+      : ""
+  )
+}
+
+export const getDefaultCardExpDate = (instrument) => {
+  if (
+    !!instrument === false || 
+    !!instrument.cardExpdate === false || 
+    !!instrument.cardExpdate.year === false ||
+    !!instrument.cardExpdate.month === false
+  ) {
     return ""
   }
 
-  return !!account.billingPreferences.cardExpdate.month
-  || !!account.billingPreferences.cardExpdate.year === true
-  ? account.billingPreferences.cardExpdate.month
-    + '/' +
-    account.billingPreferences.cardExpdate.year
-  : ""
+  return `${getExpMonth(instrument)}/${getExpYear(instrument)}`
+}
+
+export const isInstrumentUpdate = (instrument) => {
+  if(!!instrument === false ||!!instrument.id === false ){
+    return false
+  }
+  return instrument.id.startsWith('inst_') === true
 }
