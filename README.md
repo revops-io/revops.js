@@ -242,7 +242,7 @@ account = {
 ```
 
 | Prop     |      type      |  Description |  Tokenized |
-|------------------|:--------------:|-------------:|---------|
+|------------------|:--------------:|-------------:|:--------:|
 | paymentMethod    | PropTypes.oneOf(['ach', 'card', 'plaid']) | The primary method used for paying. | ✅ |
 | cardName | PropTypes.string | Name on the credit card. |  ✅
 | cardToken | PropTypes.string | Token used for authorizing payment. | ✅
@@ -582,6 +582,7 @@ __Example Usage:__
 ```
 
 __Logging Levels__
+
 | Level | Meaning |
 |--------|:--------|
 | info | enables all console messages. i.e. console.log, console.warn and console.error |
