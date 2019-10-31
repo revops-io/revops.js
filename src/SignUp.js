@@ -1,17 +1,27 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
-import configure from './client/VaultConfig'
+import { submitForm, getToken } from './actions/FormActions'
 
+import { makeAccount } from './actions/AccountActions'
 import {
   getErrorText,
   convertAPIError,
+  getDefaultValue,
 } from './FormHelpers'
 
-import { ButtonGroup } from './ButtonGroup'
-import { inputStyles, cardWidth } from './SharedStyles'
+import configure from './client/VaultConfig'
 
-export class SignUp extends Component {
+import { ButtonGroup } from './ButtonGroup'
+import * as SharedStyles from './SharedStyles'
+
+import {
+  Field,
+  configureVault,
+} from './index'
+import { Account } from './models'
+
+export class _SignUp extends Component {
   state = {
     loading: false,
   }
@@ -24,135 +34,223 @@ export class SignUp extends Component {
     this.form = {};
   }
 
+  static defaultProps = {
+    inputStyles: SharedStyles.inputStyles,
+    cardWidth: SharedStyles.cardWidth,
+    buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
+    buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
+    linkStyling: SharedStyles.linkStyling,
+    errorColor: SharedStyles.errorColor,
+  }
+
   static propTypes = {
     styles: PropTypes.object,
+
+    /** `inputStyles` for input fields. `&:focus` state can also be styled. */
+    inputStyles: PropTypes.object,
+
+    /** A callable function to fire when form is complete */
     onComplete: PropTypes.func,
-    onNext: PropTypes.func,
+
+    /** A callable function to fire when cancel event occurs */
     onCancel: PropTypes.func,
+
+    /** A callable function to fire when last event occurs */
     onLast: PropTypes.func,
+
+    /** A callable function to fire when an error occurs on the form. */
     onError: PropTypes.func,
+
+    /** A callable function to fire when an validation error occurs on the form. */
+    onValidationError: PropTypes.func,
+
+    /** Optional API Options **/
+    apiOptions: PropTypes.object,
+
+    /** Color of error text, a valid color name or hex. */
+    errorColor: PropTypes.string,
+
+    /** Account object allows preconfigured account options to be set */
+    account: PropTypes.object,
+
+    /** Optional reference to allow your own save buttons */
+    saveRef: PropTypes.shape({ current: PropTypes.any }),
   }
 
   componentDidMount() {
-    const script = document.createElement("script")
+    configureVault(
+      this.props.apiOptions,
+      this.initialize,
+    )
+  }
 
-    script.src = configure(this.props.env).vaultCollectUrl
-    script.async = true
-    script.onload = () => {
-      this.initialize()
+  componentDidUpdate(prevProps) {
+    if (!!prevProps.account !== false &&
+      !!this.props.account !== false &&
+      prevProps.account !== this.props.account
+    ) {
+      this.updateAccount(this.props.account)
     }
-    document.body.appendChild(script);
+  }
+
+  updateAccount(account) {
+    this.setAccount(account)
+  }
+
+  setAccount = (account) => {
+    this.setState({
+      account: makeAccount({
+        ...account,
+      })
+    })
+  }
+
+  initForm(id, fieldRender) {
+    if (document.getElementById(id)) {
+      fieldRender()
+    }
   }
 
   initialize = () => {
-    const { accountModel } = this.props
-    let form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
+    const { account } = this.props
+    const conf = configure(this.props.apiOptions)
 
+    // eslint-disable-next-line
+    const form = VGSCollect.create(conf.vaultId, function (state) { });
 
-    form.field("#signup-email .field-space", {
-      type: "text",
-      name: "email",
-      defaultValue: !!accountModel.email === true
-        ? accountModel.email
-        : "",
-      placeholder: "you@example.com",
-      validations: ["required"],
-      css: inputStyles
-    });
-
-    form.field("#signup-password .field-space", {
-      type: "password",
-      name: "password",
-      placeholder: "Enter password",
-      validations: ["required"],
-      css: inputStyles
-    });
+    this.initForm('signup-email',
+      () => form.field("#signup-email .field-space", {
+        type: "text",
+        errorColor: this.props.errorColor,
+        name: 'email',
+        defaultValue: getDefaultValue(account, 'email', ''),
+        placeholder: "you@example.com",
+        validations: ["required"],
+        css: this.props.inputStyles,
+      })
+    )
 
     this.form = form
   }
 
-  onNext = () => {
-    if (!!this.props.onNext === true && typeof(this.props.onNext) === 'function') {
-      this.props.onNext()
-      this.setState({
-        loading: false,
-      })
-    }
-  }
-
-  onError = ({status, errors, response}) => {
-    if (!!this.props.onError === true && typeof(this.props.onError) === 'function') {
-      this.props.onError(errors)
-      this.setState({
-        errors: {
-          ...errors,
-          ...convertAPIError(status, response),
-        },
-        status,
-        response,
-        loading: false,
-      })
-    }
-  }
-
-  onSubmit = () => {
-    const { form } = this
-
-    const {
-      accountModel,
-      onComplete = false,
-    } = this.props
-
-    // Handlers
-    const {
-      onError,
-      onNext,
-    } = this
-
-    onError.bind(this)
-    onNext.bind(this)
+  onComplete = (response) => {
+    const { onComplete } = this.props
 
     this.setState({
-      loading: true,
+      loading: false,
     })
 
-    accountModel.saveWithSecureForm(
+    if (onComplete !== false && typeof (onComplete) === 'function') {
+      onComplete(response)
+    }
+  }
+
+  onError = (error) => {
+    const { onError } = this.props
+    this.setState({
+      errors: {
+        ...error,
+        ...convertAPIError(error.http_status, error),
+      },
+      status,
+      response: error,
+      loading: false,
+    })
+
+    if (onError !== false && typeof (onError) === 'function') {
+      onError(error)
+    }
+  }
+
+  onValidationError = (errors) => {
+    const { onValidationError } = this.props
+    this.setState({
+      errors: {
+        ...errors,
+      },
+      loading: false,
+    })
+
+    if (onValidationError !== false && typeof (onValidationError) === 'function') {
+      onValidationError(errors)
+    }
+  }
+
+  bindCallbacks = () => {
+    return {
+      onError: this.onError,
+      onComplete: this.onComplete,
+      onValidationError: this.onValidationError,
+    }
+  }
+
+  onSubmit = async () => {
+    const { form } = this
+    const { account, apiOptions } = this.props
+
+    // Clear state
+    this.setState({
+      account: account,
+      errors: false,
+      loading: true,
+      status: false,
+      response: false,
+    })
+
+    // get all the values we need to submit the form securely
+    const payload = new Account({ ...account })
+    const callbacks = this.bindCallbacks()
+    const token = await getToken({ ...this.props })
+
+    // delete the instrument so it doesn't try and create an empty one
+    delete payload.instrument
+
+    submitForm(
+      payload,
+      token,
       form,
-      {
-        onError,
-        onComplete,
-        onNext
-      })
+      callbacks,
+      apiOptions,
+    )
   }
 
   render() {
-    const { errors } = this.state
+    const { errors, cardWidth, account } = this.state
     return (
       <section style={cardWidth}>
-        <div id="contact-form" >
-          <div id="signup-email" className="field">
-            <label>Email</label>
-            <span className="field-space"></span>
-            <span>{getErrorText('Email', 'email', errors)}</span>
-          </div>
-
-          <div id="signup-password" className="field">
-            <label>Password</label>
-            <span className="field-space"></span>
-            <span>{getErrorText('Password', 'password', errors)}</span>
-          </div>
-
+        <div id="signup-form" >
+          <Field
+            id="signup-email"
+            name="email"
+            label="Email"
+            defaultValue={getDefaultValue(account, 'email', '')}
+            showInlineError={true}
+            errors={errors}
+          />
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
-        <ButtonGroup
-          loading={this.state.loading}
-          onSubmit={this.onSubmit}
-          hidePrevious={true}
-        />
-      </section>
+        {(!!this.props.saveRef === false || this.props.ref === true) &&
+          <ButtonGroup
+            loading={this.state.loading}
+            onSubmit={this.onSubmit}
+            hidePrevious={true}
+          />
+        }
+      </section >
     )
   }
+}
+
+export const SignUp = (props) => {
+  return (
+    <_SignUp ref={props.saveRef} {...props} />
+  )
+}
+
+SignUp.propTypes = {
+  /** Optional reference to allow your own save buttons */
+  saveRef: PropTypes.shape({ current: PropTypes.any }),
 }
 
 export default SignUp
