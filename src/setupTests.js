@@ -1,4 +1,4 @@
-import { mount, render, shallow, configure} from 'enzyme'
+import { mount, render, shallow, configure } from 'enzyme'
 import chai, { expect } from 'chai'
 import 'raf/polyfill'
 import Adapter from 'enzyme-adapter-react-16'
@@ -10,7 +10,7 @@ configure({ adapter: new Adapter() })
 
 // Fail tests on any warning
 console.error = message => {
-  throw new Error(message);
+  throw new Error(message)
 }
 
 global.expect = expect

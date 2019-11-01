@@ -5,40 +5,39 @@ export const submitForm = (object, token, form, callbacks, apiOptions = {}, isUp
 }
 
 export const getToken = async ({
-  account, 
-  accessToken, 
-  getToken, 
+  account,
+  accessToken,
+  getToken,
   publicKey,
   apiOptions = {},
-  isUpdate = false,
+  isUpdate = false
 }) => {
-  const { loggingLevel = "" } = apiOptions
+  const { loggingLevel = '' } = apiOptions
 
-  if(!!accessToken === true && isUpdate === false){
+  if (!!accessToken === true && isUpdate === false) {
     return accessToken
   }
 
   // if editing an instance, get a new token before request
   if (!!getToken !== false && typeof (getToken) === 'function') {
     try {
-      
       // need to get a specific account token when updating an instance
       const token = await getToken(
-        isUpdate === true  && !!account.accountId === true 
-          ? account.accountId 
-          : "*"
+        isUpdate === true && !!account.accountId === true
+          ? account.accountId
+          : '*'
       )
       return token
-    } catch(error) {
-      logError("getToken() token failed to get a token", loggingLevel )
+    } catch (error) {
+      logError('getToken() token failed to get a token', loggingLevel)
       return false
     }
   } else {
     // if we do not have a way to get a token use the public key
-    if(!!publicKey === true){
+    if (!!publicKey === true) {
       return publicKey
     }
   }
 
-  logWarning("Unable to the authorize the request", loggingLevel)
+  logWarning('Unable to the authorize the request', loggingLevel)
 }

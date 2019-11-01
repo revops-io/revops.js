@@ -2,10 +2,10 @@ import { submitForm, getToken } from './FormActions'
 
 describe('submitForm', () => {
   const obj = {
-    saveWithSecureForm: jest.fn(),
+    saveWithSecureForm: jest.fn()
   }
   it('should call the saveWithSecureForm() on the object', () => {
-    submitForm(obj, "token", {}, () => {})
+    submitForm(obj, 'token', {}, () => {})
     expect(obj.saveWithSecureForm.mock.calls.length).to.equal(1)
   })
 })
@@ -13,9 +13,9 @@ describe('submitForm', () => {
 describe('should use getToken() to get a token', () => {
   it('Should return the accessToken', async () => {
     const mockProps = {
-      accessToken: "access-token",
+      accessToken: 'access-token',
       getToken: jest.fn(),
-      publicKey: false,
+      publicKey: false
     }
     const result = await getToken(mockProps)
     expect(result).to.equal(mockProps.accessToken)
@@ -26,7 +26,7 @@ describe('should use getToken() to get a token', () => {
     const mockProps = {
       accessToken: false,
       getToken: jest.fn(),
-      publicKey: false,
+      publicKey: false
     }
     await getToken(mockProps)
     expect(mockProps.getToken.mock.calls.length).to.equal(1)
@@ -36,7 +36,7 @@ describe('should use getToken() to get a token', () => {
     const mockProps = {
       accessToken: false,
       getToken: false,
-      publicKey: "public-key",
+      publicKey: 'public-key'
     }
     const result = await getToken(mockProps)
     expect(result).to.equal(mockProps.publicKey)
@@ -49,7 +49,7 @@ describe('should use getToken() to get a token', () => {
       getToken: false,
       publicKey: false,
       apiOptions: {
-        loggingLevel: "error"
+        loggingLevel: 'error'
       }
     }
     const result = await getToken(mockProps)
@@ -58,21 +58,19 @@ describe('should use getToken() to get a token', () => {
   })
 
   it('should print an error to the console.error', async () => {
-
     console.error = jest.fn()
     const mockProps = {
       accessToken: false,
-      getToken: jest.fn(function() {
-        throw new Error("Uh oh");
+      getToken: jest.fn(function () {
+        throw new Error('Uh oh')
       }),
       publicKey: false,
       apiOptions: {
-        loggingLevel: "error"
+        loggingLevel: 'error'
       }
     }
     const result = await getToken(mockProps)
     expect(result).to.equal(false)
     expect(console.error.mock.calls.length).to.equal(1)
   })
-
 })
