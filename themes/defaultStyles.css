@@ -61,6 +61,7 @@ a.pay-by-cc-link:hover,
   border-radius: 6px;
 }
 
+#signup-form .field > label,
 #card-form .field > label,
 #ach-form .field > label,
 #plaid-form .field > label {
