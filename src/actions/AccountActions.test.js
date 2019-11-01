@@ -14,12 +14,12 @@ describe('AccountActions', () => {
   it('makeAccount w/ custom accountId', () => {
     ['accountId-123', '', null, false].map(
       (accountId) => {
-        let account = actions.makeAccount({
+        const account = actions.makeAccount({
           id: 'test-uuid',
-          accountId: accountId,
+          accountId: accountId
         })
         expect(account.id).to.equal('test-uuid')
         expect(account.accountId).to.equal(accountId)
-    })
+      })
   })
 })

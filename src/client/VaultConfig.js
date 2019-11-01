@@ -10,7 +10,7 @@ const production = () => ({
   plaidKey: 'c648203cbd9ce4b7ea39f26c61f115',
   vaultId: 'tnt2w1xznia',
   baseUrl: `https://${document.location.host}`,
-  serviceName: 'revops-js-production',
+  serviceName: 'revops-js-production'
 })
 
 const sandbox = () => ({
@@ -22,22 +22,22 @@ const sandbox = () => ({
   plaidKey: 'c648203cbd9ce4b7ea39f26c61f115',
   vaultId: 'tnt2w1xznia',
   baseUrl: `https://${document.location.host}`,
-  serviceName: 'revops-js-production',
+  serviceName: 'revops-js-production'
 })
 
 const configurations = () => ({
-  "production": production(),
-  "sandbox": sandbox(),
+  production: production(),
+  sandbox: sandbox()
 })
 
 export const configure = (apiOptions = {
-  env: ENV_PRODUCTION,
+  env: ENV_PRODUCTION
 }) => {
-  let environments = configurations()
+  const environments = configurations()
   let env = ENV_PRODUCTION
   if (!!apiOptions.env !== false) {
     if (!!environments[apiOptions.env] === false) {
-      throw new Error("Unable to locate environment selected: ", env)
+      throw new Error('Unable to locate environment selected: ', env)
     }
 
     env = apiOptions.env
@@ -45,7 +45,7 @@ export const configure = (apiOptions = {
 
   return {
     ...environments[env],
-    ...apiOptions,
+    ...apiOptions
   }
 }
 

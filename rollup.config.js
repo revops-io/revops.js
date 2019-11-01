@@ -27,16 +27,16 @@ export default {
     postcss({
       modules: true,
       extract: true,
-      extensions: ['.css'],
+      extensions: ['.css']
     }),
     url(),
     svgr(),
     babel({
       exclude: 'node_modules/**',
-      plugins: [ 'external-helpers' ]
+      plugins: ['external-helpers']
     }),
     resolve({
-      browser: true,
+      browser: true
     }),
     commonjs()
   ]

@@ -1,15 +1,15 @@
 export class EntityDate {
-  constructor() {
+  constructor () {
     this._date = new Date()
   }
 
-  toIsoString() {
-    var tzo = -this._date.getTimezoneOffset(),
-        dif = tzo >= 0 ? '+' : '-',
-        pad = function(num) {
-            var norm = Math.floor(Math.abs(num));
-            return (norm < 10 ? '0' : '') + norm;
-        };
+  toIsoString () {
+    var tzo = -this._date.getTimezoneOffset()
+    var dif = tzo >= 0 ? '+' : '-'
+    var pad = function (num) {
+      var norm = Math.floor(Math.abs(num))
+      return (norm < 10 ? '0' : '') + norm
+    }
     return this._date.getFullYear() +
         '-' + pad(this._date.getMonth() + 1) +
         '-' + pad(this._date.getDate()) +
@@ -17,6 +17,6 @@ export class EntityDate {
         ':' + pad(this._date.getMinutes()) +
         ':' + pad(this._date.getSeconds()) +
         dif + pad(tzo / 60) +
-        ':' + pad(tzo % 60);
+        ':' + pad(tzo % 60)
   }
 }

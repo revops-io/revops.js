@@ -1,11 +1,11 @@
 export const LoggingLevels = {
-  Warn: "warn",
-  Info: "info",
-  Error: "error",
+  Warn: 'warn',
+  Info: 'info',
+  Error: 'error'
 }
 
 // extraInfo allows for passing an object to be printed to the console
-export const logInfo = (msg, loggingLevel = "", extraInfo = "") => {
+export const logInfo = (msg, loggingLevel = '', extraInfo = '') => {
   if (
     loggingLevel === LoggingLevels.Info ||
     loggingLevel === LoggingLevels.Warn ||
@@ -15,7 +15,7 @@ export const logInfo = (msg, loggingLevel = "", extraInfo = "") => {
   }
 }
 
-export const logWarning = (msg, loggingLevel = "", extraInfo = "") => {
+export const logWarning = (msg, loggingLevel = '', extraInfo = '') => {
   if (
     loggingLevel === LoggingLevels.Warn ||
     loggingLevel === LoggingLevels.Error
@@ -24,7 +24,7 @@ export const logWarning = (msg, loggingLevel = "", extraInfo = "") => {
   }
 }
 
-export const logError = (msg, loggingLevel = "", extraInfo = "") => {
+export const logError = (msg, loggingLevel = '', extraInfo = '') => {
   if (
     loggingLevel === LoggingLevels.Error
   ) {

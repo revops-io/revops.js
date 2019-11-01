@@ -4,7 +4,7 @@
 /* getErrorText - reveals error messages when errors are return */
 export const getErrorText = (prefix, errorKey, errors) => {
   if (!!errors === true && !!errors[errorKey] === true) {
-    return prefix + ' ' + errors[errorKey]['errorMessages'][0]
+    return prefix + ' ' + errors[errorKey].errorMessages[0]
   } else {
     return ''
   }
@@ -22,7 +22,7 @@ export const getClassName = (className, errorKey, errors) => {
 export const createErrorMessage = (errorKey, errorMessage) => {
   return {
     [errorKey]: {
-      'errorMessages': [errorMessage]
+      errorMessages: [errorMessage]
     }
   }
 }
@@ -43,7 +43,7 @@ export const convertAPIError = (httpStatus, httpResponse) => {
 
       return createErrorMessage(
         param,
-        httpResponse.error.message,
+        httpResponse.error.message
       )
     }
 
@@ -71,7 +71,7 @@ const getExpMonth = (instrument) => {
   return (
     !!instrument.cardExpdate.month === true
       ? instrument.cardExpdate.month
-      : ""
+      : ''
   )
 }
 
@@ -79,25 +79,25 @@ const getExpYear = (instrument) => {
   return (
     !!instrument.cardExpdate.year === true
       ? instrument.cardExpdate.year
-      : ""
+      : ''
   )
 }
 
 export const getDefaultCardExpDate = (instrument) => {
   if (
-    !!instrument === false || 
-    !!instrument.cardExpdate === false || 
+    !!instrument === false ||
+    !!instrument.cardExpdate === false ||
     !!instrument.cardExpdate.year === false ||
     !!instrument.cardExpdate.month === false
   ) {
-    return ""
+    return ''
   }
 
   return `${getExpMonth(instrument)}/${getExpYear(instrument)}`
 }
 
 export const isInstrumentUpdate = (instrument) => {
-  if(!!instrument === false ||!!instrument.id === false ){
+  if (!!instrument === false || !!instrument.id === false) {
     return false
   }
   return instrument.id.startsWith('inst_') === true
