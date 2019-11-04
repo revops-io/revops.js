@@ -393,7 +393,7 @@ class App extends Component {
     )
   }
 }
-
+```
 
 ## Advanced configurations
 
