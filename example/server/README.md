@@ -1,7 +1,7 @@
 # Example Auth Server
 This is an example of how you might construct a server to retrieve an authorization token from RevOps. This may be necessary, when you want to access secured information from RevOps or perform certain operations. 
 
-This server is only an example and should not be used in production.
+See the [walkthrough](https://github.com/revops-io/revops.js/wiki/Build-a-Secure-Auth-Token-Server)
 
 ## To Run the Example
 The server may use either you public or secret key and is passed at start time as an environment variable. 
