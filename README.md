@@ -4,11 +4,11 @@
 
 [![Build Status](https://travis-ci.org/revops-io/revops.js.svg?branch=master)](https://travis-ci.org/revops-io/revops.js) [![NPM](https://img.shields.io/npm/v/revops-js.svg)](https://www.npmjs.com/package/revops-js) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-RevOps helps software businesses setup their usage-based pricing and billing. Request an account at https://www.revops.io to start automate your pricing today.
+RevOps helps software businesses set up their usage-based pricing and billing. Request early access at https://www.revops.io and automate your pricing today.
 
 ## Usage
 
-### Create a payment portal to create and manage new customers with a few lines of code.
+### Build a payment portal to create new manage exisitng customers with a few lines of code.
 Here we use the public API key found in RevOps at `https://<your-organization>.revops.io/integrations/api/key`. 
 For more information on authentication see [Authentication Overview](https://github.com/revops-io/revops.js/wiki/Authentication-Overview).
 
@@ -17,7 +17,7 @@ import React from 'react'
 
 import { PaymentMethod } from 'revops-js'
 
-/* Default stylesheet to configure look and feel */
+/* Default stylesheet to configure the look and feel */
 import 'revops-js/themes/defaultStyles.css'
 
 
@@ -37,18 +37,18 @@ export const App = ({
 export default App
 ```
 
-We built an example at https://codesandbox.io/s/sample-revopsjs-form-tx6kv for you!
+See a live example and play with a demo at https://codesandbox.io/s/sample-revopsjs-form-tx6kv
 
 It only takes a few steps:
 
 1. Copy your public API key from `https://<your_instance>.revops.io/integrations/api/key`
-2. Replace the __public key__, line 38 if you haven't made any changes
+2. Replace the __public key__
 3. Complete the form
 4. Find the account at `https://<your_instance>.revops.io/accounts`
 
 ## Main Components
 - [SignUp](https://github.com/revops-io/revops.js/wiki/SignUp) - Creates an acccount in RevOps
-- [PaymentMethod](https://github.com/revops-io/revops.js/wiki/Payment-Method) - Creates or modifies payment instruments. Also capable of creating accounts.
+- [PaymentMethod](https://github.com/revops-io/revops.js/wiki/Payment-Method) - Creates and modifies payment instruments. Also supports the creation of accounts in Revops for a unified workflow.
 - [RevOpsAuth](https://github.com/revops-io/revops.js/wiki/RevOpsAuth-Component) - Wrapper component used to authenticate and coordinate state between multiple components. 
 
 ## Integrating Revops-js
