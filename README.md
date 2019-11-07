@@ -34,6 +34,15 @@ export const App = ({ accountId, publicKey = 'your-public-api-key' }) => (
 export default App
 ```
 
+We built an example at https://codesandbox.io/s/sample-revopsjs-form-tx6kv for you!
+
+It only takes a few steps:
+
+1. Copy your public API key from `https://<your_instance>.revops.io/integrations/api/key`
+2. Replace the __public key__, line 38 if you haven't made any changes
+3. Complete the form
+4. Find the account at `https://<your_instance>.revops.io/accounts`
+
 ## Integrating Revops-js
 Revops-js is highly customizable and supports a number of ways to integrate it into an existing application.
 - [Authentication Overview](https://github.com/revops-io/revops.js/wiki/Authentication-Overview)
