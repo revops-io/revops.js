@@ -49,6 +49,13 @@ export class _SignUp extends Component {
     /** `inputStyles` for input fields. `&:focus` state can also be styled. */
     inputStyles: PropTypes.object,
 
+    /** Styles for your primary CTA button. */
+    buttonStylesPrimary: PropTypes.object,
+
+    /** Styles for your secondary CTA button.
+    ** Eg. Previous, Cancel buttons. */
+    buttonStylesSecondary: PropTypes.object,
+
     /** A callable function to fire when form is complete */
     onComplete: PropTypes.func,
 
@@ -75,6 +82,9 @@ export class _SignUp extends Component {
 
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
+
+    /** How wide you want the content area of the component. */
+    cardWidth: PropTypes.object,
   }
 
   componentDidMount() {
@@ -215,7 +225,13 @@ export class _SignUp extends Component {
   }
 
   render() {
-    const { errors, cardWidth, account } = this.state
+    const { errors, account } = this.state
+    const {
+      onLast,
+      onCancel,
+      cardWidth,
+    } = this.props
+
     return (
       <section style={cardWidth}>
         <div id="signup-form" >
@@ -230,11 +246,16 @@ export class _SignUp extends Component {
         </div>
         <div className="ui clearing divider"></div>
         <span>{getErrorText('', 'networkError', errors)}</span>
-        {(!!this.props.saveRef === false || this.props.ref === true) &&
+        {!!this.props.saveRef === false &&
           <ButtonGroup
+            showAccept={false}
             loading={this.state.loading}
             onSubmit={this.onSubmit}
-            hidePrevious={true}
+            onLast={onLast}
+            onCancel={onCancel}
+            finalStep={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
           />
         }
       </section >
