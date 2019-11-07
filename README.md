@@ -53,7 +53,7 @@ It only takes a few steps:
 
 ## Integrating Revops-js
 Revops-js is highly customizable and supports a number of ways to integrate it into an existing application.
-- [Payment Integration Guide](https://github.com/revops-io/revops.js/wiki/Guide-to-Integrating-PaymentMethod-Components)
+- [PaymentMethod Integration Guide](https://github.com/revops-io/revops.js/wiki/Guide-to-Integrating-PaymentMethod-Components)
 - [Styling Revops-js Components](https://github.com/revops-io/revops.js/wiki/Styling-Revops-js-Components)
 - [Authentication Overview](https://github.com/revops-io/revops.js/wiki/Authentication-Overview)
 - [Using Callbacks](https://github.com/revops-io/revops.js/wiki/Using-Callback-to-Integrate-Revops-js)
