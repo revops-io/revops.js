@@ -18,11 +18,11 @@ import React from 'react'
 import { PaymentMethod } from 'revops-js'
 
 /* Default stylesheet to configure look and feel */
-import "revops-js/themes/defaultStyles.css"
+import 'revops-js/themes/defaultStyles.css'
 
 
 export const App = ({ 
-  accountId = "your-acct-id", 
+  accountId = 'your-acct-id', 
   publicKey = 'your-public-api-key' 
 }) => (
   <PaymentMethod
