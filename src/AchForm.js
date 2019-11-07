@@ -72,6 +72,9 @@ export default class AchForm extends Component {
     linkStyling: PropTypes.object,
 
     /** How wide you want the content area of `<PaymentMethod />`. */
+    sectionStyle: PropTypes.object,
+
+    /** Deprecated property for controlling the style of the parent component */
     cardWidth: PropTypes.object,
 
     /** Color of error text, a valid color name or hex. */
@@ -108,7 +111,7 @@ export default class AchForm extends Component {
     hideTogglePlaid: true,
     showCardLink: false,
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
+    sectionStyle: SharedStyles.sectionStyle,
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
     buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
     linkStyling: SharedStyles.linkStyling,
@@ -398,10 +401,12 @@ export default class AchForm extends Component {
       onCancel,
       children,
       instrument,
+      sectionStyle,
+      cardWidth = false,
     } = this.props
 
     return (
-      <section style={this.props.cardWidth}>
+      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
         <label className="h3">Paying by ACH</label>
         {this.props.showCardLink === true &&
           <a

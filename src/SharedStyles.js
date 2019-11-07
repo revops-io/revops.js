@@ -40,7 +40,7 @@ export const backgroundColor = {
   background: 'black'
 }
 
-export const cardWidth = {
+export const sectionStyle = {
   width: '404px',
   margin: '0 auto'
 }

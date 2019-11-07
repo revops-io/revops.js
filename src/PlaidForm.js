@@ -67,6 +67,9 @@ export default class PlaidForm extends Component {
     linkStyling: PropTypes.object,
 
     /** How wide you want the content area of `<PaymentMethod />`. */
+    sectionStyle: PropTypes.object,
+
+    /** Deprecated property for controlling the style of the parent component */
     cardWidth: PropTypes.object,
 
     /** Color of error text, a valid color name or hex. */
@@ -101,7 +104,7 @@ export default class PlaidForm extends Component {
 
   static defaultProps = {
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
+    sectionStyle: SharedStyles.sectionStyle,
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
     buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
     linkStyling: SharedStyles.linkStyling,
@@ -330,9 +333,15 @@ export default class PlaidForm extends Component {
 
   render() {
     const { errors, } = this.state
-    const { onLast, onCancel, } = this.props
+    const {
+      onLast,
+      onCancel,
+      sectionStyle,
+      cardWidth = false,
+    } = this.props
+
     return (
-      <section style={this.props.cardWidth}>
+      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
         <label className="h3">Paying by ACH</label>
         <a
           className="pay-by-cc-link"

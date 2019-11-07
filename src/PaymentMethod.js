@@ -48,7 +48,10 @@ export default class PaymentMethod extends Component {
     linkStyling: PropTypes.object,
 
     /** How wide you want the content area of `<PaymentMethod />`. */
-    cardWidth: PropTypes.number,
+    sectionStyle: PropTypes.number,
+
+    /** Deprecated property for controlling the style of the parent component */
+    cardWidth: PropTypes.object,
 
     /** Color of error text, a valid color name or hex. */
     errorColor: PropTypes.string,
