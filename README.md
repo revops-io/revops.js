@@ -56,7 +56,7 @@ Revops-js is highly customizable and supports a number of ways to integrate it i
 - [Using Refs](https://github.com/revops-io/revops.js/wiki/Using-Refs-with-Revops-js)
 - [Logging Levels](https://github.com/revops-io/revops.js/wiki/Logging-Levels)
 
-## Official API Documentation 
+## Official API Documentation
 - [Accounts](https://www.revops.io/docs/rest-api/accounts)
 - [Instruments](https://www.revops.io/docs/rest-api/instruments)
 
