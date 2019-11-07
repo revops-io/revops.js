@@ -10,7 +10,7 @@ export function makeAccount (props = {
   email,
   billingContact,
   shippingContact,
-  billingPreferences
+  // billingPreferences
 }) {
   return new Account({
     ...props,
@@ -18,7 +18,7 @@ export function makeAccount (props = {
       ? { ...props.billingContact } : {},
     shippingContact: !!props.shippingContact !== false
       ? { ...props.shippingContact } : {},
-    billingPreferences: !!props.billingPreferences !== false
-      ? { ...props.billingPreferences } : {}
+    // billingPreferences: !!props.billingPreferences !== false
+    //   ? { ...props.billingPreferences } : {}
   })
 }

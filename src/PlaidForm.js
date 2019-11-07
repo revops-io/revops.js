@@ -66,7 +66,7 @@ export default class PlaidForm extends Component {
     /** Styles for your text links. */
     linkStyling: PropTypes.object,
 
-    /** How wide you want the content area of `<PaymentMethod />`. */
+    /** CSS in JS styling for the parent html element */
     sectionStyle: PropTypes.object,
 
     /** Deprecated property for controlling the style of the parent component */
