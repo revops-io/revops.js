@@ -48,7 +48,7 @@ It only takes a few steps:
 
 ## Main Components
 - [SignUp](https://github.com/revops-io/revops.js/wiki/SignUp) - Creates an acccount in RevOps
-- [PaymentMethod](https://github.com/revops-io/revops.js/wiki/Payment-Method) - Creates and modifies payment instruments. Also supports the creation of accounts in Revops for a unified workflow.
+- [PaymentMethod](https://github.com/revops-io/revops.js/wiki/Payment-Method) - Creates and modifies payment instruments. Also supports the creation of accounts in RevOps for a unified workflow.
 - [RevOpsAuth](https://github.com/revops-io/revops.js/wiki/RevOpsAuth-Component) - Wrapper component used to authenticate and coordinate state between multiple components. 
 
 ## Integrating Revops-js
