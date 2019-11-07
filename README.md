@@ -21,7 +21,10 @@ import { PaymentMethod } from 'revops-js'
 import "revops-js/themes/defaultStyles.css"
 
 
-export const App = ({ accountId = "your-acct-id", publicKey = 'your-public-api-key' }) => (
+export const App = ({ 
+  accountId = "your-acct-id", 
+  publicKey = 'your-public-api-key' 
+}) => (
   <PaymentMethod
     publicKey={publicKey}
     account={{
