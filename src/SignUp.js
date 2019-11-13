@@ -36,7 +36,7 @@ export class _SignUp extends Component {
 
   static defaultProps = {
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
+    sectionStyle: SharedStyles.sectionStyle,
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
     buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
     linkStyling: SharedStyles.linkStyling,
@@ -84,6 +84,9 @@ export class _SignUp extends Component {
     saveRef: PropTypes.shape({ current: PropTypes.any }),
 
     /** How wide you want the content area of the component. */
+    sectionStyle: PropTypes.object,
+
+    /** Deprecated property for controlling the style of the parent component */
     cardWidth: PropTypes.object,
   }
 
@@ -229,11 +232,12 @@ export class _SignUp extends Component {
     const {
       onLast,
       onCancel,
-      cardWidth,
+      sectionStyle,
+      cardWidth = false,
     } = this.props
 
     return (
-      <section style={cardWidth}>
+      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
         <div id="signup-form" >
           <Field
             id="signup-email"

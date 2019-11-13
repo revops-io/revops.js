@@ -69,7 +69,10 @@ export default class CreditCardForm extends Component {
     /** Styles for your text links. */
     linkStyling: PropTypes.object,
 
-    /** How wide you want the content area of `<PaymentMethod />`. */
+    /** CSS in JS styling for the parent html element */
+    sectionStyle: PropTypes.object,
+
+    /** Deprecated property for controlling the style of the parent component */
     cardWidth: PropTypes.object,
 
     /** Color of error text, a valid color name or hex. */
@@ -103,7 +106,7 @@ export default class CreditCardForm extends Component {
   static defaultProps = {
     showACHLink: false,
     inputStyles: SharedStyles.inputStyles,
-    cardWidth: SharedStyles.cardWidth,
+    sectionStyle: SharedStyles.sectionStyle,
     buttonStylesPrimary: SharedStyles.buttonStylesPrimary,
     buttonStylesSecondary: SharedStyles.buttonStylesSecondary,
     linkStyling: SharedStyles.linkStyling,
@@ -342,10 +345,12 @@ export default class CreditCardForm extends Component {
       onCancel,
       children,
       instrument,
+      sectionStyle,
+      cardWidth = false,
     } = this.props
 
     return (
-      <section style={this.props.cardWidth}>
+      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
         <label className="h3">Paying by credit card</label>
         {this.props.showACHLink === true &&
           <a
