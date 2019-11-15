@@ -103,6 +103,9 @@ export default class PaymentMethod extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
+
+    /** used to set the current method, overrides internal method state */
+    method: PropTypes.oneOf(Object.values(PaymentMethods)),
   }
 
   static defaultProps = {
@@ -161,7 +164,6 @@ export default class PaymentMethod extends Component {
     this.setAccount(account)
 
     this.setState({ isUpdate })
-    
 
     if (!!instrument === false) {
       this.setState({ instrument: new Instrument({}) })
@@ -196,9 +198,9 @@ export default class PaymentMethod extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { account, instrument } = this.props
+    const { account, instrument, method } = this.props
     if (
-      !!prevProps.account !== false && 
+      !!prevProps.account !== false &&
       !!account !== false &&
       prevProps.account !== account
     ) {
@@ -206,11 +208,15 @@ export default class PaymentMethod extends Component {
     }
 
     if (
-      !!prevProps.instrument !== false && 
+      !!prevProps.instrument !== false &&
       !!instrument !== false &&
       prevProps.instrument !== instrument
     ) {
       this.setState({ instrument: new Instrument(instrument) })
+    }
+
+    if (prevProps.method !== method) {
+      this.setState({ method })
     }
   }
 
