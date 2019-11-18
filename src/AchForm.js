@@ -263,7 +263,7 @@ export default class AchForm extends Component {
             { value: 'Canada', text: 'Canada' },
             { value: 'Mexico', text: 'Mexico' },
           ],
-          ...propHelper.overrideCollectProps('bank-account-country', ["options"]),
+          ...propHelper.overrideCollectProps('bank-account-country'),
         })
     )
 
@@ -292,7 +292,7 @@ export default class AchForm extends Component {
             { value: 'company', text: 'Company' },
             { value: 'individual', text: 'Individual' },
           ],
-          ...propHelper.overrideCollectProps('bank-account-type', ["options"]),
+          ...propHelper.overrideCollectProps('bank-account-type'),
         }, 
       ))
 
