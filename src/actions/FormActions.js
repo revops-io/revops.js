@@ -1,17 +1,17 @@
 import { logError, logWarning } from '../helpers/Logger'
 
-export const submitForm = (object, token, form, callbacks, apiOptions = {}, isUpdate) => {
+export function submitForm (object, token, form, callbacks, apiOptions = {}, isUpdate){
   object.saveWithSecureForm(token, form, callbacks, apiOptions, isUpdate)
 }
 
-export const getToken = async ({
+export const getToken =  async function({
   account,
   accessToken,
   getToken,
   publicKey,
   apiOptions = {},
   isUpdate = false
-}) => {
+}) {
   const { loggingLevel = '' } = apiOptions
 
   if (!!accessToken === true && isUpdate === false) {

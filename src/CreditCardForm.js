@@ -3,6 +3,10 @@ import PropTypes from 'prop-types'
 
 import { submitForm, getToken } from './actions/FormActions'
 
+import {
+  PropertyHelper,
+} from './helpers/PropHelpers'
+
 import { makeAccount } from './actions/AccountActions'
 import {
   getErrorText,
@@ -83,7 +87,7 @@ export default class CreditCardForm extends Component {
 
     /** Optional API Options **/
     apiOptions: PropTypes.object,
-    
+
     /** 
      * a token that grants permission to interact with the RevOps API 
      * takes the place of the public key when performing secure operations 
@@ -100,6 +104,20 @@ export default class CreditCardForm extends Component {
 
     /** tells the component to create an account with the instrument */
     createAccount: PropTypes.bool,
+
+    /**
+     * overrideProps is an object where keys names are ids of the particular 
+     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
+     * Only allowed properties are allowed, see https://github.com/revops-io/revops.js/wiki/Using-Override-Props
+     */
+    overrideProps: PropTypes.shape({
+      css: PropTypes.object, // CSS in JS
+      placeholder: PropTypes.string,
+      color: PropTypes.string,
+      errorColor: PropTypes.string,
+      showCardLink: PropTypes.bool, // some fields only
+      label: PropTypes.string,
+    })
 
   }
 
@@ -120,7 +138,7 @@ export default class CreditCardForm extends Component {
       errors: false,
       status: false,
       response: false,
-  
+
     }
     this.form = {};
   }
@@ -160,12 +178,20 @@ export default class CreditCardForm extends Component {
   }
 
   initialize = () => {
-    const { instrument, createAccount = false } = this.props
+    const {
+      instrument,
+      createAccount = false,
+      inputStyles,
+      overrideProps = {},
+    } = this.props
     let conf = configure(this.props.apiOptions)
+
+    const propHelper = new PropertyHelper(overrideProps, inputStyles)
 
     // eslint-disable-next-line
     const form = VGSCollect.create(conf.vaultId, function (state) { });
     const prefix = createAccount === true ? "instrument." : ""
+
     this.initForm('card-name',
       () => form.field("#card-name .field-space", {
         type: "text",
@@ -175,6 +201,7 @@ export default class CreditCardForm extends Component {
         placeholder: "Florence Izote",
         validations: ["required"],
         css: this.props.inputStyles,
+        ...propHelper.overrideCollectProps('card-name'),
       })
     )
 
@@ -189,6 +216,7 @@ export default class CreditCardForm extends Component {
         showCardIcon: true,
         autoComplete: 'card-number',
         css: this.props.inputStyles,
+        ...propHelper.overrideCollectProps('card-number', ["showCardIcon"]),
       })
     )
 
@@ -201,6 +229,7 @@ export default class CreditCardForm extends Component {
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
         css: this.props.inputStyles,
+        ...propHelper.overrideCollectProps('card-cvc'),
       })
     )
 
@@ -210,7 +239,7 @@ export default class CreditCardForm extends Component {
         name: prefix + 'card_expdate',
         errorColor: this.props.errorColor,
         placeholder: "01 / 2022",
-        defaultValue: getDefaultCardExpDate(instrument),
+        defaultValue: getDefaultCardExpDate(instrument, inputStyles),
         serializers: [
           form.SERIALIZERS.separate({
             monthName: 'month',
@@ -219,6 +248,7 @@ export default class CreditCardForm extends Component {
         ],
         validations: ["required", "validCardExpirationDate"],
         css: this.props.inputStyles,
+        ...propHelper.overrideCollectProps('card-expdate'),
       })
     )
 
@@ -231,6 +261,7 @@ export default class CreditCardForm extends Component {
         placeholder: "Postal code",
         validations: ["required"],
         css: this.props.inputStyles,
+        ...propHelper.overrideCollectProps('card-postalcode'),
       })
     )
 
@@ -347,7 +378,10 @@ export default class CreditCardForm extends Component {
       instrument,
       sectionStyle,
       cardWidth = false,
+      overrideProps = {},
     } = this.props
+
+    const propHelper = new PropertyHelper(overrideProps)
 
     return (
       <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
@@ -377,8 +411,9 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(instrument, 'cardName', '')}
                   showInlineError={true}
                   errors={errors}
+                  {...propHelper.overrideFieldProps("card-name")}
                 />
-                
+
                 <Field
                   id="card-number"
                   name="cardNumber"
@@ -386,6 +421,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(instrument, 'cardNumber', '')}
                   showInlineError={true}
                   errors={errors}
+                  {...propHelper.overrideFieldProps("card-number", ["showCardIcon"])}
                 />
 
                 <Field
@@ -395,6 +431,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(instrument, 'cardExpdate', '')}
                   showInlineError={true}
                   errors={errors}
+                  {...propHelper.overrideFieldProps("card-expdate")}
                 />
 
                 <Field
@@ -404,6 +441,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(instrument, 'cardCvv', '')}
                   showInlineError={true}
                   errors={errors}
+                  {...propHelper.overrideFieldProps("card-cvc")}
                 />
 
                 <Field
@@ -413,6 +451,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(instrument, 'postalCode', '')}
                   showInlineError={true}
                   errors={errors}
+                  {...propHelper.overrideFieldProps("card-postalcode")}
                 />
               </React.Fragment>
             }
