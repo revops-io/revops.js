@@ -190,4 +190,18 @@ describe('The PaymentMethod Component', () => {
       expect(wrapper.instance().state.accountModel.accountId).to.equal('existing-acct')
     })
   })
+
+  describe('toggling the explicit method prop', () => {
+    it('Should update internal "method" when the "method" prop changes', () => {
+      const mockProps = generateMockProps({
+        method: 'ach'
+      })
+      const wrapper = shallow(<PaymentMethod  {...mockProps} />)
+      expect(wrapper.instance().state.method).to.equal('ach')
+
+      wrapper.setProps({method: 'credit-card'})
+      expect(wrapper.instance().state.method).to.equal('credit-card')
+    })
+  })
+  
 })
