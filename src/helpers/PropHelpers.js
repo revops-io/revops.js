@@ -17,7 +17,7 @@ export class PropertyHelper {
     let currentOverrideProps = this.overrideProps[propName]
 
     // specific css should merge over inputStyles
-    if(!!currentOverrideProps.css === true){
+    if(!!currentOverrideProps === true && !!currentOverrideProps.css === true){
       currentOverrideProps = {
         ...currentOverrideProps,
         css: {
