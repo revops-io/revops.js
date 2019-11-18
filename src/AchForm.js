@@ -18,6 +18,10 @@ import {
   configureVault,
 } from './index'
 
+import {
+  PropertyHelper,
+} from './helpers/PropHelpers'
+
 import { Instrument, Account } from './models'
 
 import configure from './client/VaultConfig'
@@ -105,6 +109,25 @@ export default class AchForm extends Component {
 
     /** tells the component to create an account with the instrument */
     createAccount: PropTypes.bool,
+
+    /**
+     * overrideProps is an object where keys names are ids of the particular 
+     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
+     * Only allowed properties are passed see 
+     */
+    overrideProps: PropTypes.shape({
+      css: PropTypes.object, // CSS in JS
+      placeholder: PropTypes.string,
+      color: PropTypes.string,
+      errorColor: PropTypes.string,
+      showCardLink: PropTypes.bool, // some fields only
+      label: PropTypes.string,
+      options: PropTypes.arrayOf( // select lists only
+        PropTypes.shape({
+          value: PropTypes.string,
+          text: PropTypes.string
+      }))
+    })
   }
 
   static defaultProps = {
@@ -118,16 +141,12 @@ export default class AchForm extends Component {
     errorColor: SharedStyles.errorColor,
   }
 
-  state = {
-    account: {},
-    errors: false,
-    loaded: false,
-  }
-
   constructor(props) {
     super(props)
     this.state = {
+      account: {},
       errors: false,
+      loaded: false,
     }
     this.form = null
   }
@@ -188,7 +207,14 @@ export default class AchForm extends Component {
   }
 
   initialize = () => {
-    const { instrument, createAccount = false } = this.props
+    const { 
+      instrument, 
+      createAccount = false ,
+      inputStyles = {},
+      overrideProps = {},
+    } = this.props
+    
+    const propHelper = new PropertyHelper(overrideProps, inputStyles)
 
     if (!!this.form === false) {
       let conf = configure(this.props.apiOptions)
@@ -197,7 +223,7 @@ export default class AchForm extends Component {
       this.form = VGSCollect.create(conf.vaultId, function () { });
     }
     const prefix = createAccount === true ? "instrument." : ""
-
+    
     this.initForm('bank-name',
       () => this.createFormField(
         "#bank-name .field-space",
@@ -207,8 +233,10 @@ export default class AchForm extends Component {
           type: "text",
           placeholder: "Name of Bank Institution",
           validations: ["required"],
-        }
+          ...propHelper.overrideCollectProps('bank-name'),
+        },
       ))
+
     this.initForm('bank-postalcode',
       () => this.createFormField(
         "#bank-postalcode .field-space",
@@ -218,8 +246,10 @@ export default class AchForm extends Component {
           type: "zip-code",
           placeholder: "Postal code",
           validations: ["required"],
-        }
+          ...propHelper.overrideCollectProps('bank-postalcode'),
+        },
       ))
+
     this.initForm('bank-account-country',
       () => this.createFormField(
         "#bank-account-country .field-space",
@@ -233,6 +263,7 @@ export default class AchForm extends Component {
             { value: 'Canada', text: 'Canada' },
             { value: 'Mexico', text: 'Mexico' },
           ],
+          ...propHelper.overrideCollectProps('bank-account-country', ["options"]),
         })
     )
 
@@ -245,7 +276,8 @@ export default class AchForm extends Component {
           type: "text",
           placeholder: "Name on the account",
           validations: ["required"],
-        }
+          ...propHelper.overrideCollectProps('bank-holder-name'),
+        },
       ))
 
     this.initForm('bank-account-type',
@@ -260,7 +292,8 @@ export default class AchForm extends Component {
             { value: 'company', text: 'Company' },
             { value: 'individual', text: 'Individual' },
           ],
-        }
+          ...propHelper.overrideCollectProps('bank-account-type', ["options"]),
+        }, 
       ))
 
     this.initForm('bank-account-number',
@@ -272,7 +305,8 @@ export default class AchForm extends Component {
           type: "text",
           placeholder: "Enter bank account number",
           validations: ["required"],
-        }
+          ...propHelper.overrideCollectProps('bank-account-number')
+        },
       ))
 
     this.initForm('bank-routing-number', () =>
@@ -284,7 +318,8 @@ export default class AchForm extends Component {
           type: "text",
           placeholder: "Enter bank routing number",
           validations: ["required"],
-        }
+          ...propHelper.overrideCollectProps('bank-routing-number')
+        },
       )
     )
   }
@@ -403,7 +438,10 @@ export default class AchForm extends Component {
       instrument,
       sectionStyle,
       cardWidth = false,
+      overrideProps = {},
     } = this.props
+
+    const propHelper = new PropertyHelper(overrideProps)
 
     return (
       <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
@@ -433,6 +471,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'bankName', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-name")}
               />
 
               <Field
@@ -442,6 +481,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'bankAccountHolderName', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-holder-name")}
               />
 
               <Field
@@ -451,6 +491,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'postalcode', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-postalcode")}
               />
 
               <Field
@@ -460,6 +501,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'country', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-account-country")}
               />
 
               <Field
@@ -469,6 +511,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'accountHolderType', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-account-type")}
               />
 
               <Field
@@ -478,6 +521,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'routingNumber', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-routing-number")}
               />
 
               <Field
@@ -487,6 +531,7 @@ export default class AchForm extends Component {
                 defaultValue={getDefaultValue(instrument, 'accountNumber', '')}
                 showInlineError={true}
                 errors={errors}
+                {...propHelper.overrideFieldProps("bank-account-number")}
               />
             </React.Fragment>
           }

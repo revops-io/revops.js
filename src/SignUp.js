@@ -16,6 +16,10 @@ import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 
 import {
+  PropertyHelper,
+} from './helpers/PropHelpers'
+
+import {
   Field,
   configureVault,
 } from './index'
@@ -88,6 +92,25 @@ export class _SignUp extends Component {
 
     /** Deprecated property for controlling the style of the parent component */
     cardWidth: PropTypes.object,
+
+    /**
+     * overrideProps is an object where keys names are ids of the particular 
+     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
+     * Only allowed properties are passed see 
+     */
+    overrideProps: PropTypes.shape({
+      css: PropTypes.object, // CSS in JS
+      placeholder: PropTypes.string,
+      color: PropTypes.string,
+      errorColor: PropTypes.string,
+      showCardLink: PropTypes.bool, // some fields only
+      label: PropTypes.string,
+      options: PropTypes.arrayOf( // select lists only
+        PropTypes.shape({
+          value: PropTypes.string,
+          text: PropTypes.string
+      }))
+    })
   }
 
   componentDidMount() {
@@ -125,11 +148,17 @@ export class _SignUp extends Component {
   }
 
   initialize = () => {
-    const { account } = this.props
+    const { 
+      account,  
+      inputStyles,
+      overrideProps = {},
+    } = this.props
     const conf = configure(this.props.apiOptions)
 
     // eslint-disable-next-line
     const form = VGSCollect.create(conf.vaultId, function (state) { });
+
+    const propHelper = new PropertyHelper(overrideProps, inputStyles)
 
     this.initForm('signup-email',
       () => form.field("#signup-email .field-space", {
@@ -140,6 +169,7 @@ export class _SignUp extends Component {
         placeholder: "you@example.com",
         validations: ["required"],
         css: this.props.inputStyles,
+        ...propHelper.overrideCollectProps('signup-email'),
       })
     )
 
@@ -234,7 +264,10 @@ export class _SignUp extends Component {
       onCancel,
       sectionStyle,
       cardWidth = false,
+      overrideProps = {},
     } = this.props
+
+    const propHelper = new PropertyHelper(overrideProps)
 
     return (
       <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
@@ -246,6 +279,7 @@ export class _SignUp extends Component {
             defaultValue={getDefaultValue(account, 'email', '')}
             showInlineError={true}
             errors={errors}
+            {...propHelper.overrideFieldProps("signup-email")}
           />
         </div>
         <div className="ui clearing divider"></div>
@@ -267,6 +301,9 @@ export class _SignUp extends Component {
   }
 }
 
+/**
+ * We wrap the component so we can apply the ref
+ */
 export const SignUp = (props) => {
   return (
     <_SignUp ref={props.saveRef} {...props} />
