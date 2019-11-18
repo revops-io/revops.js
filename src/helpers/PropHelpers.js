@@ -3,40 +3,6 @@ import _ from 'lodash'
 const iframeOverrideProps = ['placeholder', 'color', 'errorColor', 'css']
 const fieldOverrideProps = ['label']
 
-export const overrideCollectProps = (
-  propName, 
-  overrideProps, 
-  inputStyles = {},
-  alsoAcceptProps = []
-) => {
-
-  let fieldProps = overrideProps[propName]
-
-  // specific css should merge over inputStyles
-  if(!!fieldProps.css === true){
-    fieldProps = {
-      ...fieldProps,
-      css: {
-        ...inputStyles,
-        ...fieldProps.css,
-      }
-    }
-  }
-
-  return _.pick(fieldProps, iframeOverrideProps.concat(alsoAcceptProps))
-}
-
-export const overrideFieldProps = (
-  propName, 
-  overrideProps, 
-  alsoAcceptProps = []
-) => {
-  return _.pick(
-    overrideProps[propName], 
-    fieldOverrideProps.concat(alsoAcceptProps)
-  )
-}
-
 export class PropertyHelper {
   constructor(overrideProps = {}, inputStyles = {}){
     this.overrideProps = overrideProps
