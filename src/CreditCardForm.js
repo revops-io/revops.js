@@ -426,7 +426,7 @@ export default class CreditCardForm extends Component {
                   defaultValue={getDefaultValue(instrument, 'cardNumber', '')}
                   showInlineError={true}
                   errors={errors}
-                  {...propHelper.overrideFieldProps("card-number")}
+                  {...propHelper.overrideFieldProps("card-number", ["showCardIcon"])}
                 />
 
                 <Field

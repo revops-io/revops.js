@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const iframeOverrideProps = ['placeholder', 'color', 'errorColor', 'css', 'showCardIcon']
+const iframeOverrideProps = ['placeholder', 'color', 'errorColor', 'css']
 const fieldOverrideProps = ['label']
 
 export const overrideCollectProps = (
