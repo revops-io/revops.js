@@ -8,9 +8,6 @@ import {
 
 import { logError, logWarning } from '../helpers/Logger'
 
-import _ from 'lodash'
-
-
 const INSTRUMENTS_LIST_RESOURCE = (account_id) => `/v1/accounts/${account_id}/instruments`
 const INSTRUMENTS_INSTANCE_RESOURCE = (account_id, instrument_id) => {
   return `/v1/accounts/${account_id}/instruments/${instrument_id}`
@@ -56,7 +53,7 @@ export class Instrument extends EntityModel {
     )
   }
 
-  static fetchInstrument = async (accountId, id, token, apiOptions = {} ) => {
+  static fetchInstrument = async function(accountId, id, token, apiOptions = {} ){
     let options = {
       method: 'GET',
       mode: 'cors',
