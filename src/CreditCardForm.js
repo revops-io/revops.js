@@ -108,7 +108,7 @@ export default class CreditCardForm extends Component {
     /**
      * overrideProps is an object where keys names are ids of the particular 
      * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
-     * Only allowed properties are allowed, see https://github.com/revops-io/revops.js/wiki/Using-Override-Props
+     * Only allowed properties are allowed, see see documentation for details.
      */
     overrideProps: PropTypes.shape({
       css: PropTypes.object, // CSS in JS
