@@ -8,7 +8,7 @@ RevOps helps software businesses set up their usage-based pricing and billing. R
 
 ## Usage
 
-### Build a payment portal to create new manage exisitng customers with a few lines of code.
+### Build a payment portal to create and manage customers with a few lines of code.
 Here we use the public API key found in RevOps at `https://<your-organization>.revops.io/integrations/api/key`. 
 For more information on authentication see [Authentication Overview](https://github.com/revops-io/revops.js/wiki/Authentication-Overview).
 
