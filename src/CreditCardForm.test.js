@@ -16,6 +16,7 @@ describe('The CreditCardForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
+      finishedLoading: jest.fn(),
       ...props,
     }}
   it('CreditCardForm should render without crashing', () => {
@@ -78,7 +79,6 @@ describe('The CreditCardForm Component', () => {
     })
     
     wrapper.instance().onSubmit()
-    expect(wrapper.instance().state.account.email).to.equal('slujibu2@cool.api')
     expect(wrapper.instance().state.errors).to.equal(false)
     expect(wrapper.instance().state.loading).to.equal(true)
     expect(wrapper.instance().state.status).to.equal(false)

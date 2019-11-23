@@ -125,7 +125,10 @@ export default class AchForm extends Component {
     }),
 
     /** determines if validation errors should be shown */
-    showInlineError: PropTypes.bool
+    showInlineError: PropTypes.bool,
+    
+    /** callback func that signal the component has loading completely */
+    finishedLoading: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -147,27 +150,6 @@ export default class AchForm extends Component {
       loaded: false,
     }
     this.form = null
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!!prevProps.account !== false &&
-      !!this.props.account !== false &&
-      prevProps.account !== this.props.account
-    ) {
-      this.updateAccount(this.props.account)
-    }
-  }
-
-  updateAccount(account) {
-    this.setAccount(account)
-  }
-
-  setAccount = (account) => {
-    this.setState({
-      account: makeAccount({
-        ...account,
-      })
-    })
   }
 
   componentDidMount() {
@@ -210,6 +192,7 @@ export default class AchForm extends Component {
       createAccount = false ,
       inputStyles = {},
       overrideProps = {},
+      finishedLoading
     } = this.props
     
     const propHelper = new PropertyHelper(overrideProps, inputStyles)
@@ -218,7 +201,7 @@ export default class AchForm extends Component {
       let conf = configure(this.props.apiOptions)
 
       // eslint-disable-next-line
-      this.form = VGSCollect.create(conf.vaultId, function () { });
+      this.form = VGSCollect.create(conf.vaultId, state => finishedLoading(state));
     }
     const prefix = createAccount === true ? "instrument." : ""
     

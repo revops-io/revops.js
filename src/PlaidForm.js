@@ -100,6 +100,9 @@ export default class PlaidForm extends Component {
 
     /** model for of a revops payment instrument */
     instrument: PropTypes.object,
+
+    /** callback func that signal the component has loading completely */
+    finishedLoading: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -127,6 +130,8 @@ export default class PlaidForm extends Component {
   }
 
   componentDidMount() {
+    const { finishedLoading } = this.props
+
     const conf = configure(this.props.apiOptions)
 
     configureVault(
@@ -142,29 +147,10 @@ export default class PlaidForm extends Component {
       },
       this.onPlaidSelect,
     )
-  }
 
-  componentDidUpdate(prevProps) {
-    if (!!prevProps.account !== false &&
-      !!this.props.account !== false &&
-      prevProps.account !== this.props.account
-    ) {
-      this.updateAccount(this.props.account)
-    }
+    finishedLoading()
   }
-
-  updateAccount(account) {
-    this.setAccount(account)
-  }
-
-  setAccount = (account) => {
-    this.setState({
-      account: makeAccount({
-        ...account,
-      })
-    })
-  }
-
+  
   onPlaidLoad = (plaidLink) => {
     this.plaidLink = plaidLink
   }
@@ -218,7 +204,7 @@ export default class PlaidForm extends Component {
     }
 
     this.createFormField(
-      "#bank-name .field-space",
+      "#bank-name-plaid .field-space",
       createAccount === true ? "instrument." : "" + 'bank_name',
       this.getBankName(),
       {
@@ -357,7 +343,7 @@ export default class PlaidForm extends Component {
         </button>
         {!!this.state.plaidMetadata !== false &&
           <div id="plaid-form" >
-            <div id="bank-name"
+            <div id="bank-name-plaid"
               className={
                 getClassName(
                   "field",

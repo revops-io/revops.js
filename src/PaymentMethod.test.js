@@ -61,7 +61,7 @@ describe('The PaymentMethod Component', () => {
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
-      expect(wrapper.instance().isACHEnabled()).to.equal(true)
+      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_ACH)).to.equal(true)
     })
 
     it('isACHEnabled should return false', () => {
@@ -73,7 +73,7 @@ describe('The PaymentMethod Component', () => {
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
-      expect(wrapper.instance().isACHEnabled()).to.equal(false)
+      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_ACH)).to.equal(false)
     })
   })
 
@@ -95,7 +95,7 @@ describe('The PaymentMethod Component', () => {
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
-      expect(wrapper.instance().isCardEnabled()).to.equal(true)
+      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_CARD)).to.equal(true)
     })
 
     it('isCardEnabled should return false', () => {
@@ -107,7 +107,7 @@ describe('The PaymentMethod Component', () => {
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
-      expect(wrapper.instance().isCardEnabled()).to.equal(false)
+      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_CARD)).to.equal(false)
     })
   })
 
@@ -129,7 +129,7 @@ describe('The PaymentMethod Component', () => {
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
-      expect(wrapper.instance().isPlaidEnabled()).to.equal(true)
+      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_PLAID)).to.equal(true)
     })
 
     it('isPlaidEnabled should return false', () => {
@@ -141,7 +141,7 @@ describe('The PaymentMethod Component', () => {
       })
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
-      expect(wrapper.instance().isPlaidEnabled()).to.equal(false)
+      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_PLAID)).to.equal(false)
     })
   })
 

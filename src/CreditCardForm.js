@@ -120,7 +120,10 @@ export default class CreditCardForm extends Component {
     }),
 
     /** determines if validation errors should be shown */
-    showInlineError: PropTypes.bool
+    showInlineError: PropTypes.bool,
+    
+    /** callback func that signal the component has loading completely */
+    finishedLoading: PropTypes.func.isRequired
 
   }
 
@@ -137,7 +140,6 @@ export default class CreditCardForm extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      account: {},
       errors: false,
       status: false,
       response: false,
@@ -153,26 +155,6 @@ export default class CreditCardForm extends Component {
     )
   }
 
-  componentDidUpdate(prevProps) {
-    if (!!prevProps.account !== false &&
-      !!this.props.account !== false &&
-      prevProps.account !== this.props.account
-    ) {
-      this.updateAccount(this.props.account)
-    }
-  }
-
-  updateAccount(account) {
-    this.setAccount(account)
-  }
-
-  setAccount = (account) => {
-    this.setState({
-      account: makeAccount({
-        ...account,
-      })
-    })
-  }
 
   initForm(id, fieldRender) {
     if (document.getElementById(id)) {
@@ -186,13 +168,14 @@ export default class CreditCardForm extends Component {
       createAccount = false,
       inputStyles,
       overrideProps = {},
+      finishedLoading
     } = this.props
     let conf = configure(this.props.apiOptions)
 
     const propHelper = new PropertyHelper(overrideProps, inputStyles)
 
     // eslint-disable-next-line
-    const form = VGSCollect.create(conf.vaultId, function (state) { });
+    const form = VGSCollect.create(conf.vaultId, state => finishedLoading(state));
     const prefix = createAccount === true ? "instrument." : ""
 
     this.initForm('card-name',
@@ -346,12 +329,11 @@ export default class CreditCardForm extends Component {
 
   onSubmit = async () => {
     const { form } = this
-    const { account, apiOptions, instrument = {} } = this.props
+    const { apiOptions, instrument = {} } = this.props
     const isUpdate = isInstrumentUpdate(instrument)
 
     // Clear state
     this.setState({
-      account: account,
       errors: false,
       loading: true,
       status: false,

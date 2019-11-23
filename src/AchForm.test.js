@@ -18,6 +18,7 @@ describe('The AchForm Component', () => {
       instrument: {
         saveWithSecureForm: jest.fn(),
       },
+      finishedLoading: jest.fn(),
       ...props,
     }
   }
