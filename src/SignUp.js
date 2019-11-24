@@ -110,7 +110,10 @@ export class _SignUp extends Component {
           value: PropTypes.string,
           text: PropTypes.string
       }))
-    })
+    }),
+
+    /** determines if validation errors should be shown */
+    showInlineError: PropTypes.bool
   }
 
   componentDidMount() {
@@ -265,6 +268,7 @@ export class _SignUp extends Component {
       sectionStyle,
       cardWidth = false,
       overrideProps = {},
+      showInlineError = true
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -277,7 +281,7 @@ export class _SignUp extends Component {
             name="email"
             label="Email"
             defaultValue={getDefaultValue(account, 'email', '')}
-            showInlineError={true}
+            showInlineError={showInlineError}
             errors={errors}
             {...propHelper.overrideFieldProps("signup-email")}
           />

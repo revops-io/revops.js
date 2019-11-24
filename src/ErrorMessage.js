@@ -7,10 +7,16 @@ export const ErrorMessage = ({
   errors,
   errorKey,
   label,
+  errorMsg,
   component = 'span'
-}) => (
-  <span>{getErrorText(label, errorKey, errors)}</span>
-)
+}) => {
+  const error = getErrorText(label, errorKey, errors)
+  return (
+    <span className={`field-sub-text ${!!error === true ? "error" : ""}`} >
+      {!!error === true ? errorMsg || error : ""}
+    </span>
+  )
+}
 
 ErrorMessage.propTypes = {
   label: PropTypes.string,
