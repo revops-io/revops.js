@@ -8,7 +8,6 @@ import {
   isInstrumentUpdate,
 } from './FormHelpers'
 
-import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 

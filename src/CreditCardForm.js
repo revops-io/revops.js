@@ -7,7 +7,6 @@ import {
   PropertyHelper,
 } from './helpers/PropHelpers'
 
-import { makeAccount } from './actions/AccountActions'
 import {
   getErrorText,
   convertAPIError,

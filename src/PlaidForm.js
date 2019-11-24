@@ -10,7 +10,6 @@ import {
   isInstrumentUpdate,
 } from './FormHelpers'
 
-import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 
@@ -139,7 +138,6 @@ export default class PlaidForm extends Component {
       this.initialize,
     )
 
-    if(this.props.apiOptions)
     configurePlaid(
       conf.env,
       (plaidLink) => {
