@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-const iframeOverrideProps = ['placeholder', 'color', 'errorColor', 'css']
+const iframeOverrideProps = ['placeholder', 'color', 'errorColor', 'css', 'autoFocus']
 const fieldOverrideProps = ['label']
 
 export class PropertyHelper {
