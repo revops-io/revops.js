@@ -133,7 +133,7 @@ export default class PaymentMethod extends Component {
 
     this.state = {
       errors: false,
-      loading: false, //props.method === PaymentMethod.METHOD_PLAID ? false : true,
+      loading: true,
       isUpdate: false,
       method: !!props.method === true
         ? props.method
@@ -283,14 +283,18 @@ export default class PaymentMethod extends Component {
 
   endLoading = () => {
     const { onLoad } = this.props
-    this.setState({ loading: false })
 
-    if (onLoad !== false && typeof (onLoad) === 'function') {
-      onLoad()
+    if(this.state.loading === true){
+      this.setState({ loading: false })
+  
+      if (onLoad !== false && typeof (onLoad) === 'function') {
+        onLoad()
+      }
     }
   }
 
-  isDoneLoading = (formState) => {
+  isDoneLoading = (formState = {}) => {
+
     if (this.state.method === PaymentMethods.METHOD_CARD) {
       if (Object.keys(formState).length === 5) {
         this.endLoading()
