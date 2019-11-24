@@ -8,7 +8,6 @@ export const ErrorMessage = ({
   errorKey,
   label,
   errorMsg,
-  component = 'span'
 }) => {
   const error = getErrorText(label, errorKey, errors)
   return (
@@ -22,7 +21,7 @@ ErrorMessage.propTypes = {
   label: PropTypes.string,
   errorKey: PropTypes.string.isRequired,
   errors: PropTypes.any,
-  component: PropTypes.string,
+  errorMsg: PropTypes.string,
 }
 
 export default ErrorMessage
