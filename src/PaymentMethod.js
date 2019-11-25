@@ -142,6 +142,7 @@ export default class PaymentMethod extends Component {
           : props.methods[0] || PaymentMethods.METHOD_CARD
     }
     this.form = null
+    this.timeOut = null
   }
 
   validateMethods(props) {
@@ -190,6 +191,9 @@ export default class PaymentMethod extends Component {
         logError("Unable to fetch instruments", apiOptions.loggingLevel)
       }
     }
+
+    // Set a timer to alert the user the form hasn't loaded after 5 second
+    this.timeOut = setTimeout(() =>  logError("Form was not loading successfully.", apiOptions.loggingLevel), 5000)
   }
 
   // Helper to set the PaymentMethods's method to the method of the incoming instrument
@@ -206,6 +210,10 @@ export default class PaymentMethod extends Component {
       method: fetchedInstrument.method,
       loading: false,
     })
+  }
+
+  componentWillUnmount(){
+    clearTimeout(this.timeOut)
   }
 
   componentDidUpdate(prevProps) {
@@ -255,23 +263,9 @@ export default class PaymentMethod extends Component {
     })
   }
 
-  changePaymentMethodACH() {
+  changeMethod(method){
     if (this.state.isUpdate === false) {
-      this.setState({ method: PaymentMethods.METHOD_ACH })
-    }
-  }
-
-  changePaymentMethodCC() {
-    if (this.state.isUpdate === false) {
-      this.setState({ method: PaymentMethods.METHOD_CARD })
-    }
-  }
-
-  togglePlaidHandler = () => {
-    if (this.state.isUpdate === false) {
-      this.setState({
-        method: PaymentMethods.METHOD_PLAID,
-      })
+      this.setState({ method })
     }
   }
 
@@ -291,6 +285,8 @@ export default class PaymentMethod extends Component {
         onLoad()
       }
     }
+
+    clearTimeout(this.timeOut)
   }
 
   isDoneLoading = (formState = {}) => {
@@ -348,11 +344,8 @@ export default class PaymentMethod extends Component {
               <CreditCardForm
                 ref={(method === 'card' || method === PaymentMethods.METHOD_CARD) ? this.props.saveRef : null}
                 account={this.state.accountModel}
-                setAccount={(accountProperty, field, value) =>
-                  this.setAccount(accountProperty, field, value)
-                }
                 showACHLink={this.isMethodEnabled(PaymentMethods.METHOD_ACH)}
-                changePaymentMethod={() => this.changePaymentMethodACH()}
+                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
                 {...subProperties}
               >
                 {renderCardForms}
@@ -367,12 +360,9 @@ export default class PaymentMethod extends Component {
                 hideTogglePlaid={this.isMethodEnabled(PaymentMethods.METHOD_PLAID) ?
                   false : true
                 }
-                setAccount={(accountProperty, field, value) =>
-                  this.setAccount(accountProperty, field, value)
-                }
-                changePaymentMethod={() => this.changePaymentMethodCC()}
+                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
                 showCardLink={this.isMethodEnabled(PaymentMethods.METHOD_CARD)}
-                togglePlaidHandler={this.togglePlaidHandler}
+                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_PLAID)}
                 {...subProperties}
               >
                 {renderAchForms}
@@ -384,11 +374,8 @@ export default class PaymentMethod extends Component {
             <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_PLAID)}>
               <PlaidForm
                 ref={method === PaymentMethods.METHOD_PLAID ? this.props.saveRef : null}
-                setAccount={(accountProperty, field, value) =>
-                  this.setAccount(accountProperty, field, value)
-                }
-                changePaymentMethod={() => this.changePaymentMethodCC()}
-                togglePlaidHandler={this.togglePlaidHandler}
+                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
+                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
                 {...subProperties}
               />
             </div>

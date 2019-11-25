@@ -152,7 +152,7 @@ describe('The PaymentMethod Component', () => {
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
       wrapper.setState({ method: PaymentMethods.METHOD_ACH })
-      wrapper.instance().changePaymentMethodCC()
+      wrapper.instance().changeMethod(PaymentMethods.METHOD_CARD)
       expect(wrapper.instance().state.method).to.equal(PaymentMethods.METHOD_CARD)
 
     })
@@ -161,7 +161,7 @@ describe('The PaymentMethod Component', () => {
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
       wrapper.setState({ method: PaymentMethods.METHOD_CARD })
-      wrapper.instance().changePaymentMethodACH()
+      wrapper.instance().changeMethod(PaymentMethods.METHOD_ACH)
       expect(wrapper.instance().state.method).to.equal(PaymentMethods.METHOD_ACH)
 
     })
