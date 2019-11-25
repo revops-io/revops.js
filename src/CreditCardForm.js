@@ -167,7 +167,7 @@ export default class CreditCardForm extends Component {
       createAccount = false,
       inputStyles,
       overrideProps = {},
-      finishedLoading
+      finishedLoading = () => {}
     } = this.props
     let conf = configure(this.props.apiOptions)
 

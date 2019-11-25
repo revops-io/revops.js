@@ -129,7 +129,7 @@ export default class PlaidForm extends Component {
   }
 
   componentDidMount() {
-    const { finishedLoading } = this.props
+    const { finishedLoading = () => {}} = this.props
 
     const conf = configure(this.props.apiOptions)
 

@@ -193,7 +193,7 @@ export default class PaymentMethod extends Component {
     }
 
     // Set a timer to alert the user the form hasn't loaded after 5 second
-    this.timeOut = setTimeout(() =>  logError("Form was not loading successfully.", apiOptions.loggingLevel), 5000)
+    this.timeOut = setTimeout(() => logError("Form was not loaded successfully.", apiOptions.loggingLevel), 5000)
   }
 
   // Helper to set the PaymentMethods's method to the method of the incoming instrument
@@ -212,7 +212,7 @@ export default class PaymentMethod extends Component {
     })
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearTimeout(this.timeOut)
   }
 
@@ -263,7 +263,7 @@ export default class PaymentMethod extends Component {
     })
   }
 
-  changeMethod(method){
+  changeMethod(method) {
     if (this.state.isUpdate === false) {
       this.setState({ method })
     }
@@ -278,9 +278,9 @@ export default class PaymentMethod extends Component {
   endLoading = () => {
     const { onLoad } = this.props
 
-    if(this.state.loading === true){
+    if (this.state.loading === true) {
       this.setState({ loading: false })
-  
+
       if (onLoad !== false && typeof (onLoad) === 'function') {
         onLoad()
       }
@@ -311,8 +311,14 @@ export default class PaymentMethod extends Component {
 
   isVisible = (method) => {
     const { loading } = this.state
+    const { loadingState } = this.props
+    
 
-    if (loading === true || method !== this.state.method) {
+    if (!!loadingState === true && loading === true && method === this.state.method) {
+      return { visibility: "hidden" }
+    }
+
+    if (method !== this.state.method) {
       return { display: "none" }
     }
   }
@@ -331,74 +337,87 @@ export default class PaymentMethod extends Component {
       account: this.state.accountModel,
       createAccount: this.state.createAccount,
       instrument: this.state.instrument,
-      finishedLoading: (state) => this.isDoneLoading(state)
     }
 
     return (
-      <React.Fragment>
-        <section className="" style={{ display: this.state.loading === true ? "" : "" }}>
-          <br />
-          {
-            this.isMethodEnabled(PaymentMethods.METHOD_CARD) &&
-            <div id="cc-info" style={this.isVisible(PaymentMethods.METHOD_CARD)}>
-              <CreditCardForm
-                ref={(method === 'card' || method === PaymentMethods.METHOD_CARD) ? this.props.saveRef : null}
-                account={this.state.accountModel}
-                showACHLink={this.isMethodEnabled(PaymentMethods.METHOD_ACH)}
-                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
-                {...subProperties}
-              >
-                {renderCardForms}
-              </CreditCardForm>
-            </div>
-          }
-          {
-            this.isMethodEnabled(PaymentMethods.METHOD_ACH) &&
-            <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_ACH)}>
-              <AchForm
-                ref={method === PaymentMethods.METHOD_ACH ? this.props.saveRef : null}
-                hideTogglePlaid={this.isMethodEnabled(PaymentMethods.METHOD_PLAID) ?
-                  false : true
-                }
-                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
-                showCardLink={this.isMethodEnabled(PaymentMethods.METHOD_CARD)}
-                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_PLAID)}
-                {...subProperties}
-              >
-                {renderAchForms}
-              </AchForm>
-            </div>
-          }
-          {
-            this.isMethodEnabled(PaymentMethods.METHOD_PLAID) &&
-            <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_PLAID)}>
-              <PlaidForm
-                ref={method === PaymentMethods.METHOD_PLAID ? this.props.saveRef : null}
-                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
-                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
-                {...subProperties}
-              />
-            </div>
-          }
-
-          {method === false && <div className="ui clearing divider"></div>}
-          {method === false &&
-            <ButtonGroup
-              showAccept={false}
-              onLast={onLast}
-              onCancel={onCancel}
-              hideNext={true}
-              buttonStylesPrimary={this.props.buttonStylesPrimary}
-              buttonStylesSecondary={this.props.buttonStylesSecondary}
-            />
-          }
-        </section>
+      <section id="revops-payment-method" >
+        <br />
         {this.state.loading === true &&
-          <React.Fragment>
+          <div className="loader-holder">
             {this.props.loadingState}
-          </React.Fragment>
+          </div>
         }
-      </React.Fragment>
+        {
+          this.isMethodEnabled(PaymentMethods.METHOD_CARD) &&
+          <div id="cc-info" style={this.isVisible(PaymentMethods.METHOD_CARD)}>
+            <CreditCardForm
+              ref={(method === 'card' || method === PaymentMethods.METHOD_CARD) ? this.props.saveRef : null}
+              account={this.state.accountModel}
+              showACHLink={this.isMethodEnabled(PaymentMethods.METHOD_ACH)}
+              changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
+              finishedLoading={(state) => {
+                if (method === 'card' || method === PaymentMethods.METHOD_CARD) {
+                  this.isDoneLoading(state)
+                }
+              }}
+              {...subProperties}>
+              {renderCardForms}
+            </CreditCardForm>
+          </div>
+        }
+        {
+          this.isMethodEnabled(PaymentMethods.METHOD_ACH) &&
+          <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_ACH)}>
+            <AchForm
+              ref={method === PaymentMethods.METHOD_ACH ? this.props.saveRef : null}
+              hideTogglePlaid={this.isMethodEnabled(PaymentMethods.METHOD_PLAID) ?
+                false : true
+              }
+              changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
+              showCardLink={this.isMethodEnabled(PaymentMethods.METHOD_CARD)}
+              togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_PLAID)}
+              finishedLoading={(state) => {
+                if (method === PaymentMethods.METHOD_ACH) {
+                  this.isDoneLoading(state)
+                }
+              }
+              }
+              {...subProperties}
+            >
+              {renderAchForms}
+            </AchForm>
+          </div>
+        }
+        {
+          this.isMethodEnabled(PaymentMethods.METHOD_PLAID) &&
+          <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_PLAID)}>
+            <PlaidForm
+              ref={method === PaymentMethods.METHOD_PLAID ? this.props.saveRef : null}
+              changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
+              togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
+              finishedLoading={(state) => {
+                if (method === PaymentMethods.METHOD_PLAID) {
+                  this.isDoneLoading(state)
+                }
+              }
+              }
+              {...subProperties}
+            />
+          </div>
+        }
+
+        {method === false && <div className="ui clearing divider"></div>}
+        {method === false &&
+          <ButtonGroup
+            showAccept={false}
+            onLast={onLast}
+            onCancel={onCancel}
+            hideNext={true}
+            buttonStylesPrimary={this.props.buttonStylesPrimary}
+            buttonStylesSecondary={this.props.buttonStylesSecondary}
+          />
+        }
+      </section>
     )
   }
 }

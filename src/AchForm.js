@@ -191,7 +191,7 @@ export default class AchForm extends Component {
       createAccount = false ,
       inputStyles = {},
       overrideProps = {},
-      finishedLoading
+      finishedLoading = () => {}
     } = this.props
     
     const propHelper = new PropertyHelper(overrideProps, inputStyles)
