@@ -117,7 +117,10 @@ export default class CreditCardForm extends Component {
       errorColor: PropTypes.string,
       showCardLink: PropTypes.bool, // some fields only
       label: PropTypes.string,
-    })
+    }),
+
+    /** determines if validation errors should be shown */
+    showInlineError: PropTypes.bool
 
   }
 
@@ -379,6 +382,7 @@ export default class CreditCardForm extends Component {
       sectionStyle,
       cardWidth = false,
       overrideProps = {},
+      showInlineError = true
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -409,7 +413,7 @@ export default class CreditCardForm extends Component {
                   name="holderName"
                   label="Card Holder"
                   defaultValue={getDefaultValue(instrument, 'cardName', '')}
-                  showInlineError={true}
+                  showInlineError={showInlineError}
                   errors={errors}
                   {...propHelper.overrideFieldProps("card-name")}
                 />
@@ -419,7 +423,7 @@ export default class CreditCardForm extends Component {
                   name="cardNumber"
                   label="Card Number"
                   defaultValue={getDefaultValue(instrument, 'cardNumber', '')}
-                  showInlineError={true}
+                  showInlineError={showInlineError}
                   errors={errors}
                   {...propHelper.overrideFieldProps("card-number", ["showCardIcon"])}
                 />
@@ -429,7 +433,7 @@ export default class CreditCardForm extends Component {
                   name="cardExpdate"
                   label="Expiration"
                   defaultValue={getDefaultValue(instrument, 'cardExpdate', '')}
-                  showInlineError={true}
+                  showInlineError={showInlineError}
                   errors={errors}
                   {...propHelper.overrideFieldProps("card-expdate")}
                 />
@@ -439,7 +443,7 @@ export default class CreditCardForm extends Component {
                   name="cardCvv"
                   label="CVC/CVV"
                   defaultValue={getDefaultValue(instrument, 'cardCvv', '')}
-                  showInlineError={true}
+                  showInlineError={showInlineError}
                   errors={errors}
                   {...propHelper.overrideFieldProps("card-cvc")}
                 />
@@ -449,7 +453,7 @@ export default class CreditCardForm extends Component {
                   name="postalCode"
                   label="Postal Code"
                   defaultValue={getDefaultValue(instrument, 'postalCode', '')}
-                  showInlineError={true}
+                  showInlineError={showInlineError}
                   errors={errors}
                   {...propHelper.overrideFieldProps("card-postalcode")}
                 />

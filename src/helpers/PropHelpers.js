@@ -1,7 +1,7 @@
 import _ from 'lodash'
 
 const iframeOverrideProps = ['placeholder', 'color', 'errorColor', 'css', 'autoFocus']
-const fieldOverrideProps = ['label']
+const fieldOverrideProps = ['label', 'errorMsg', 'showInlineError']
 
 export class PropertyHelper {
   constructor(overrideProps = {}, inputStyles = {}){

@@ -50,6 +50,7 @@ export class Field extends Component {
         <span className="field-space"></span>
         {this.props.showInlineError === true &&
           <ErrorMessage
+            errorMsg={this.props.errorMsg}
             label={this.props.label}
             errorKey={this.getElementKey()}
             errors={this.props.errors} />
