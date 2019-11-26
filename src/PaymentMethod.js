@@ -113,7 +113,19 @@ export default class PaymentMethod extends Component {
     onLoad: PropTypes.func,
 
     /** loadingState */
-    loadingState: PropTypes.node
+    loadingState: PropTypes.node,
+    
+    overrideProps: PropTypes.shape({
+      css: PropTypes.object, // CSS in JS
+      placeholder: PropTypes.string,
+      color: PropTypes.string,
+      errorColor: PropTypes.string,
+      showCardLink: PropTypes.bool, // some fields only
+      label: PropTypes.string,
+    }),
+
+    /** determines if validation errors should be shown */
+    showInlineError: PropTypes.bool,
 
   }
 
@@ -272,6 +284,7 @@ export default class PaymentMethod extends Component {
   isMethodEnabled = (methodToCheck) => {
     const { method, methods } = this.props
 
+    // explicit method prop takes precedent, then check to see if it is in `methods`
     return methodToCheck === method || _.includes(methods, methodToCheck)
   }
 
@@ -286,9 +299,11 @@ export default class PaymentMethod extends Component {
       }
     }
 
+    // stope timeout so we don't have a mistaken console.error 
     clearTimeout(this.timeOut)
   }
 
+  // done loading when # of loaded === # of expected fields
   isDoneLoading = (formState = {}) => {
 
     if (this.state.method === PaymentMethods.METHOD_CARD) {
@@ -309,15 +324,17 @@ export default class PaymentMethod extends Component {
 
   }
 
+  // creates inline CSS defs to inline in the style for each method
   isVisible = (method) => {
     const { loading } = this.state
     const { loadingState } = this.props
     
-
+    // if the first method os loading hide it but keep the space in the DOM
     if (!!loadingState === true && loading === true && method === this.state.method) {
       return { visibility: "hidden" }
     }
 
+    // if it is another method, hide it from DOM completely
     if (method !== this.state.method) {
       return { display: "none" }
     }
