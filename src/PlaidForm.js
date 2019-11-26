@@ -4,8 +4,7 @@ import PropTypes from 'prop-types'
 import { submitForm, getToken } from './actions/FormActions'
 
 import {
-  getErrorText,
-  getClassName,
+  convertAPIError,
   getDefaultValue,
   isInstrumentUpdate,
 } from './FormHelpers'
@@ -17,7 +16,12 @@ import {
   TogglePlaid,
   configureVault,
   configurePlaid,
+  Field
 } from './index'
+
+import {
+  PropertyHelper,
+} from './helpers/PropHelpers'
 
 import { Instrument, Account } from './models'
 
@@ -101,7 +105,24 @@ export default class PlaidForm extends Component {
     instrument: PropTypes.object,
 
     /** callback func that signal the component has loading completely */
-    finishedLoading: PropTypes.func.isRequired
+    finishedLoading: PropTypes.func.isRequired,
+
+    /**
+     * overrideProps is an object where keys names are ids of the particular 
+     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
+     * Only allowed properties are allowed, see documentation for details. 
+     */
+    overrideProps: PropTypes.shape({
+      css: PropTypes.object, // CSS in JS
+      placeholder: PropTypes.string,
+      color: PropTypes.string,
+      errorColor: PropTypes.string,
+      showCardLink: PropTypes.bool, // some fields only
+      label: PropTypes.string,
+    }),
+
+    /** determines if validation errors should be shown */
+    showInlineError: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -129,8 +150,6 @@ export default class PlaidForm extends Component {
   }
 
   componentDidMount() {
-    const { finishedLoading = () => {}} = this.props
-
     const conf = configure(this.props.apiOptions)
 
     configureVault(
@@ -145,10 +164,8 @@ export default class PlaidForm extends Component {
       },
       this.onPlaidSelect,
     )
-
-    finishedLoading()
   }
-  
+
   onPlaidLoad = (plaidLink) => {
     this.plaidLink = plaidLink
   }
@@ -195,10 +212,13 @@ export default class PlaidForm extends Component {
   }
 
   initialize = () => {
-    const { createAccount = false } = this.props
+    const {
+      createAccount = false,
+      finishedLoading = () => { }
+    } = this.props
     if (!!this.form === false) {
       // eslint-disable-next-line
-      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, state => finishedLoading(state));
     }
 
     this.createFormField(
@@ -226,14 +246,19 @@ export default class PlaidForm extends Component {
     }
   }
 
-  onError = ({ errors }) => {
+  onError = (error) => {
     const { onError } = this.props
     this.setState({
-      errors
+      errors: {
+        ...error,
+        ...convertAPIError(error.http_status, error),
+      },
+      response: error,
+      loading: false,
     })
 
     if (onError !== false && typeof (onError) === 'function') {
-      onError(errors)
+      onError(error)
     }
   }
 
@@ -285,12 +310,11 @@ export default class PlaidForm extends Component {
 
   onSubmit = async () => {
     const { form } = this
-    const { account, apiOptions, instrument = {} } = this.props
+    const { apiOptions, instrument = {} } = this.props
     const isUpdate = isInstrumentUpdate(instrument)
 
     // Clear state
     this.setState({
-      account: account,
       errors: false,
       loading: true,
       status: false,
@@ -320,9 +344,14 @@ export default class PlaidForm extends Component {
     const {
       onLast,
       onCancel,
+      instrument,
       sectionStyle,
       cardWidth = false,
+      overrideProps = {},
+      showInlineError = true
     } = this.props
+
+    const propHelper = new PropertyHelper(overrideProps)
 
     return (
       <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
@@ -341,19 +370,6 @@ export default class PlaidForm extends Component {
         </button>
         {!!this.state.plaidMetadata !== false &&
           <div id="plaid-form" >
-            <div id="bank-name-plaid"
-              className={
-                getClassName(
-                  "field",
-                  "billing_preferences.bank_name",
-                  errors
-                )
-              }>
-              <label>Bank Name</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
-            </div>
-
             <div className="ui info message">
               <div className="content">
                 <i aria-hidden="true" className="university icon"></i>
@@ -363,6 +379,18 @@ export default class PlaidForm extends Component {
             </div>
           </div>
         }
+
+        <div style={{ display: 'none' }}>
+          <Field
+            id="bank-name-plaid"
+            name="bankName"
+            label="Bank Name"
+            defaultValue={getDefaultValue(instrument, 'bankName', '')}
+            showInlineError={showInlineError}
+            errors={errors}
+            {...propHelper.overrideFieldProps("bank-name")}
+          />
+        </div>
 
         <TogglePlaid
           style={this.props.linkStyling}
