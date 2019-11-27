@@ -21,11 +21,18 @@ import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 import { linkStyling } from './SharedStyles'
 
+import _ from 'lodash'
+
 import {
   Field,
   configureVault,
 } from './index'
+
 import { Instrument, Account } from './models'
+
+import { PaymentMethods } from './PaymentMethod'
+
+const expectedFormFields = ['card-expdate', 'card-cvc', 'card-number', 'card-name', 'card-cvc']
 
 export default class CreditCardForm extends Component {
   static propTypes = {
@@ -120,9 +127,15 @@ export default class CreditCardForm extends Component {
 
     /** determines if validation errors should be shown */
     showInlineError: PropTypes.bool,
-    
-    /** callback func that signal the component has loading completely */
-    finishedLoading: PropTypes.func.isRequired
+
+    /** A callable function to fire when the PaymentMethod initializes all fields */
+    onLoad: PropTypes.func,
+
+    /** user defined loading element */
+    loadingState: PropTypes.node,
+
+    /** internal system flag to indicate that the system is loading an Instrument to update */
+    isUpdate: PropTypes.bool
 
   }
 
@@ -142,7 +155,7 @@ export default class CreditCardForm extends Component {
       errors: false,
       status: false,
       response: false,
-
+      loading: true,
     }
     this.form = {};
   }
@@ -161,20 +174,26 @@ export default class CreditCardForm extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    const { method } = this.props
+    if (prevProps.method !== method && this.isThisMethod()) {
+      this.setState({ loading: false })
+    }
+  }
+
   initialize = () => {
     const {
       instrument,
       createAccount = false,
       inputStyles,
       overrideProps = {},
-      finishedLoading = () => {}
     } = this.props
     let conf = configure(this.props.apiOptions)
 
     const propHelper = new PropertyHelper(overrideProps, inputStyles)
 
     // eslint-disable-next-line
-    const form = VGSCollect.create(conf.vaultId, state => finishedLoading(state));
+    const form = VGSCollect.create(conf.vaultId, state => this.isFinishedLoading(state));
     const prefix = createAccount === true ? "instrument." : ""
 
     this.initForm('card-name',
@@ -326,6 +345,44 @@ export default class CreditCardForm extends Component {
     return payload
   }
 
+  isFinishedLoading = (formState) => {
+    const { onLoad } = this.props
+
+    if (this.state.loading === true && this.isThisMethod()) {
+      if (_.intersection(formState, expectedFormFields).length === 0) {
+        this.setState({ loading: false })
+
+        if (onLoad !== false && typeof (onLoad) === 'function') {
+          onLoad()
+        }
+      }
+    }
+  }
+
+  isThisMethod = () => {
+    const { method } = this.props
+    return method === PaymentMethods.METHOD_CARD || method === 'card'
+  }
+
+  getSectionDisplayProps = () => {
+    const { loading } = this.state
+    const { loadingState, sectionStyle, cardWidth } = this.props
+
+    const isThisMethod = this.isThisMethod()
+
+    // if the first method os loading hide it but keep the space in the DOM
+    if (isThisMethod === true && !!loadingState === true && loading === true) {
+      return { ...cardWidth, ...sectionStyle, visibility: "hidden" }
+    }
+
+    // if it is another method, hide it from DOM completely
+    if (isThisMethod === false) {
+      return { ...cardWidth, ...sectionStyle, display: "none" }
+    }
+
+    return { ...cardWidth, ...sectionStyle }
+  }
+
   onSubmit = async () => {
     const { form } = this
     const { apiOptions, instrument = {} } = this.props
@@ -334,7 +391,7 @@ export default class CreditCardForm extends Component {
     // Clear state
     this.setState({
       errors: false,
-      loading: true,
+      saving: true,
       status: false,
       response: false,
     })
@@ -360,103 +417,112 @@ export default class CreditCardForm extends Component {
       onCancel,
       children,
       instrument,
-      sectionStyle,
-      cardWidth = false,
       overrideProps = {},
-      showInlineError = true
+      showInlineError = true,
+      isUpdate = false
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
 
     return (
-      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
-        <label className="h3">Paying by credit card</label>
-        {this.props.showACHLink === true &&
-          <a
-            className="pay-by-ach-link"
-            style={linkStyling}
-            onClick={this.props.changePaymentMethod}>
-            Pay by ACH instead
-          </a>
-        }
-        <div className="form-container">
-          <div id="card-form" >
-            {!!children !== false &&
-              React.createElement(children, {
-                ...this.props,
-                ...this.state,
-              }, null)
-            }
-            {!!children === false &&
-              <React.Fragment>
-                <Field
-                  id="card-name"
-                  name="holderName"
-                  label="Card Holder"
-                  defaultValue={getDefaultValue(instrument, 'cardName', '')}
-                  showInlineError={showInlineError}
-                  errors={errors}
-                  {...propHelper.overrideFieldProps("card-name")}
-                />
-
-                <Field
-                  id="card-number"
-                  name="cardNumber"
-                  label="Card Number"
-                  defaultValue={getDefaultValue(instrument, 'cardNumber', '')}
-                  showInlineError={showInlineError}
-                  errors={errors}
-                  {...propHelper.overrideFieldProps("card-number", ["showCardIcon"])}
-                />
-
-                <Field
-                  id="card-expdate"
-                  name="cardExpdate"
-                  label="Expiration"
-                  defaultValue={getDefaultValue(instrument, 'cardExpdate', '')}
-                  showInlineError={showInlineError}
-                  errors={errors}
-                  {...propHelper.overrideFieldProps("card-expdate")}
-                />
-
-                <Field
-                  id="card-cvc"
-                  name="cardCvv"
-                  label="CVC/CVV"
-                  defaultValue={getDefaultValue(instrument, 'cardCvv', '')}
-                  showInlineError={showInlineError}
-                  errors={errors}
-                  {...propHelper.overrideFieldProps("card-cvc")}
-                />
-
-                <Field
-                  id="card-postalcode"
-                  name="postalCode"
-                  label="Postal Code"
-                  defaultValue={getDefaultValue(instrument, 'postalCode', '')}
-                  showInlineError={showInlineError}
-                  errors={errors}
-                  {...propHelper.overrideFieldProps("card-postalcode")}
-                />
-              </React.Fragment>
-            }
+      <React.Fragment>
+        {
+          isUpdate === false &&
+          this.state.loading === true &&
+          this.isThisMethod() &&
+          <div className="loader-holder">
+            {this.props.loadingState}
           </div>
-        </div>
-        <div className="ui clearing divider"></div>
-        <span>{getErrorText('', 'networkError', errors)}</span>
-        {!!this.props.saveRef === false &&
-          <ButtonGroup
-            showAccept={false}
-            loading={this.state.loading}
-            onSubmit={this.onSubmit}
-            onLast={onLast}
-            onCancel={onCancel}
-            finalStep={true}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
-          />
         }
-      </section>
+        <section style={this.getSectionDisplayProps()}>
+          <label className="h3">Paying by credit card</label>
+          {this.props.showACHLink === true &&
+            <a
+              className="pay-by-ach-link"
+              style={linkStyling}
+              onClick={this.props.changePaymentMethod}>
+              Pay by ACH instead
+          </a>
+          }
+          <div className="form-container">
+            <div id="card-form" >
+              {!!children !== false &&
+                React.createElement(children, {
+                  ...this.props,
+                  ...this.state,
+                }, null)
+              }
+              {!!children === false &&
+                <React.Fragment>
+                  <Field
+                    id="card-name"
+                    name="holderName"
+                    label="Card Holder"
+                    defaultValue={getDefaultValue(instrument, 'cardName', '')}
+                    showInlineError={showInlineError}
+                    errors={errors}
+                    {...propHelper.overrideFieldProps("card-name")}
+                  />
+
+                  <Field
+                    id="card-number"
+                    name="cardNumber"
+                    label="Card Number"
+                    defaultValue={getDefaultValue(instrument, 'cardNumber', '')}
+                    showInlineError={showInlineError}
+                    errors={errors}
+                    {...propHelper.overrideFieldProps("card-number", ["showCardIcon"])}
+                  />
+
+                  <Field
+                    id="card-expdate"
+                    name="cardExpdate"
+                    label="Expiration"
+                    defaultValue={getDefaultValue(instrument, 'cardExpdate', '')}
+                    showInlineError={showInlineError}
+                    errors={errors}
+                    {...propHelper.overrideFieldProps("card-expdate")}
+                  />
+
+                  <Field
+                    id="card-cvc"
+                    name="cardCvv"
+                    label="CVC/CVV"
+                    defaultValue={getDefaultValue(instrument, 'cardCvv', '')}
+                    showInlineError={showInlineError}
+                    errors={errors}
+                    {...propHelper.overrideFieldProps("card-cvc")}
+                  />
+
+                  <Field
+                    id="card-postalcode"
+                    name="postalCode"
+                    label="Postal Code"
+                    defaultValue={getDefaultValue(instrument, 'postalCode', '')}
+                    showInlineError={showInlineError}
+                    errors={errors}
+                    {...propHelper.overrideFieldProps("card-postalcode")}
+                  />
+                </React.Fragment>
+              }
+            </div>
+          </div>
+          <div className="ui clearing divider"></div>
+          <span>{getErrorText('', 'networkError', errors)}</span>
+          {!!this.props.saveRef === false &&
+            <ButtonGroup
+              showAccept={false}
+              loading={this.state.saving}
+              onSubmit={this.onSubmit}
+              onLast={onLast}
+              onCancel={onCancel}
+              finalStep={true}
+              buttonStylesPrimary={this.props.buttonStylesPrimary}
+              buttonStylesSecondary={this.props.buttonStylesSecondary}
+            />
+          }
+        </section>
+      </React.Fragment>
     )
   }
 }

@@ -106,15 +106,6 @@ export default class PaymentMethod extends Component {
     /** Optional API Options **/
     apiOptions: PropTypes.object,
 
-    /** used to set the current method, overrides internal method state */
-    method: PropTypes.oneOf(Object.values(PaymentMethods)),
-
-    /** A callable function to fire when the PaymentMethod initializes all fields */
-    onLoad: PropTypes.func,
-
-    /** loadingState */
-    loadingState: PropTypes.node,
-    
     overrideProps: PropTypes.shape({
       css: PropTypes.object, // CSS in JS
       placeholder: PropTypes.string,
@@ -126,6 +117,12 @@ export default class PaymentMethod extends Component {
 
     /** determines if validation errors should be shown */
     showInlineError: PropTypes.bool,
+
+    /** used to set the current method, overrides internal method state */
+    method: PropTypes.oneOf(Object.values(PaymentMethods)),
+
+    /** user defined loading element */
+    loadingState: PropTypes.node,
 
   }
 
@@ -145,7 +142,7 @@ export default class PaymentMethod extends Component {
 
     this.state = {
       errors: false,
-      loading: true,
+      loading: false,
       isUpdate: false,
       method: !!props.method === true
         ? props.method
@@ -170,6 +167,7 @@ export default class PaymentMethod extends Component {
       throw new Error('[PaymentMethod.props.defaultMethod missing from `PaymentMethod.props.methods`]')
     }
   }
+
 
   async componentDidMount() {
     const {
@@ -203,9 +201,6 @@ export default class PaymentMethod extends Component {
         logError("Unable to fetch instruments", apiOptions.loggingLevel)
       }
     }
-
-    // Set a timer to alert the user the form hasn't loaded after 5 second
-    this.timeOut = setTimeout(() => logError("Form was not loaded successfully.", apiOptions.loggingLevel), 5000)
   }
 
   // Helper to set the PaymentMethods's method to the method of the incoming instrument
@@ -222,10 +217,6 @@ export default class PaymentMethod extends Component {
       method: fetchedInstrument.method,
       loading: false,
     })
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timeOut)
   }
 
   componentDidUpdate(prevProps) {
@@ -288,58 +279,6 @@ export default class PaymentMethod extends Component {
     return methodToCheck === method || _.includes(methods, methodToCheck)
   }
 
-  endLoading = () => {
-    const { onLoad } = this.props
-
-    if (this.state.loading === true) {
-      this.setState({ loading: false })
-
-      if (onLoad !== false && typeof (onLoad) === 'function') {
-        onLoad()
-      }
-    }
-
-    // stope timeout so we don't have a mistaken console.error 
-    clearTimeout(this.timeOut)
-  }
-
-  // done loading when # of loaded === # of expected fields
-  isDoneLoading = (formState = {}) => {
-
-    if (this.state.method === PaymentMethods.METHOD_CARD) {
-      if (Object.keys(formState).length === 5) {
-        this.endLoading()
-      }
-    }
-
-    if (this.state.method === PaymentMethods.METHOD_ACH) {
-      if (Object.keys(formState).length === 7) {
-        this.endLoading()
-      }
-    }
-
-    if (this.state.method === PaymentMethods.METHOD_PLAID) {
-      this.endLoading()
-    }
-
-  }
-
-  // creates inline CSS defs to inline in the style for each method
-  isVisible = (method) => {
-    const { loading } = this.state
-    const { loadingState } = this.props
-    
-    // if the first method os loading hide it but keep the space in the DOM
-    if (!!loadingState === true && loading === true && method === this.state.method) {
-      return { visibility: "hidden" }
-    }
-
-    // if it is another method, hide it from DOM completely
-    if (method !== this.state.method) {
-      return { display: "none" }
-    }
-  }
-
   render() {
     const { method } = this.state
     const {
@@ -347,94 +286,86 @@ export default class PaymentMethod extends Component {
       onCancel,
       renderCardForms,
       renderAchForms,
+      instrument,
     } = this.props
+
+    const isUpdate = isInstrumentUpdate(instrument)
 
     const subProperties = {
       ...this.props,
       account: this.state.accountModel,
       createAccount: this.state.createAccount,
       instrument: this.state.instrument,
+      method: this.state.method,
+      isUpdate
     }
 
+    
     return (
-      <section id="revops-payment-method" >
-        <br />
+      <React.Fragment>
         {this.state.loading === true &&
           <div className="loader-holder">
             {this.props.loadingState}
           </div>
         }
-        {
-          this.isMethodEnabled(PaymentMethods.METHOD_CARD) &&
-          <div id="cc-info" style={this.isVisible(PaymentMethods.METHOD_CARD)}>
-            <CreditCardForm
-              ref={(method === 'card' || method === PaymentMethods.METHOD_CARD) ? this.props.saveRef : null}
-              account={this.state.accountModel}
-              showACHLink={this.isMethodEnabled(PaymentMethods.METHOD_ACH)}
-              changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
-              finishedLoading={(state) => {
-                if (method === 'card' || method === PaymentMethods.METHOD_CARD) {
-                  this.isDoneLoading(state)
+        <section id="revops-payment-method"
+        >
+          <br />
+          {
+            this.isMethodEnabled(PaymentMethods.METHOD_CARD) &&
+            <div id="cc-info">
+              <CreditCardForm
+                ref={(method === 'card' || method === PaymentMethods.METHOD_CARD) ? this.props.saveRef : null}
+                account={this.state.accountModel}
+                showACHLink={isUpdate === false && this.isMethodEnabled(PaymentMethods.METHOD_ACH)}
+                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
+                {...subProperties}>
+                {renderCardForms}
+              </CreditCardForm>
+            </div>
+          }
+          {
+            this.isMethodEnabled(PaymentMethods.METHOD_ACH) &&
+            <div id="bank-info">
+              <AchForm
+                ref={method === PaymentMethods.METHOD_ACH ? this.props.saveRef : null}
+                hideTogglePlaid={(isUpdate === false && this.isMethodEnabled(PaymentMethods.METHOD_PLAID)) ?
+                  false : true
                 }
-              }}
-              {...subProperties}>
-              {renderCardForms}
-            </CreditCardForm>
-          </div>
-        }
-        {
-          this.isMethodEnabled(PaymentMethods.METHOD_ACH) &&
-          <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_ACH)}>
-            <AchForm
-              ref={method === PaymentMethods.METHOD_ACH ? this.props.saveRef : null}
-              hideTogglePlaid={this.isMethodEnabled(PaymentMethods.METHOD_PLAID) ?
-                false : true
-              }
-              changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
-              showCardLink={this.isMethodEnabled(PaymentMethods.METHOD_CARD)}
-              togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_PLAID)}
-              finishedLoading={(state) => {
-                if (method === PaymentMethods.METHOD_ACH) {
-                  this.isDoneLoading(state)
-                }
-              }
-              }
-              {...subProperties}
-            >
-              {renderAchForms}
-            </AchForm>
-          </div>
-        }
-        {
-          this.isMethodEnabled(PaymentMethods.METHOD_PLAID) &&
-          <div id="bank-info" style={this.isVisible(PaymentMethods.METHOD_PLAID)}>
-            <PlaidForm
-              ref={method === PaymentMethods.METHOD_PLAID ? this.props.saveRef : null}
-              changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
-              togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
-              finishedLoading={(state) => {
-                if (method === PaymentMethods.METHOD_PLAID) {
-                  this.isDoneLoading(state)
-                }
-              }
-              }
-              {...subProperties}
-            />
-          </div>
-        }
+                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
+                showCardLink={isUpdate === false && this.isMethodEnabled(PaymentMethods.METHOD_CARD)}
+                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_PLAID)}
+                {...subProperties}
+              >
+                {renderAchForms}
+              </AchForm>
+            </div>
+          }
+          {
+            this.isMethodEnabled(PaymentMethods.METHOD_PLAID) &&
+            <div id="bank-info">
+              <PlaidForm
+                ref={method === PaymentMethods.METHOD_PLAID ? this.props.saveRef : null}
+                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
+                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
+                {...subProperties}
+              />
+            </div>
+          }
 
-        {method === false && <div className="ui clearing divider"></div>}
-        {method === false &&
-          <ButtonGroup
-            showAccept={false}
-            onLast={onLast}
-            onCancel={onCancel}
-            hideNext={true}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
-          />
-        }
-      </section>
+          {method === false && <div className="ui clearing divider"></div>}
+          {method === false &&
+            <ButtonGroup
+              showAccept={false}
+              onLast={onLast}
+              onCancel={onCancel}
+              hideNext={true}
+              buttonStylesPrimary={this.props.buttonStylesPrimary}
+              buttonStylesSecondary={this.props.buttonStylesSecondary}
+            />
+          }
+        </section>
+      </React.Fragment>
     )
   }
 }
