@@ -21,7 +21,7 @@ ErrorMessage.propTypes = {
   label: PropTypes.string,
   errorKey: PropTypes.string.isRequired,
   errors: PropTypes.any,
-  errorMsg: PropTypes.string,
+  errorMsg: PropTypes.node,
 }
 
 export default ErrorMessage

@@ -4,13 +4,11 @@ import PropTypes from 'prop-types'
 import { submitForm, getToken } from './actions/FormActions'
 
 import {
-  getErrorText,
-  getClassName,
+  convertAPIError,
   getDefaultValue,
   isInstrumentUpdate,
 } from './FormHelpers'
 
-import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 
@@ -18,11 +16,18 @@ import {
   TogglePlaid,
   configureVault,
   configurePlaid,
+  Field
 } from './index'
+
+import {
+  PropertyHelper,
+} from './helpers/PropHelpers'
 
 import { Instrument, Account } from './models'
 
 import configure from './client/VaultConfig'
+
+import { PaymentMethods } from './PaymentMethod'
 
 export default class PlaidForm extends Component {
   static propTypes = {
@@ -100,6 +105,32 @@ export default class PlaidForm extends Component {
 
     /** model for of a revops payment instrument */
     instrument: PropTypes.object,
+
+    /**
+     * overrideProps is an object where keys names are ids of the particular 
+     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
+     * Only allowed properties are allowed, see documentation for details. 
+     */
+    overrideProps: PropTypes.shape({
+      css: PropTypes.object, // CSS in JS
+      placeholder: PropTypes.string,
+      color: PropTypes.string,
+      errorColor: PropTypes.string,
+      showCardLink: PropTypes.bool, // some fields only
+      label: PropTypes.string,
+    }),
+
+    /** determines if validation errors should be shown */
+    showInlineError: PropTypes.bool,
+
+    /** A callable function to fire when the PaymentMethod initializes all fields */
+    onLoad: PropTypes.func,
+
+    /** user defined loading element */
+    loadingState: PropTypes.node,
+
+    /** internal system flag to indicate that the system is loading an Instrument to update */
+    isUpdate: PropTypes.bool
   }
 
   static defaultProps = {
@@ -116,6 +147,7 @@ export default class PlaidForm extends Component {
     plaidLinkPublicToken: false,
     plaidAccountId: false,
     loaded: false,
+    saving: false,
   }
 
   constructor(props) {
@@ -134,7 +166,6 @@ export default class PlaidForm extends Component {
       this.initialize,
     )
 
-    if(this.props.apiOptions)
     configurePlaid(
       conf.env,
       (plaidLink) => {
@@ -145,24 +176,10 @@ export default class PlaidForm extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (!!prevProps.account !== false &&
-      !!this.props.account !== false &&
-      prevProps.account !== this.props.account
-    ) {
-      this.updateAccount(this.props.account)
+    const { method } = this.props
+    if (prevProps.method !== method && this.isThisMethod()) {
+      this.setState({ loading: false })
     }
-  }
-
-  updateAccount(account) {
-    this.setAccount(account)
-  }
-
-  setAccount = (account) => {
-    this.setState({
-      account: makeAccount({
-        ...account,
-      })
-    })
   }
 
   onPlaidLoad = (plaidLink) => {
@@ -211,14 +228,16 @@ export default class PlaidForm extends Component {
   }
 
   initialize = () => {
-    const { createAccount = false } = this.props
+    const {
+      createAccount = false,
+    } = this.props
     if (!!this.form === false) {
       // eslint-disable-next-line
-      this.form = VGSCollect.create(configure(this.props.env).vaultId, function (state) { });
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, state => this.isFinishedLoading(state));
     }
 
     this.createFormField(
-      "#bank-name .field-space",
+      "#bank-name-plaid .field-space",
       createAccount === true ? "instrument." : "" + 'bank_name',
       this.getBankName(),
       {
@@ -226,6 +245,7 @@ export default class PlaidForm extends Component {
         readOnly: 'readOnly',
         placeholder: "Name of Bank Institution",
         validations: ["required"],
+        defaultValue: "Plaid Bank"
       }
     )
   }
@@ -234,7 +254,7 @@ export default class PlaidForm extends Component {
     const { onComplete } = this.props
 
     this.setState({
-      loading: false,
+      saving: false,
     })
 
     if (onComplete !== false && typeof (onComplete) === 'function') {
@@ -242,14 +262,19 @@ export default class PlaidForm extends Component {
     }
   }
 
-  onError = ({ errors }) => {
+  onError = (error) => {
     const { onError } = this.props
     this.setState({
-      errors
+      errors: {
+        ...error,
+        ...convertAPIError(error.http_status, error),
+      },
+      response: error,
+      saving: false,
     })
 
     if (onError !== false && typeof (onError) === 'function') {
-      onError(errors)
+      onError(error)
     }
   }
 
@@ -301,14 +326,13 @@ export default class PlaidForm extends Component {
 
   onSubmit = async () => {
     const { form } = this
-    const { account, apiOptions, instrument = {} } = this.props
+    const { apiOptions, instrument = {} } = this.props
     const isUpdate = isInstrumentUpdate(instrument)
 
     // Clear state
     this.setState({
-      account: account,
       errors: false,
-      loading: true,
+      saving: true,
       status: false,
       response: false,
     })
@@ -331,74 +355,123 @@ export default class PlaidForm extends Component {
     this.plaidLink.open()
   }
 
+  isFinishedLoading = () => {
+    const { onLoad } = this.props
+
+    if (this.state.loading === true && this.isThisMethod()) {
+      this.setState({ loading: false })
+
+      if (onLoad !== false && typeof (onLoad) === 'function') {
+        onLoad()
+      }
+    }
+  }
+
+  getSectionDisplayProps = () => {
+    const { loading } = this.state
+    const { loadingState, sectionStyle, cardWidth, method } = this.props
+
+    const isThisMethod = this.isThisMethod()
+
+    // if the first method os loading hide it but keep the space in the DOM
+    if (isThisMethod === true && !!loadingState === true && loading === true) {
+      return { ...cardWidth, ...sectionStyle, visibility: "hidden" }
+    }
+
+    // if it is another method, hide it from DOM completely
+    if (isThisMethod === false) {
+      return { ...cardWidth, ...sectionStyle, display: "none" }
+    }
+
+    return { ...cardWidth, ...sectionStyle }
+  }
+
+  isThisMethod = () => {
+    const { method } = this.props
+    return method === PaymentMethods.METHOD_PLAID
+  }
+
   render() {
     const { errors, } = this.state
     const {
       onLast,
       onCancel,
-      sectionStyle,
-      cardWidth = false,
+      instrument,
+      overrideProps = {},
+      showInlineError = true,
+      isUpdate
     } = this.props
 
-    return (
-      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
-        <label className="h3">Paying by ACH</label>
-        <a
-          className="pay-by-cc-link"
-          style={this.props.linkStyling}
-          onClick={this.props.changePaymentMethod}>
-          Pay by credit card instead
-        </a>
-        <button
-          className="btn-primary centered single"
-          style={this.props.buttonStylesPrimary}
-          onClick={() => this.openPlaid()}>
-          Sync your bank account
-        </button>
-        {!!this.state.plaidMetadata !== false &&
-          <div id="plaid-form" >
-            <div id="bank-name"
-              className={
-                getClassName(
-                  "field",
-                  "billing_preferences.bank_name",
-                  errors
-                )
-              }>
-              <label>Bank Name</label>
-              <span className="field-space"></span>
-              <span>{getErrorText('Bank name', 'billingPreferences.bankName', errors)}</span>
-            </div>
+    const propHelper = new PropertyHelper(overrideProps)
 
-            <div className="ui info message">
-              <div className="content">
-                <i aria-hidden="true" className="university icon"></i>
-                <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
-                <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
-              </div>
-            </div>
+    return (
+      <React.Fragment>
+        {
+          isUpdate === false &&
+          this.state.loading === true &&
+          this.isThisMethod() &&
+          <div className="loader-holder">
+            {this.props.loadingState}
           </div>
         }
+        <section style={this.getSectionDisplayProps()}>
+          <label className="h3">Paying by ACH</label>
+          <a
+            className="pay-by-cc-link"
+            style={this.props.linkStyling}
+            onClick={this.props.changePaymentMethod}>
+            Pay by credit card instead
+        </a>
+          <button
+            className="btn-primary centered single"
+            style={this.props.buttonStylesPrimary}
+            onClick={() => this.openPlaid()}>
+            Sync your bank account
+        </button>
+          {!!this.state.plaidMetadata !== false &&
+            <div id="plaid-form" >
+              <div className="ui info message">
+                <div className="content">
+                  <i aria-hidden="true" className="university icon"></i>
+                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
+                <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
+              </div>
+              </div>
+            </div>
+          }
 
-        <TogglePlaid
-          style={this.props.linkStyling}
-          togglePlaidHandler={this.props.togglePlaidHandler}
-          plaidSelected={true}
-        />
+          <div style={{ display: 'none' }}>
+            <Field
+              id="bank-name-plaid"
+              name="bankName"
+              label="Bank Name"
+              defaultValue={getDefaultValue(instrument, 'bankName', '')}
+              showInlineError={showInlineError}
+              errors={errors}
+              {...propHelper.overrideFieldProps("bank-name")}
+            />
+          </div>
 
-        <div className="ui clearing divider"></div>
-        {!!this.props.saveRef === false &&
-          <ButtonGroup
-            loading={this.state.loading}
-            onSubmit={this.onSubmit}
-            onLast={onLast}
-            onCancel={onCancel}
-            finalStep={true}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
+          <TogglePlaid
+            style={this.props.linkStyling}
+            togglePlaidHandler={this.props.togglePlaidHandler}
+            plaidSelected={true}
           />
-        }
-      </section>
+
+          <div className="ui clearing divider"></div>
+          {!!this.props.saveRef === false &&
+            <ButtonGroup
+              loading={this.state.saving}
+              onSubmit={this.onSubmit}
+              onLast={onLast}
+              onCancel={onCancel}
+              finalStep={true}
+              buttonStylesPrimary={this.props.buttonStylesPrimary}
+              buttonStylesSecondary={this.props.buttonStylesSecondary}
+            />
+          }
+        </section>
+      </React.Fragment>
     )
   }
 }

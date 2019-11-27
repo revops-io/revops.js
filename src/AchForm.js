@@ -8,7 +8,6 @@ import {
   isInstrumentUpdate,
 } from './FormHelpers'
 
-import { makeAccount } from './actions/AccountActions'
 import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 
@@ -25,6 +24,10 @@ import {
 import { Instrument, Account } from './models'
 
 import configure from './client/VaultConfig'
+
+import { PaymentMethods } from './PaymentMethod'
+
+const NUMBER_OF_FIELDS = 7
 
 export default class AchForm extends Component {
   static propTypes = {
@@ -125,7 +128,16 @@ export default class AchForm extends Component {
     }),
 
     /** determines if validation errors should be shown */
-    showInlineError: PropTypes.bool
+    showInlineError: PropTypes.bool,
+
+    /** A callable function to fire when the PaymentMethod initializes all fields */
+    onLoad: PropTypes.func,
+
+    /** user defined loading element */
+    loadingState: PropTypes.node,
+
+    /** internal system flag to indicate that the system is loading an Instrument to update */
+    isUpdate: PropTypes.bool
   }
 
   static defaultProps = {
@@ -144,30 +156,10 @@ export default class AchForm extends Component {
     this.state = {
       account: {},
       errors: false,
-      loaded: false,
+      loading: true,
+      saving: false,
     }
     this.form = null
-  }
-
-  componentDidUpdate(prevProps) {
-    if (!!prevProps.account !== false &&
-      !!this.props.account !== false &&
-      prevProps.account !== this.props.account
-    ) {
-      this.updateAccount(this.props.account)
-    }
-  }
-
-  updateAccount(account) {
-    this.setAccount(account)
-  }
-
-  setAccount = (account) => {
-    this.setState({
-      account: makeAccount({
-        ...account,
-      })
-    })
   }
 
   componentDidMount() {
@@ -177,6 +169,13 @@ export default class AchForm extends Component {
       conf,
       this.initialize,
     )
+  }
+
+  componentDidUpdate(prevProps) {
+    const { method } = this.props
+    if (prevProps.method !== method && this.isThisMethod()) {
+      this.setState({ loading: false })
+    }
   }
 
   isFormFieldCreated(field) {
@@ -205,23 +204,23 @@ export default class AchForm extends Component {
   }
 
   initialize = () => {
-    const { 
-      instrument, 
-      createAccount = false ,
+    const {
+      instrument,
+      createAccount = false,
       inputStyles = {},
       overrideProps = {},
     } = this.props
-    
+
     const propHelper = new PropertyHelper(overrideProps, inputStyles)
 
     if (!!this.form === false) {
       let conf = configure(this.props.apiOptions)
 
       // eslint-disable-next-line
-      this.form = VGSCollect.create(conf.vaultId, function () { });
+      this.form = VGSCollect.create(conf.vaultId, state => this.finishedLoading(state));
     }
     const prefix = createAccount === true ? "instrument." : ""
-    
+
     this.initForm('bank-name',
       () => this.createFormField(
         "#bank-name .field-space",
@@ -291,7 +290,7 @@ export default class AchForm extends Component {
             { value: 'individual', text: 'Individual' },
           ],
           ...propHelper.overrideCollectProps('bank-account-type'),
-        }, 
+        },
       ))
 
     this.initForm('bank-account-number',
@@ -331,7 +330,7 @@ export default class AchForm extends Component {
       },
       status,
       response: error,
-      loading: false,
+      saving: false,
     })
 
     if (onError !== false && typeof (onError) === 'function') {
@@ -342,7 +341,7 @@ export default class AchForm extends Component {
   onComplete = (response) => {
     const { onComplete } = this.props
     this.setState({
-      loading: false,
+      saving: false,
     })
 
     if (onComplete !== false && typeof (onComplete) === 'function') {
@@ -404,7 +403,7 @@ export default class AchForm extends Component {
     this.setState({
       account: account,
       errors: false,
-      loading: true,
+      saving: true,
       status: false,
       response: false,
     })
@@ -427,6 +426,43 @@ export default class AchForm extends Component {
     this.plaidLink.open()
   }
 
+  isThisMethod = () => {
+    const { method } = this.props
+    return method === PaymentMethods.METHOD_ACH
+  }
+
+  finishedLoading = (formState) => {
+    const { onLoad } = this.props
+    if (this.state.loading === true && this.isThisMethod()) {
+      if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
+        this.setState({ loading: false })
+
+        if (onLoad !== false && typeof (onLoad) === 'function') {
+          onLoad()
+        }
+      }
+    }
+  }
+
+  getSectionDisplayProps = () => {
+    const { loading } = this.state
+    const { loadingState, sectionStyle, cardWidth } = this.props
+
+    const isThisMethod = this.isThisMethod()
+
+    // if the first method os loading hide it but keep the space in the DOM
+    if (isThisMethod === true && !!loadingState === true && loading === true) {
+      return { ...cardWidth, ...sectionStyle, visibility: "hidden" }
+    }
+
+    // if it is another method, hide it from DOM completely
+    if (isThisMethod === false) {
+      return { ...cardWidth, ...sectionStyle, display: "none" }
+    }
+
+    return { ...cardWidth, ...sectionStyle }
+  }
+
   render() {
     const { errors, } = this.state
     const {
@@ -434,124 +470,134 @@ export default class AchForm extends Component {
       onCancel,
       children,
       instrument,
-      sectionStyle,
-      cardWidth = false,
       overrideProps = {},
-      showInlineError = true
+      showInlineError = true,
+      isUpdate
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
 
     return (
-      <section style={!!cardWidth === true ? cardWidth : sectionStyle}>
-        <label className="h3">Paying by ACH</label>
-        {this.props.showCardLink === true &&
-          <a
-            style={this.props.linkStyling}
-            className="pay-by-cc-link"
-            onClick={this.props.changePaymentMethod}>
-            Pay by credit card instead
+      <React.Fragment>
+        {
+          isUpdate === false &&
+          this.state.loading === true &&
+          this.isThisMethod() &&
+          <div className="loader-holder">
+            {this.props.loadingState}
+          </div>
+        }
+        <section style={this.getSectionDisplayProps()}>
+          <label className="h3">Paying by ACH</label>
+          {this.props.showCardLink === true &&
+            <a
+              style={this.props.linkStyling}
+              className="pay-by-cc-link"
+              onClick={this.props.changePaymentMethod}>
+              Pay by credit card instead
           </a>
-        }
-
-        <div id="ach-form" className="form-container">
-          {!!children !== false &&
-            React.createElement(children, {
-              ...this.props,
-              ...this.state,
-            }, null)
           }
-          {!!children === false &&
-            <React.Fragment>
-              <Field
-                id="bank-name"
-                name="bankName"
-                label="Bank Name"
-                defaultValue={getDefaultValue(instrument, 'bankName', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-name")}
-              />
 
-              <Field
-                id="bank-holder-name"
-                name="holderName"
-                label="Account Holder Name"
-                defaultValue={getDefaultValue(instrument, 'bankAccountHolderName', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-holder-name")}
-              />
+          <div id="ach-form" className="form-container">
+            {!!children !== false &&
+              React.createElement(children, {
+                ...this.props,
+                ...this.state,
+              }, null)
+            }
+            {!!children === false &&
+              <React.Fragment>
+                <Field
+                  id="bank-name"
+                  name="bankName"
+                  label="Bank Name"
+                  defaultValue={getDefaultValue(instrument, 'bankName', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-name")}
+                />
 
-              <Field
-                id="bank-postalcode"
-                name="postalCode"
-                label="Postal Code"
-                defaultValue={getDefaultValue(instrument, 'postalcode', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-postalcode")}
-              />
+                <Field
+                  id="bank-holder-name"
+                  name="holderName"
+                  label="Account Holder Name"
+                  defaultValue={getDefaultValue(instrument, 'bankAccountHolderName', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-holder-name")}
+                />
 
-              <Field
-                id="bank-account-country"
-                name="country"
-                label="Bank Country"
-                defaultValue={getDefaultValue(instrument, 'country', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-account-country")}
-              />
+                <Field
+                  id="bank-postalcode"
+                  name="postalCode"
+                  label="Postal Code"
+                  defaultValue={getDefaultValue(instrument, 'postalcode', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-postalcode")}
+                />
 
-              <Field
-                id="bank-account-type"
-                name="bankAccountHolderType"
-                label="Account Type"
-                defaultValue={getDefaultValue(instrument, 'accountHolderType', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-account-type")}
-              />
+                <Field
+                  id="bank-account-country"
+                  name="country"
+                  label="Bank Country"
+                  defaultValue={getDefaultValue(instrument, 'country', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-account-country")}
+                />
 
-              <Field
-                id="bank-routing-number"
-                name="routingNumber"
-                label="Routing Number"
-                defaultValue={getDefaultValue(instrument, 'routingNumber', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-routing-number")}
-              />
+                <Field
+                  id="bank-account-type"
+                  name="bankAccountHolderType"
+                  label="Account Type"
+                  defaultValue={getDefaultValue(instrument, 'accountHolderType', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-account-type")}
+                />
 
-              <Field
-                id="bank-account-number"
-                name="accountNumber"
-                label="Account Number"
-                defaultValue={getDefaultValue(instrument, 'accountNumber', '')}
-                showInlineError={showInlineError}
-                errors={errors}
-                {...propHelper.overrideFieldProps("bank-account-number")}
-              />
-            </React.Fragment>
+                <Field
+                  id="bank-routing-number"
+                  name="routingNumber"
+                  label="Routing Number"
+                  defaultValue={getDefaultValue(instrument, 'routingNumber', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-routing-number")}
+                />
+
+                <Field
+                  id="bank-account-number"
+                  name="accountNumber"
+                  label="Account Number"
+                  defaultValue={getDefaultValue(instrument, 'accountNumber', '')}
+                  showInlineError={showInlineError}
+                  errors={errors}
+                  {...propHelper.overrideFieldProps("bank-account-number")}
+                />
+              </React.Fragment>
+            }
+          </div>
+          <div className="ui clearing divider"></div>
+          {this.props.hideTogglePlaid === false &&
+            <TogglePlaid
+              togglePlaidHandler={this.props.togglePlaidHandler}
+            />
           }
-        </div>
-        <div className="ui clearing divider"></div>
-        {this.props.hideTogglePlaid === false &&
-          <TogglePlaid
-            togglePlaidHandler={this.props.togglePlaidHandler}
-          />
-        }
-        {!!this.props.saveRef === false &&
-          <ButtonGroup
-            onLast={onLast}
-            onCancel={onCancel}
-            finalStep={true}
-            onSubmit={this.onSubmit}
-            buttonStylesPrimary={this.props.buttonStylesPrimary}
-            buttonStylesSecondary={this.props.buttonStylesSecondary}
-          />
-        }
-      </section>
+          {!!this.props.saveRef === false &&
+            <ButtonGroup
+              onLast={onLast}
+              onCancel={onCancel}
+              finalStep={true}
+              onSubmit={this.onSubmit}
+              loading={this.state.saving}
+              buttonStylesPrimary={this.props.buttonStylesPrimary}
+              buttonStylesSecondary={this.props.buttonStylesSecondary}
+            />
+          }
+        </section>
+      </React.Fragment>
     )
   }
 }
