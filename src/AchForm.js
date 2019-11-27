@@ -27,17 +27,7 @@ import configure from './client/VaultConfig'
 
 import { PaymentMethods } from './PaymentMethod'
 
-import _ from 'lodash'
-
-const expectedFormFields = [
-  'bank-routing-number',
-  'bank-account-number',
-  'bank-account-type',
-  'bank-holder-name',
-  'bank-postalcode',
-  'bank-account-country',
-  'bank-name'
-]
+const NUMBER_OF_FIELDS = 7
 
 export default class AchForm extends Component {
   static propTypes = {
@@ -444,7 +434,7 @@ export default class AchForm extends Component {
   finishedLoading = (formState) => {
     const { onLoad } = this.props
     if (this.state.loading === true && this.isThisMethod()) {
-      if (_.intersection(formState, expectedFormFields).length === 0) {
+      if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
         this.setState({ loading: false })
 
         if (onLoad !== false && typeof (onLoad) === 'function') {

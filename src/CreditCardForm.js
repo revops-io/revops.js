@@ -21,8 +21,6 @@ import { ButtonGroup } from './ButtonGroup'
 import * as SharedStyles from './SharedStyles'
 import { linkStyling } from './SharedStyles'
 
-import _ from 'lodash'
-
 import {
   Field,
   configureVault,
@@ -32,7 +30,7 @@ import { Instrument, Account } from './models'
 
 import { PaymentMethods } from './PaymentMethod'
 
-const expectedFormFields = ['card-expdate', 'card-cvc', 'card-number', 'card-name', 'card-cvc']
+const NUMBER_OF_FIELDS = 5
 
 export default class CreditCardForm extends Component {
   static propTypes = {
@@ -349,7 +347,7 @@ export default class CreditCardForm extends Component {
     const { onLoad } = this.props
 
     if (this.state.loading === true && this.isThisMethod()) {
-      if (_.intersection(formState, expectedFormFields).length === 0) {
+      if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
         this.setState({ loading: false })
 
         if (onLoad !== false && typeof (onLoad) === 'function') {

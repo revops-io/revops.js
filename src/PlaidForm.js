@@ -356,9 +356,9 @@ export default class PlaidForm extends Component {
   }
 
   isFinishedLoading = () => {
-    const { method, onLoad } = this.props
+    const { onLoad } = this.props
 
-    if (this.state.loading === true && method === 'plaid') {
+    if (this.state.loading === true && this.isThisMethod()) {
       this.setState({ loading: false })
 
       if (onLoad !== false && typeof (onLoad) === 'function') {
@@ -371,7 +371,7 @@ export default class PlaidForm extends Component {
     const { loading } = this.state
     const { loadingState, sectionStyle, cardWidth, method } = this.props
 
-    const isThisMethod = method === 'plaid'
+    const isThisMethod = this.isThisMethod()
 
     // if the first method os loading hide it but keep the space in the DOM
     if (isThisMethod === true && !!loadingState === true && loading === true) {
