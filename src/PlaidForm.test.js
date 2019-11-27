@@ -73,7 +73,7 @@ describe('The PlaidForm Component', () => {
 
     wrapper.instance().onSubmit()
     expect(wrapper.instance().state.errors).to.equal(false)
-    expect(wrapper.instance().state.loading).to.equal(true)
+    expect(wrapper.instance().state.saving).to.equal(true)
     expect(mockProps.account.saveWithSecureForm.call.length).to.equal(1)
   })
 

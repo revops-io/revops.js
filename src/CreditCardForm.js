@@ -276,7 +276,7 @@ export default class CreditCardForm extends Component {
     const { onComplete } = this.props
 
     this.setState({
-      loading: false,
+      saving: false,
     })
 
     if (onComplete !== false && typeof (onComplete) === 'function') {
@@ -293,7 +293,7 @@ export default class CreditCardForm extends Component {
       },
       status,
       response: error,
-      loading: false,
+      saving: false,
     })
 
     if (onError !== false && typeof (onError) === 'function') {

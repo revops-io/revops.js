@@ -167,6 +167,7 @@ export default class AchForm extends Component {
       account: {},
       errors: false,
       loading: true,
+      saving: false,
     }
     this.form = null
   }
@@ -339,7 +340,7 @@ export default class AchForm extends Component {
       },
       status,
       response: error,
-      loading: false,
+      saving: false,
     })
 
     if (onError !== false && typeof (onError) === 'function') {
@@ -350,7 +351,7 @@ export default class AchForm extends Component {
   onComplete = (response) => {
     const { onComplete } = this.props
     this.setState({
-      loading: false,
+      saving: false,
     })
 
     if (onComplete !== false && typeof (onComplete) === 'function') {
@@ -470,17 +471,6 @@ export default class AchForm extends Component {
     }
 
     return { ...cardWidth, ...sectionStyle }
-  }
-
-  showLoader = () => {
-    if (
-      this.state.loading === true &&
-      this.props.isUpdate === false &&
-      this.isThisMethod()
-    ) {
-      return this.props.loadingState
-    }
-    return null
   }
 
   render() {

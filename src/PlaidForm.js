@@ -147,6 +147,7 @@ export default class PlaidForm extends Component {
     plaidLinkPublicToken: false,
     plaidAccountId: false,
     loaded: false,
+    saving: false,
   }
 
   constructor(props) {
@@ -253,7 +254,7 @@ export default class PlaidForm extends Component {
     const { onComplete } = this.props
 
     this.setState({
-      loading: false,
+      saving: false,
     })
 
     if (onComplete !== false && typeof (onComplete) === 'function') {
@@ -269,7 +270,7 @@ export default class PlaidForm extends Component {
         ...convertAPIError(error.http_status, error),
       },
       response: error,
-      loading: false,
+      saving: false,
     })
 
     if (onError !== false && typeof (onError) === 'function') {
@@ -331,7 +332,7 @@ export default class PlaidForm extends Component {
     // Clear state
     this.setState({
       errors: false,
-      loading: true,
+      saving: true,
       status: false,
       response: false,
     })
@@ -460,7 +461,7 @@ export default class PlaidForm extends Component {
           <div className="ui clearing divider"></div>
           {!!this.props.saveRef === false &&
             <ButtonGroup
-              loading={this.state.loading}
+              loading={this.state.saving}
               onSubmit={this.onSubmit}
               onLast={onLast}
               onCancel={onCancel}
