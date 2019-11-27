@@ -16,7 +16,6 @@ describe('The PlaidForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
-      finishedLoading: jest.fn(),
       ...props,
     }
   }
