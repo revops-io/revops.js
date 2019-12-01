@@ -408,6 +408,14 @@ export default class CreditCardForm extends Component {
     )
   }
 
+  achLink = () => (
+    <a style={linkStyling}
+      className="pay-by-ach-link"
+      onClick={this.props.changePaymentMethod}>
+      Pay by ACH instead
+    </a>
+  )
+
   render() {
     const { errors } = this.state
     const {
@@ -417,7 +425,10 @@ export default class CreditCardForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
-      isUpdate = false
+      isUpdate = false,
+      achLink = null,
+      creditCardLabel = <label className="cc-label">Paying by Credit Card</label>
+
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -433,14 +444,9 @@ export default class CreditCardForm extends Component {
           </div>
         }
         <section style={this.getSectionDisplayProps()}>
-          <label className="h3">Paying by credit card</label>
+          {creditCardLabel}
           {this.props.showACHLink === true &&
-            <a
-              className="pay-by-ach-link"
-              style={linkStyling}
-              onClick={this.props.changePaymentMethod}>
-              Pay by ACH instead
-          </a>
+            !!achLink === true ? achLink : this.achLink()
           }
           <div className="form-container">
             <div id="card-form" >

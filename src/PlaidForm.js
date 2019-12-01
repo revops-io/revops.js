@@ -166,13 +166,14 @@ export default class PlaidForm extends Component {
       this.initialize,
     )
 
-    configurePlaid(
-      conf.env,
-      (plaidLink) => {
-        this.onPlaidLoad(plaidLink)
-      },
-      this.onPlaidSelect,
-    )
+    if (this.props.apiOptions)
+      configurePlaid(
+        conf.env,
+        (plaidLink) => {
+          this.onPlaidLoad(plaidLink)
+        },
+        this.onPlaidSelect,
+      )
   }
 
   componentDidUpdate(prevProps) {
@@ -399,7 +400,12 @@ export default class PlaidForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
-      isUpdate
+      isUpdate,
+      sectionStyle,
+      cardWidth = false,
+      achLink,
+      showACHLink
+
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -452,16 +458,20 @@ export default class PlaidForm extends Component {
             />
           </div>
 
-          <TogglePlaid
-            style={this.props.linkStyling}
-            togglePlaidHandler={this.props.togglePlaidHandler}
-            plaidSelected={true}
-          />
+          {this.props.showACHLink === true &&
+            !!achLink === true
+            ? achLink
+            : <TogglePlaid
+              style={this.props.linkStyling}
+              togglePlaidHandler={this.props.togglePlaidHandler}
+              plaidSelected={true}
+            />
+          }
 
           <div className="ui clearing divider"></div>
           {!!this.props.saveRef === false &&
             <ButtonGroup
-              loading={this.state.saving}
+              loading={this.state.loading}
               onSubmit={this.onSubmit}
               onLast={onLast}
               onCancel={onCancel}

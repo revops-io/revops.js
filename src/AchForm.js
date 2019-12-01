@@ -422,6 +422,14 @@ export default class AchForm extends Component {
     )
   }
 
+  creditCardLink = () => (
+    <a style={this.props.linkStyling}
+      className="pay-by-cc-link"
+      onClick={this.props.changePaymentMethod}>
+      Pay by credit card instead
+    </a>
+  )
+
   openPlaid = () => {
     this.plaidLink.open()
   }
@@ -472,7 +480,10 @@ export default class AchForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
-      isUpdate
+      isUpdate,
+      achLabel = <label className="h3">Paying by ACH</label>,
+      creditCardLink,
+      plaidLink
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -488,16 +499,10 @@ export default class AchForm extends Component {
           </div>
         }
         <section style={this.getSectionDisplayProps()}>
-          <label className="h3">Paying by ACH</label>
+          {achLabel}
           {this.props.showCardLink === true &&
-            <a
-              style={this.props.linkStyling}
-              className="pay-by-cc-link"
-              onClick={this.props.changePaymentMethod}>
-              Pay by credit card instead
-          </a>
+            !!creditCardLink === true ? creditCardLink : this.creditCardLink()
           }
-
           <div id="ach-form" className="form-container">
             {!!children !== false &&
               React.createElement(children, {
@@ -581,9 +586,9 @@ export default class AchForm extends Component {
           </div>
           <div className="ui clearing divider"></div>
           {this.props.hideTogglePlaid === false &&
-            <TogglePlaid
-              togglePlaidHandler={this.props.togglePlaidHandler}
-            />
+            !!plaidLink === true
+            ? plaidLink
+            : <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
           }
           {!!this.props.saveRef === false &&
             <ButtonGroup
@@ -591,7 +596,6 @@ export default class AchForm extends Component {
               onCancel={onCancel}
               finalStep={true}
               onSubmit={this.onSubmit}
-              loading={this.state.saving}
               buttonStylesPrimary={this.props.buttonStylesPrimary}
               buttonStylesSecondary={this.props.buttonStylesSecondary}
             />
