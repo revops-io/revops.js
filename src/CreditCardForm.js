@@ -134,7 +134,13 @@ export default class CreditCardForm extends Component {
     loadingState: PropTypes.node,
 
     /** internal system flag to indicate that the system is loading an Instrument to update */
-    isUpdate: PropTypes.bool
+    isUpdate: PropTypes.bool,
+
+    /** User defined header used for the credit card payment method */
+    creditCardLabel: PropTypes.node,
+
+    /** Customized link that switches to the ACH payment method */
+    achLink: PropTypes.node,
 
   }
 
@@ -428,9 +434,9 @@ export default class CreditCardForm extends Component {
       overrideProps = {},
       showInlineError = true,
       isUpdate = false,
-      achLink,
       creditCardLabel = <label className="cc-label">Paying by Credit Card</label>,
       showACHLink = true,
+      achLink,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)

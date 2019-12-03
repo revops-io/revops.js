@@ -130,7 +130,23 @@ export default class PlaidForm extends Component {
     loadingState: PropTypes.node,
 
     /** internal system flag to indicate that the system is loading an Instrument to update */
-    isUpdate: PropTypes.bool
+    isUpdate: PropTypes.bool,
+
+    /** A boolean to show/hide change to credit card link. */
+    showCardLink: PropTypes.bool,
+
+    /** Boolean prop for showing/hiding ACH Link */
+    showACHLink: PropTypes.bool,
+
+    /** User defined header used for the Plaid payment method */
+    plaidLabel: PropTypes.node,
+
+    /** Customized link that switches to the ACH payment method */
+    achLink: PropTypes.node,
+
+    /** Customized link that switches to the credit card payment method */
+    creditCardLink: PropTypes.node,
+
   }
 
   static defaultProps = {
@@ -409,11 +425,11 @@ export default class PlaidForm extends Component {
       overrideProps = {},
       showInlineError = true,
       isUpdate,
-      achLink,
       plaidLabel = <label className="ach-label">Paying by ACH</label>,
-      creditCardLink,
       showCardLink = true,
-      showACHLink = true
+      creditCardLink,
+      showACHLink = true,
+      achLink,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)

@@ -137,7 +137,16 @@ export default class AchForm extends Component {
     loadingState: PropTypes.node,
 
     /** internal system flag to indicate that the system is loading an Instrument to update */
-    isUpdate: PropTypes.bool
+    isUpdate: PropTypes.bool,
+
+    /** User defined header used for the ACH  payment method */
+    achLabel: PropTypes.node,
+
+    /** Customized link that switches to the credit card payment method */
+    creditCardLink: PropTypes.node,
+
+    /** Customized link that switches to the Plaid payment method */
+    plaidLink: PropTypes.node,
   }
 
   static defaultProps = {
@@ -482,8 +491,9 @@ export default class AchForm extends Component {
       showInlineError = true,
       isUpdate,
       achLabel = <label className="ach-label">Paying by ACH</label>,
-      creditCardLink,
       showCardLink = true,
+      creditCardLink,
+      hideTogglePlaid,
       plaidLink
     } = this.props
 
@@ -586,7 +596,7 @@ export default class AchForm extends Component {
             }
           </div>
           <div className="ui clearing divider"></div>
-          {this.props.hideTogglePlaid === false && !!plaidLink === true
+          {hideTogglePlaid === false && !!plaidLink === true
             ? plaidLink
             : <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
           }
