@@ -157,7 +157,6 @@ export default class CreditCardForm extends Component {
       loading: true,
     }
     this.form = {};
-    this.timeOut = null
   }
 
   componentDidMount() {
@@ -166,13 +165,6 @@ export default class CreditCardForm extends Component {
       apiOptions,
       this.initialize,
     )
-
-    this.timeOut = setTimeout(() => {
-      logInfo("Loaded confirmation not received, clearing loading state after 5 seconds", apiOptions.loggingLevel)
-      this.setState({ loading: false })
-    }, 5000)
-
-    window.addEventListener("message", (event) => console.log(event))
   }
 
 
@@ -180,10 +172,6 @@ export default class CreditCardForm extends Component {
     if (document.getElementById(id)) {
       fieldRender()
     }
-  }
-
-  componentWillUnmount() {
-    clearTimeout(this.timeOut)
   }
 
   componentDidUpdate(prevProps) {
@@ -363,7 +351,6 @@ export default class CreditCardForm extends Component {
     if (this.state.loading === true && this.isThisMethod()) {
       if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
         this.setState({ loading: false })
-        clearTimeout(this.timeOut)
 
         if (onLoad !== false && typeof (onLoad) === 'function') {
           onLoad()
