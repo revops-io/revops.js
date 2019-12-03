@@ -370,7 +370,7 @@ export default class PlaidForm extends Component {
 
   getSectionDisplayProps = () => {
     const { loading } = this.state
-    const { loadingState, sectionStyle, cardWidth, method } = this.props
+    const { loadingState, sectionStyle, cardWidth } = this.props
 
     const isThisMethod = this.isThisMethod()
 
@@ -392,6 +392,14 @@ export default class PlaidForm extends Component {
     return method === PaymentMethods.METHOD_PLAID
   }
 
+  creditCardLink = () => (
+    <a style={this.props.linkStyling}
+      className="pay-by-cc-link"
+      onClick={this.props.changePaymentMethod}>
+      Pay by credit card instead
+    </a>
+  )
+
   render() {
     const { errors, } = this.state
     const {
@@ -401,11 +409,11 @@ export default class PlaidForm extends Component {
       overrideProps = {},
       showInlineError = true,
       isUpdate,
-      sectionStyle,
-      cardWidth = false,
       achLink,
-      showACHLink
-
+      plaidLabel = <label className="ach-label">Paying by ACH</label>,
+      creditCardLink,
+      showCardLink = true,
+      showACHLink = true
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -421,13 +429,10 @@ export default class PlaidForm extends Component {
           </div>
         }
         <section style={this.getSectionDisplayProps()}>
-          <label className="h3">Paying by ACH</label>
-          <a
-            className="pay-by-cc-link"
-            style={this.props.linkStyling}
-            onClick={this.props.changePaymentMethod}>
-            Pay by credit card instead
-        </a>
+          {plaidLabel}
+          {showCardLink === true &&
+            !!creditCardLink === true ? creditCardLink : this.creditCardLink()
+          }
           <button
             className="btn-primary centered single"
             style={this.props.buttonStylesPrimary}
@@ -458,8 +463,7 @@ export default class PlaidForm extends Component {
             />
           </div>
 
-          {this.props.showACHLink === true &&
-            !!achLink === true
+          {showACHLink === true && !!achLink === true
             ? achLink
             : <TogglePlaid
               style={this.props.linkStyling}

@@ -29,6 +29,7 @@ import {
 import { Instrument, Account } from './models'
 
 import { PaymentMethods } from './PaymentMethod'
+import { logInfo } from './helpers/Logger'
 
 const NUMBER_OF_FIELDS = 5
 
@@ -156,13 +157,22 @@ export default class CreditCardForm extends Component {
       loading: true,
     }
     this.form = {};
+    this.timeOut = null
   }
 
   componentDidMount() {
+    const { apiOptions = {} } = this.props
     configureVault(
-      this.props.apiOptions,
+      apiOptions,
       this.initialize,
     )
+
+    this.timeOut = setTimeout(() => {
+      logInfo("Loaded confirmation not received, clearing loading state after 5 seconds", apiOptions.loggingLevel)
+      this.setState({ loading: false })
+    }, 5000)
+
+    window.addEventListener("message", (event) => console.log(event))
   }
 
 
@@ -170,6 +180,10 @@ export default class CreditCardForm extends Component {
     if (document.getElementById(id)) {
       fieldRender()
     }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeOut)
   }
 
   componentDidUpdate(prevProps) {
@@ -349,6 +363,7 @@ export default class CreditCardForm extends Component {
     if (this.state.loading === true && this.isThisMethod()) {
       if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
         this.setState({ loading: false })
+        clearTimeout(this.timeOut)
 
         if (onLoad !== false && typeof (onLoad) === 'function') {
           onLoad()
@@ -426,9 +441,9 @@ export default class CreditCardForm extends Component {
       overrideProps = {},
       showInlineError = true,
       isUpdate = false,
-      achLink = null,
-      creditCardLabel = <label className="cc-label">Paying by Credit Card</label>
-
+      achLink,
+      creditCardLabel = <label className="cc-label">Paying by Credit Card</label>,
+      showACHLink = true,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -445,7 +460,7 @@ export default class CreditCardForm extends Component {
         }
         <section style={this.getSectionDisplayProps()}>
           {creditCardLabel}
-          {this.props.showACHLink === true &&
+          {showACHLink === true &&
             !!achLink === true ? achLink : this.achLink()
           }
           <div className="form-container">

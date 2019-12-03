@@ -481,8 +481,9 @@ export default class AchForm extends Component {
       overrideProps = {},
       showInlineError = true,
       isUpdate,
-      achLabel = <label className="h3">Paying by ACH</label>,
+      achLabel = <label className="ach-label">Paying by ACH</label>,
       creditCardLink,
+      showCardLink = true,
       plaidLink
     } = this.props
 
@@ -500,7 +501,7 @@ export default class AchForm extends Component {
         }
         <section style={this.getSectionDisplayProps()}>
           {achLabel}
-          {this.props.showCardLink === true &&
+          {showCardLink === true &&
             !!creditCardLink === true ? creditCardLink : this.creditCardLink()
           }
           <div id="ach-form" className="form-container">
@@ -585,8 +586,7 @@ export default class AchForm extends Component {
             }
           </div>
           <div className="ui clearing divider"></div>
-          {this.props.hideTogglePlaid === false &&
-            !!plaidLink === true
+          {this.props.hideTogglePlaid === false && !!plaidLink === true
             ? plaidLink
             : <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
           }
