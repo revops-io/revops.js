@@ -29,6 +29,7 @@ import {
 import { Instrument, Account } from './models'
 
 import { PaymentMethods } from './PaymentMethod'
+import { logInfo } from './helpers/Logger'
 
 const NUMBER_OF_FIELDS = 5
 
@@ -133,7 +134,13 @@ export default class CreditCardForm extends Component {
     loadingState: PropTypes.node,
 
     /** internal system flag to indicate that the system is loading an Instrument to update */
-    isUpdate: PropTypes.bool
+    isUpdate: PropTypes.bool,
+
+    /** User defined header used for the credit card payment method */
+    creditCardLabel: PropTypes.node,
+
+    /** Customized link that switches to the ACH payment method */
+    achLink: PropTypes.node,
 
   }
 
@@ -159,8 +166,9 @@ export default class CreditCardForm extends Component {
   }
 
   componentDidMount() {
+    const { apiOptions = {} } = this.props
     configureVault(
-      this.props.apiOptions,
+      apiOptions,
       this.initialize,
     )
   }
@@ -408,6 +416,14 @@ export default class CreditCardForm extends Component {
     )
   }
 
+  achLink = () => (
+    <a style={linkStyling}
+      className="pay-by-ach-link"
+      onClick={this.props.changePaymentMethod}>
+      Pay by ACH instead
+    </a>
+  )
+
   render() {
     const { errors } = this.state
     const {
@@ -417,7 +433,10 @@ export default class CreditCardForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
-      isUpdate = false
+      isUpdate = false,
+      creditCardLabel = <label className="cc-label">Paying by Credit Card</label>,
+      showACHLink = true,
+      achLink,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -433,14 +452,9 @@ export default class CreditCardForm extends Component {
           </div>
         }
         <section style={this.getSectionDisplayProps()}>
-          <label className="h3">Paying by credit card</label>
-          {this.props.showACHLink === true &&
-            <a
-              className="pay-by-ach-link"
-              style={linkStyling}
-              onClick={this.props.changePaymentMethod}>
-              Pay by ACH instead
-          </a>
+          {creditCardLabel}
+          {showACHLink === true &&
+            !!achLink === true ? achLink : this.achLink()
           }
           <div className="form-container">
             <div id="card-form" >

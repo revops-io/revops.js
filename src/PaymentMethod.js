@@ -151,7 +151,6 @@ export default class PaymentMethod extends Component {
           : props.methods[0] || PaymentMethods.METHOD_CARD
     }
     this.form = null
-    this.timeOut = null
   }
 
   validateMethods(props) {

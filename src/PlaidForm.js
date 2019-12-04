@@ -130,7 +130,23 @@ export default class PlaidForm extends Component {
     loadingState: PropTypes.node,
 
     /** internal system flag to indicate that the system is loading an Instrument to update */
-    isUpdate: PropTypes.bool
+    isUpdate: PropTypes.bool,
+
+    /** A boolean to show/hide change to credit card link. */
+    showCardLink: PropTypes.bool,
+
+    /** Boolean prop for showing/hiding ACH Link */
+    showACHLink: PropTypes.bool,
+
+    /** User defined header used for the Plaid payment method */
+    plaidLabel: PropTypes.node,
+
+    /** Customized link that switches to the ACH payment method */
+    achLink: PropTypes.node,
+
+    /** Customized link that switches to the credit card payment method */
+    creditCardLink: PropTypes.node,
+
   }
 
   static defaultProps = {
@@ -166,13 +182,14 @@ export default class PlaidForm extends Component {
       this.initialize,
     )
 
-    configurePlaid(
-      conf.env,
-      (plaidLink) => {
-        this.onPlaidLoad(plaidLink)
-      },
-      this.onPlaidSelect,
-    )
+    if (this.props.apiOptions)
+      configurePlaid(
+        conf.env,
+        (plaidLink) => {
+          this.onPlaidLoad(plaidLink)
+        },
+        this.onPlaidSelect,
+      )
   }
 
   componentDidUpdate(prevProps) {
@@ -369,7 +386,7 @@ export default class PlaidForm extends Component {
 
   getSectionDisplayProps = () => {
     const { loading } = this.state
-    const { loadingState, sectionStyle, cardWidth, method } = this.props
+    const { loadingState, sectionStyle, cardWidth } = this.props
 
     const isThisMethod = this.isThisMethod()
 
@@ -391,6 +408,14 @@ export default class PlaidForm extends Component {
     return method === PaymentMethods.METHOD_PLAID
   }
 
+  creditCardLink = () => (
+    <a style={this.props.linkStyling}
+      className="pay-by-cc-link"
+      onClick={this.props.changePaymentMethod}>
+      Pay by credit card instead
+    </a>
+  )
+
   render() {
     const { errors, } = this.state
     const {
@@ -399,7 +424,12 @@ export default class PlaidForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
-      isUpdate
+      isUpdate,
+      plaidLabel = <label className="ach-label">Paying by ACH</label>,
+      showCardLink = true,
+      creditCardLink,
+      showACHLink = true,
+      achLink,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -415,13 +445,10 @@ export default class PlaidForm extends Component {
           </div>
         }
         <section style={this.getSectionDisplayProps()}>
-          <label className="h3">Paying by ACH</label>
-          <a
-            className="pay-by-cc-link"
-            style={this.props.linkStyling}
-            onClick={this.props.changePaymentMethod}>
-            Pay by credit card instead
-        </a>
+          {plaidLabel}
+          {showCardLink === true &&
+            !!creditCardLink === true ? creditCardLink : this.creditCardLink()
+          }
           <button
             className="btn-primary centered single"
             style={this.props.buttonStylesPrimary}
@@ -452,16 +479,19 @@ export default class PlaidForm extends Component {
             />
           </div>
 
-          <TogglePlaid
-            style={this.props.linkStyling}
-            togglePlaidHandler={this.props.togglePlaidHandler}
-            plaidSelected={true}
-          />
+          {showACHLink === true && !!achLink === true
+            ? achLink
+            : <TogglePlaid
+              style={this.props.linkStyling}
+              togglePlaidHandler={this.props.togglePlaidHandler}
+              plaidSelected={true}
+            />
+          }
 
           <div className="ui clearing divider"></div>
           {!!this.props.saveRef === false &&
             <ButtonGroup
-              loading={this.state.saving}
+              loading={this.state.loading}
               onSubmit={this.onSubmit}
               onLast={onLast}
               onCancel={onCancel}
