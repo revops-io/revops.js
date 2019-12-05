@@ -141,20 +141,20 @@ describe('The PlaidForm Component', () => {
     expect(wrapper.instance().getACHLink()).to.equal("")
   })
 
-  it('Should NOT return a ACH link ', () => {
-    const mockProps = generateMockProps({ achLink: null })
+  it('Should NOT return an ACH link ', () => {
+    const mockProps = generateMockProps({ showACHLink: false })
     const wrapper = shallow(<PlaidForm  {...mockProps} />)
 
     expect(wrapper.instance().getACHLink()).to.equal(null)
 
-    wrapper.setProps({ achLink: false })
+    wrapper.setProps({ achLink: false,  showACHLink: true })
     expect(wrapper.instance().getACHLink()).to.equal(false)
 
-    wrapper.setProps({ achLink: undefined, showACHLink: false })
+    wrapper.setProps({ achLink: null, showACHLink: true })
     expect(wrapper.instance().getACHLink()).to.equal(null)
 
-    wrapper.setProps({ achLink: false })
-    expect(wrapper.instance().getACHLink()).to.equal(null)
+    wrapper.setProps({ achLink: false,  showACHLink: true })
+    expect(wrapper.instance().getACHLink()).to.equal(false)
   })
 
   it('Should return a custom label', () => {

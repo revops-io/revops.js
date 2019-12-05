@@ -90,19 +90,20 @@ describe('The AchForm Component', () => {
   })
 
   it('Should NOT return a CreditCard link ', () => {
-    const mockProps = generateMockProps({ creditCardLink: null })
+    const mockProps = generateMockProps({ showCardLink: false })
     const wrapper = shallow(<AchForm  {...mockProps} />)
 
     expect(wrapper.instance().getCreditCardLink()).to.equal(null)
 
-    wrapper.setProps({ creditCardLink: false })
+    wrapper.setProps({ creditCardLink: <p></p>, showCardLink: false})
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+
+    wrapper.setProps({ creditCardLink: false, showCardLink: true })
     expect(wrapper.instance().getCreditCardLink()).to.equal(false)
 
-    wrapper.setProps({ creditCardLink: undefined, showCardLink: false })
+    wrapper.setProps({ creditCardLink: null, showCardLink: true })
     expect(wrapper.instance().getCreditCardLink()).to.equal(null)
 
-    wrapper.setProps({ showCardLink: false })
-    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
   })
 
   it('Should get the default Plaid link', () => {
@@ -124,19 +125,19 @@ describe('The AchForm Component', () => {
   })
 
   it('Should NOT return a Plaid link ', () => {
-    const mockProps = generateMockProps({ plaidLink: null })
+    const mockProps = generateMockProps({ hideTogglePlaid: true })
     const wrapper = shallow(<AchForm  {...mockProps} />)
 
     expect(wrapper.instance().getPlaidLink()).to.equal(null)
 
-    wrapper.setProps({ plaidLink: false })
+    wrapper.setProps({ plaidLink: <p></p>, hideTogglePlaid: true  })
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: null, hideTogglePlaid: false })
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: false, hideTogglePlaid: false })
     expect(wrapper.instance().getPlaidLink()).to.equal(false)
-
-    wrapper.setProps({ plaidLink: undefined, hideTogglePlaid: true })
-    expect(wrapper.instance().getPlaidLink()).to.equal(null)
-
-    wrapper.setProps({ plaidLink: false })
-    expect(wrapper.instance().getPlaidLink()).to.equal(null)
   })
 
   it('Should return a custom label', () => {
