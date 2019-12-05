@@ -122,4 +122,10 @@ describe('The CreditCardForm Component', () => {
     expect(wrapper.instance().getACHLink()).to.equal(null)
   })
 
+  it('Should return a custom label', () => {
+    const mockProps = generateMockProps({ creditCardLabel: <p className="custom-label"></p> })
+    const wrapper = shallow(<CreditCardForm  {...mockProps} />)
+
+    expect(wrapper.find('.custom-label').length).to.equal(1)
+  })
 })

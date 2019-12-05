@@ -32,6 +32,7 @@ describe('The AchForm Component', () => {
     expect(wrapper.length).to.equal(1)
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
+    expect(wrapper.find('.ach-label').length).to.equal(1)
   })
 
   it('should not render button group when saveRef is defined', () => {
@@ -136,6 +137,13 @@ describe('The AchForm Component', () => {
 
     wrapper.setProps({ plaidLink: false })
     expect(wrapper.instance().getPlaidLink()).to.equal(null)
+  })
+
+  it('Should return a custom label', () => {
+    const mockProps = generateMockProps({ achLabel: <p className="custom-label"></p> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.find('.custom-label').length).to.equal(1)
   })
 
 })
