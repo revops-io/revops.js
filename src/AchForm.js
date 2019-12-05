@@ -439,6 +439,34 @@ export default class AchForm extends Component {
     </a>
   )
 
+  getCreditCardLink = () => {
+    const {
+      showCardLink = true,
+      creditCardLink = this.creditCardLink(),
+    } = this.props
+
+    if(showCardLink === false){
+      return null
+    }
+    return creditCardLink
+  }
+
+  getPlaidLink = () => {
+    const {
+      hideTogglePlaid = false,
+      plaidLink = this.plaidLink(),
+    } = this.props
+
+    if(hideTogglePlaid === true){
+      return null
+    }
+    return plaidLink
+  }
+
+  plaidLink = () => (
+    <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
+  )
+
   openPlaid = () => {
     this.plaidLink.open()
   }
@@ -491,10 +519,6 @@ export default class AchForm extends Component {
       showInlineError = true,
       isUpdate,
       achLabel = <label className="ach-label">Paying by ACH</label>,
-      showCardLink = true,
-      creditCardLink,
-      hideTogglePlaid,
-      plaidLink
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -511,9 +535,7 @@ export default class AchForm extends Component {
         }
         <section style={this.getSectionDisplayProps()}>
           {achLabel}
-          {showCardLink === true &&
-            !!creditCardLink === true ? creditCardLink : this.creditCardLink()
-          }
+          {this.getCreditCardLink()}
           <div id="ach-form" className="form-container">
             {!!children !== false &&
               React.createElement(children, {
@@ -596,10 +618,7 @@ export default class AchForm extends Component {
             }
           </div>
           <div className="ui clearing divider"></div>
-          {hideTogglePlaid === false && !!plaidLink === true
-            ? plaidLink
-            : <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
-          }
+          {this.getPlaidLink()}
           {!!this.props.saveRef === false &&
             <ButtonGroup
               onLast={onLast}

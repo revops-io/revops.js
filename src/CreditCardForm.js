@@ -424,6 +424,18 @@ export default class CreditCardForm extends Component {
     </a>
   )
 
+  getACHLink = () => {
+    const {
+      showACHLink = true,
+      achLink = this.achLink(), 
+    } = this.props
+
+    if(showACHLink === false){
+      return null
+    }
+    return achLink
+  }  
+
   render() {
     const { errors } = this.state
     const {
@@ -435,8 +447,6 @@ export default class CreditCardForm extends Component {
       showInlineError = true,
       isUpdate = false,
       creditCardLabel = <label className="cc-label">Paying by Credit Card</label>,
-      showACHLink = true,
-      achLink,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -453,9 +463,7 @@ export default class CreditCardForm extends Component {
         }
         <section style={this.getSectionDisplayProps()}>
           {creditCardLabel}
-          {showACHLink === true &&
-            !!achLink === true ? achLink : this.achLink()
-          }
+          {this.getACHLink()}
           <div className="form-container">
             <div id="card-form" >
               {!!children !== false &&

@@ -15,6 +15,8 @@ describe('The AchForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
+      hideTogglePlaid: false,
+      showCardLink: true,
       instrument: {
         saveWithSecureForm: jest.fn(),
       },
@@ -30,6 +32,7 @@ describe('The AchForm Component', () => {
     expect(wrapper.length).to.equal(1)
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
+    expect(wrapper.find('.ach-label').length).to.equal(1)
   })
 
   it('should not render button group when saveRef is defined', () => {
@@ -67,4 +70,81 @@ describe('The AchForm Component', () => {
     expect(wrapper.instance().state.status).to.equal(false)
     expect(wrapper.instance().state.response).to.equal(false)
   })
+
+  it('Should get the default CreditCard link', () => {
+    const mockProps = generateMockProps({})
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.find('.pay-by-cc-link').length).to.equal(1)
+  })
+
+  it('Should return the customized CreditCard link ', () => {
+    const mockProps = generateMockProps({ creditCardLink: <p></p> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    const link = wrapper.instance().getCreditCardLink()
+    expect(link.type).to.equal('p')
+
+    wrapper.setProps({ creditCardLink: "" })
+    expect(wrapper.instance().getCreditCardLink()).to.equal("")
+  })
+
+  it('Should NOT return a CreditCard link ', () => {
+    const mockProps = generateMockProps({ showCardLink: false })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+
+    wrapper.setProps({ creditCardLink: <p></p>, showCardLink: false})
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+
+    wrapper.setProps({ creditCardLink: false, showCardLink: true })
+    expect(wrapper.instance().getCreditCardLink()).to.equal(false)
+
+    wrapper.setProps({ creditCardLink: null, showCardLink: true })
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+
+  })
+
+  it('Should get the default Plaid link', () => {
+    const mockProps = generateMockProps({})
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.find('TogglePlaid').length).to.equal(1)
+  })
+
+  it('Should return the customized Plaid link ', () => {
+    const mockProps = generateMockProps({ plaidLink: <p></p> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    const link = wrapper.instance().getPlaidLink()
+    expect(link.type).to.equal('p')
+
+    wrapper.setProps({ plaidLink: "" })
+    expect(wrapper.instance().getPlaidLink()).to.equal("")
+  })
+
+  it('Should NOT return a Plaid link ', () => {
+    const mockProps = generateMockProps({ hideTogglePlaid: true })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: <p></p>, hideTogglePlaid: true  })
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: null, hideTogglePlaid: false })
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: false, hideTogglePlaid: false })
+    expect(wrapper.instance().getPlaidLink()).to.equal(false)
+  })
+
+  it('Should return a custom label', () => {
+    const mockProps = generateMockProps({ achLabel: <p className="custom-label"></p> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.find('.custom-label').length).to.equal(1)
+  })
+
 })
