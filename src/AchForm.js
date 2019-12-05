@@ -439,7 +439,7 @@ export default class AchForm extends Component {
     </a>
   )
 
-  getCCLink = () => {
+  getCreditCardLink = () => {
     const {
       showCardLink = true,
       creditCardLink = this.creditCardLink(),
@@ -535,7 +535,7 @@ export default class AchForm extends Component {
         }
         <section style={this.getSectionDisplayProps()}>
           {achLabel}
-          {this.getCCLink()}
+          {this.getCreditCardLink()}
           <div id="ach-form" className="form-container">
             {!!children !== false &&
               React.createElement(children, {

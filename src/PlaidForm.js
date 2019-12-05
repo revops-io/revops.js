@@ -416,36 +416,38 @@ export default class PlaidForm extends Component {
     </a>
   )
 
-  getCCLink = () => {
+  getCreditCardLink = () => {
     const {
       showCardLink = true,
       creditCardLink = this.creditCardLink(),
     } = this.props
 
-    if(showCardLink === false){
+    if (showCardLink === false) {
       return null
     }
     return creditCardLink
   }
-  
 
   getACHLink = () => {
     const {
       showACHLink = true,
-      achLink = this.achLink(), 
+      achLink = this.achLink(),
     } = this.props
 
-    if(showACHLink === false){
+    if (showACHLink === false) {
       return null
     }
     return achLink
-  } 
+  }
 
   achLink = () => (
-    <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
+    <TogglePlaid
+      style={this.props.linkStyling}
+      togglePlaidHandler={this.props.togglePlaidHandler}
+      plaidSelected={true}
+    />
   )
-
-
+  
   render() {
     const { errors, } = this.state
     const {
@@ -456,10 +458,6 @@ export default class PlaidForm extends Component {
       showInlineError = true,
       isUpdate,
       plaidLabel = <label className="ach-label">Paying by ACH</label>,
-      showCardLink = true,
-      creditCardLink,
-      showACHLink = true,
-      achLink,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -476,7 +474,7 @@ export default class PlaidForm extends Component {
         }
         <section style={this.getSectionDisplayProps()}>
           {plaidLabel}
-          {this.getCCLink()}
+          {this.getCreditCardLink()}
           <button
             className="btn-primary centered single"
             style={this.props.buttonStylesPrimary}
