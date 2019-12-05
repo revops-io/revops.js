@@ -15,6 +15,8 @@ describe('The AchForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
+      hideTogglePlaid: false,
+      showCardLink: true,
       instrument: {
         saveWithSecureForm: jest.fn(),
       },
@@ -67,4 +69,73 @@ describe('The AchForm Component', () => {
     expect(wrapper.instance().state.status).to.equal(false)
     expect(wrapper.instance().state.response).to.equal(false)
   })
+
+  it('Should get the default CreditCard link', () => {
+    const mockProps = generateMockProps({})
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.find('.pay-by-cc-link').length).to.equal(1)
+  })
+
+  it('Should return the customized CreditCard link ', () => {
+    const mockProps = generateMockProps({ creditCardLink: <p></p> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    const link = wrapper.instance().getCreditCardLink()
+    expect(link.type).to.equal('p')
+
+    wrapper.setProps({ creditCardLink: "" })
+    expect(wrapper.instance().getCreditCardLink()).to.equal("")
+  })
+
+  it('Should NOT return a CreditCard link ', () => {
+    const mockProps = generateMockProps({ creditCardLink: null })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+
+    wrapper.setProps({ creditCardLink: false })
+    expect(wrapper.instance().getCreditCardLink()).to.equal(false)
+
+    wrapper.setProps({ creditCardLink: undefined, showCardLink: false })
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+
+    wrapper.setProps({ showCardLink: false })
+    expect(wrapper.instance().getCreditCardLink()).to.equal(null)
+  })
+
+  it('Should get the default Plaid link', () => {
+    const mockProps = generateMockProps({})
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.find('TogglePlaid').length).to.equal(1)
+  })
+
+  it('Should return the customized Plaid link ', () => {
+    const mockProps = generateMockProps({ plaidLink: <p></p> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    const link = wrapper.instance().getPlaidLink()
+    expect(link.type).to.equal('p')
+
+    wrapper.setProps({ plaidLink: "" })
+    expect(wrapper.instance().getPlaidLink()).to.equal("")
+  })
+
+  it('Should NOT return a Plaid link ', () => {
+    const mockProps = generateMockProps({ plaidLink: null })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: false })
+    expect(wrapper.instance().getPlaidLink()).to.equal(false)
+
+    wrapper.setProps({ plaidLink: undefined, hideTogglePlaid: true })
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+
+    wrapper.setProps({ plaidLink: false })
+    expect(wrapper.instance().getPlaidLink()).to.equal(null)
+  })
+
 })

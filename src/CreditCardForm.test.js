@@ -11,13 +11,15 @@ describe('The CreditCardForm Component', () => {
       onNext: jest.fn(),
       onError: jest.fn(),
       publicKey: 'pk_test-1234',
+      showACHLink: true,
       account: {
         id: "test",
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
       ...props,
-    }}
+    }
+  }
   it('CreditCardForm should render without crashing', () => {
     const mockProps = generateMockProps({})
     const wrapper = shallow(<CreditCardForm  {...mockProps} />
@@ -32,7 +34,7 @@ describe('The CreditCardForm Component', () => {
   })
 
   it('should not render button group when saveRef is defined', () => {
-    const mockProps = generateMockProps({saveRef: {}})
+    const mockProps = generateMockProps({ saveRef: {} })
     const wrapper = shallow(<CreditCardForm  {...mockProps} />)
     expect(wrapper.find('ButtonGroup').length).to.equal(0)
   })
@@ -76,7 +78,7 @@ describe('The CreditCardForm Component', () => {
       status: null,
       response: null,
     })
-    
+
     wrapper.instance().onSubmit()
     expect(wrapper.instance().state.errors).to.equal(false)
     expect(wrapper.instance().state.saving).to.equal(true)
@@ -84,4 +86,40 @@ describe('The CreditCardForm Component', () => {
     expect(wrapper.instance().state.response).to.equal(false)
     expect(mockProps.account.saveWithSecureForm.call.length).to.equal(1)
   })
+
+  it('Should get the default link', () => {
+    const mockProps = generateMockProps({})
+    const wrapper = shallow(<CreditCardForm  {...mockProps} />)
+
+    expect(wrapper.find('.pay-by-ach-link').length).to.equal(1)
+  })
+
+
+  it('Should return the customized link ', () => {
+    const mockProps = generateMockProps({ achLink: <p></p> })
+    const wrapper = shallow(<CreditCardForm  {...mockProps} />)
+
+    const link = wrapper.instance().getACHLink()
+    expect(link.type).to.equal('p')
+
+    wrapper.setProps({ achLink: "" })
+    expect(wrapper.instance().getACHLink()).to.equal("")
+  })
+
+  it('Should NOT return a link ', () => {
+    const mockProps = generateMockProps({ achLink: null})
+    const wrapper = shallow(<CreditCardForm  {...mockProps} />)
+
+    expect(wrapper.instance().getACHLink()).to.equal(null)
+
+    wrapper.setProps({ achLink: false })
+    expect(wrapper.instance().getACHLink()).to.equal(false)
+
+    wrapper.setProps({ achLink: undefined, showACHLink: false })
+    expect(wrapper.instance().getACHLink()).to.equal(null)
+    
+    wrapper.setProps({ showACHLink: false })
+    expect(wrapper.instance().getACHLink()).to.equal(null)
+  })
+
 })
