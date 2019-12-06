@@ -29,6 +29,8 @@ import configure from './client/VaultConfig'
 
 import { PaymentMethods } from './PaymentMethod'
 
+import { logError } from './helpers/Logger'
+
 export default class PlaidForm extends Component {
   static propTypes = {
     /** Required RevOps API Public Key **/
@@ -170,19 +172,22 @@ export default class PlaidForm extends Component {
     super(props)
     this.state = {
       errors: false,
+      loading: true,
     }
     this.form = null
+    this.loadingTimeOut = null
   }
 
   componentDidMount() {
-    const conf = configure(this.props.apiOptions)
+    const { apiOptions, loadingState } = this.props
+    const conf = configure(apiOptions)
 
     configureVault(
       conf,
       this.initialize,
     )
 
-    if (this.props.apiOptions)
+    if (apiOptions) {
       configurePlaid(
         conf.env,
         (plaidLink) => {
@@ -190,6 +195,22 @@ export default class PlaidForm extends Component {
         },
         this.onPlaidSelect,
       )
+    }
+
+    // setup debug information when using `loadingState`
+    if(!!loadingState === true && this.isThisMethod()){
+      this.loadingTimeOut = setTimeout(() => {
+        logError("The form has not loaded after 5 seconds.", apiOptions.loggingLevel)
+        this.onError({
+          "message": "Form not loaded successfully.",
+          "code": "form_timeout"
+        })
+      }, 5000)
+    }
+  }
+
+  componentWillUnmount(){
+    clearTimeout(this.loadingTimeOut)
   }
 
   componentDidUpdate(prevProps) {
@@ -286,7 +307,6 @@ export default class PlaidForm extends Component {
         ...error,
         ...convertAPIError(error.http_status, error),
       },
-      response: error,
       saving: false,
     })
 
@@ -378,6 +398,8 @@ export default class PlaidForm extends Component {
     if (this.state.loading === true && this.isThisMethod()) {
       this.setState({ loading: false })
 
+      clearTimeout(this.loadingTimeOut)
+
       if (onLoad !== false && typeof (onLoad) === 'function') {
         onLoad()
       }
@@ -447,7 +469,7 @@ export default class PlaidForm extends Component {
       plaidSelected={true}
     />
   )
-  
+
   render() {
     const { errors, } = this.state
     const {

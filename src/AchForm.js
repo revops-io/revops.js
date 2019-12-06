@@ -27,6 +27,8 @@ import configure from './client/VaultConfig'
 
 import { PaymentMethods } from './PaymentMethod'
 
+import { logError } from './helpers/Logger'
+
 const NUMBER_OF_FIELDS = 7
 
 export default class AchForm extends Component {
@@ -169,15 +171,32 @@ export default class AchForm extends Component {
       saving: false,
     }
     this.form = null
+    this.loadingTimeOut = null
   }
 
   componentDidMount() {
-    const conf = configure(this.props.apiOptions)
+    const { apiOptions, loadingState} = this.props
+    const conf = configure(apiOptions)
 
     configureVault(
       conf,
       this.initialize,
     )
+
+    // setup debug information when using `loadingState`
+    if(!!loadingState === true && this.isThisMethod()){
+      this.loadingTimeOut = setTimeout(() => {
+        logError("The form has not loaded after 5 seconds.", apiOptions.loggingLevel)
+        this.onError({
+          "message": "Form not loaded successfully.",
+          "code": "form_timeout"
+        })
+      }, 5000)
+    }
+  }
+
+  componentWillUnmount(){
+    clearTimeout(this.loadingTimeOut)
   }
 
   componentDidUpdate(prevProps) {
@@ -338,7 +357,6 @@ export default class AchForm extends Component {
         ...convertAPIError(error.http_status, error),
       },
       status,
-      response: error,
       saving: false,
     })
 
@@ -478,9 +496,12 @@ export default class AchForm extends Component {
 
   finishedLoading = (formState) => {
     const { onLoad } = this.props
+
     if (this.state.loading === true && this.isThisMethod()) {
       if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
         this.setState({ loading: false })
+
+        clearTimeout(this.loadingTimeOut)
 
         if (onLoad !== false && typeof (onLoad) === 'function') {
           onLoad()
