@@ -307,9 +307,7 @@ export default class PaymentMethod extends Component {
             {this.props.loadingState}
           </div>
         }
-        <section id="revops-payment-method"
-        >
-          <br />
+        <section id="revops-payment-method">
           {
             this.isMethodEnabled(PaymentMethods.METHOD_CARD) &&
             <div id="cc-info">
