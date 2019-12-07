@@ -7,8 +7,6 @@ import {
 
 import { logError, logWarning } from '../helpers/Logger'
 
-import _ from 'lodash'
-
 const ACCOUNTS_LIST_RESOURCE = '/v1/accounts'
 
 export class Account extends EntityModel {
@@ -86,7 +84,14 @@ export class Account extends EntityModel {
             logError(`[${status}] RevOps API error:`, loggingLevel, response)
           }
           if (!!onError !== false && typeof (onError) === 'function') {
-            onError(response)
+            onError(
+              !!response.error === true
+                ? response.error
+                : {
+                  "message": "Unknown Error",
+                  "code": "unknown_error"
+                }
+            )
           }
         } else {
           Object.keys(response).map(attrName =>

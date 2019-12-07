@@ -62,7 +62,7 @@ export class Instrument extends EntityModel {
         'Content-Type': 'application/json;charset=UTF-8',
       },
     };
-    
+
     const url = `https://vault.revops.io${INSTRUMENTS_LIST_RESOURCE(accountId)}/${id}`
     try {
       let response = await fetch(url, options)
@@ -124,7 +124,14 @@ export class Instrument extends EntityModel {
             logError(`[${status}] RevOps API error:`, loggingLevel, response)
           }
           if (!!onError !== false && typeof (onError) === 'function') {
-            onError(response)
+            onError(
+              !!response.error === true
+                ? response.error
+                : {
+                  "message": "Unknown Error",
+                  "code": "unknown_error"
+                }
+            )
           }
         } else {
           Object.keys(response).map(attrName =>
