@@ -28,6 +28,7 @@ describe('The PlaidForm Component', () => {
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
     expect(wrapper.find('TogglePlaid').length).to.equal(1)
+    expect(wrapper.find('.network-error').length).to.equal(1)
 
   })
 
@@ -163,4 +164,11 @@ describe('The PlaidForm Component', () => {
 
     expect(wrapper.find('.custom-label').length).to.equal(1)
   })
+
+  it('should not show a network error', () => {
+    const mockProps = generateMockProps({ showNetworkError: false })
+    const wrapper = shallow(<PlaidForm  {...mockProps} />)
+    expect(wrapper.find('.network-error').length).to.equal(0)
+  })
+
 })

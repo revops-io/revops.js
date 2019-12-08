@@ -6,6 +6,7 @@ import {
   convertAPIError,
   getDefaultValue,
   isInstrumentUpdate,
+  getErrorText,
 } from './FormHelpers'
 
 import { ButtonGroup } from './ButtonGroup'
@@ -149,6 +150,9 @@ export default class AchForm extends Component {
 
     /** Customized link that switches to the Plaid payment method */
     plaidLink: PropTypes.node,
+
+    /** optional prop to disable the network errors */
+    showNetworkError: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -175,7 +179,7 @@ export default class AchForm extends Component {
   }
 
   componentDidMount() {
-    const { apiOptions, loadingState} = this.props
+    const { apiOptions, loadingState } = this.props
     const conf = configure(apiOptions)
 
     configureVault(
@@ -184,7 +188,7 @@ export default class AchForm extends Component {
     )
 
     // setup debug information when using `loadingState`
-    if(!!loadingState === true && this.isThisMethod()){
+    if (!!loadingState === true && this.isThisMethod()) {
       this.loadingTimeOut = setTimeout(() => {
         logError("The form has not loaded after 5 seconds.", apiOptions.loggingLevel)
         this.onError({
@@ -195,7 +199,7 @@ export default class AchForm extends Component {
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearTimeout(this.loadingTimeOut)
   }
 
@@ -463,7 +467,7 @@ export default class AchForm extends Component {
       creditCardLink = this.creditCardLink(),
     } = this.props
 
-    if(showCardLink === false){
+    if (showCardLink === false) {
       return null
     }
     return creditCardLink
@@ -475,7 +479,7 @@ export default class AchForm extends Component {
       plaidLink = this.plaidLink(),
     } = this.props
 
-    if(hideTogglePlaid === true){
+    if (hideTogglePlaid === true) {
       return null
     }
     return plaidLink
@@ -538,6 +542,7 @@ export default class AchForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
+      showNetworkError = true,
       isUpdate,
       achLabel = <label className="ach-label">Paying by ACH</label>,
     } = this.props
@@ -639,6 +644,9 @@ export default class AchForm extends Component {
             }
           </div>
           <div className="ui clearing divider"></div>
+          {showNetworkError === true &&
+            <span className="network-error">{getErrorText('', 'networkError', errors)}</span>
+          }
           {this.getPlaidLink()}
           {!!this.props.saveRef === false &&
             <ButtonGroup

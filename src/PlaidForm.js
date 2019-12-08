@@ -7,6 +7,7 @@ import {
   convertAPIError,
   getDefaultValue,
   isInstrumentUpdate,
+  getErrorText,
 } from './FormHelpers'
 
 import { ButtonGroup } from './ButtonGroup'
@@ -148,6 +149,9 @@ export default class PlaidForm extends Component {
 
     /** Customized link that switches to the credit card payment method */
     creditCardLink: PropTypes.node,
+
+    /** optional prop to disable the network errors */
+    showNetworkError: PropTypes.bool,
 
   }
 
@@ -478,6 +482,7 @@ export default class PlaidForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
+      showNetworkError = true,
       isUpdate,
       plaidLabel = <label className="ach-label">Paying by ACH</label>,
     } = this.props
@@ -528,6 +533,9 @@ export default class PlaidForm extends Component {
           </div>
           {this.getACHLink()}
           <div className="ui clearing divider"></div>
+          {showNetworkError === true && 
+            <span className="network-error">{getErrorText('', 'networkError', errors)}</span>
+          }
           {!!this.props.saveRef === false &&
             <ButtonGroup
               loading={this.state.loading}
