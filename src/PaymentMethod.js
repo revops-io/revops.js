@@ -124,6 +124,9 @@ export default class PaymentMethod extends Component {
     /** user defined loading element */
     loadingState: PropTypes.node,
 
+    /** optional prop to disable the network errors */
+    showNetworkError: PropTypes.bool,
+
   }
 
   static defaultProps = {

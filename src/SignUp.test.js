@@ -26,6 +26,7 @@ describe('The SignUp Component', () => {
     expect(wrapper.find('#signup-form').length).to.equal(1)
     expect(wrapper.find('#signup-email').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
+    expect(wrapper.find('.network-error').length).to.equal(1)
   })
 
   it('should not render button group when saveRef is defined', () => {
@@ -70,5 +71,11 @@ describe('The SignUp Component', () => {
     expect(wrapper.instance().state.status).to.equal(false)
     expect(wrapper.instance().state.response).to.equal(false)
     expect(mockProps.account.saveWithSecureForm.call.length).to.equal(1)
+  })
+
+  it('should not show a network error', () => {
+    const mockProps = generateMockProps({ showNetworkError: false })
+    const wrapper = shallow(<_SignUp  {...mockProps} />)
+    expect(wrapper.find('.network-error').length).to.equal(0)
   })
 })

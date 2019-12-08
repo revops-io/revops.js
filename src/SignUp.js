@@ -109,11 +109,14 @@ export class _SignUp extends Component {
         PropTypes.shape({
           value: PropTypes.string,
           text: PropTypes.string
-      }))
+        }))
     }),
 
     /** determines if validation errors should be shown */
-    showInlineError: PropTypes.bool
+    showInlineError: PropTypes.bool,
+
+    /** optional prop to disable the network errors */
+    showNetworkError: PropTypes.bool,
   }
 
   componentDidMount() {
@@ -151,8 +154,8 @@ export class _SignUp extends Component {
   }
 
   initialize = () => {
-    const { 
-      account,  
+    const {
+      account,
       inputStyles,
       overrideProps = {},
     } = this.props
@@ -268,7 +271,8 @@ export class _SignUp extends Component {
       sectionStyle,
       cardWidth = false,
       overrideProps = {},
-      showInlineError = true
+      showInlineError = true,
+      showNetworkError = true,
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
@@ -287,7 +291,9 @@ export class _SignUp extends Component {
           />
         </div>
         <div className="ui clearing divider"></div>
-        <span>{getErrorText('', 'networkError', errors)}</span>
+        {showNetworkError === true &&
+          <span className="network-error">{getErrorText('', 'networkError', errors)}</span>
+        }
         {!!this.props.saveRef === false &&
           <ButtonGroup
             showAccept={false}

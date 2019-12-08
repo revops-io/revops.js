@@ -33,6 +33,7 @@ describe('The AchForm Component', () => {
     expect(wrapper.find('section').length).to.equal(1)
     expect(wrapper.find('ButtonGroup').length).to.equal(1)
     expect(wrapper.find('.ach-label').length).to.equal(1)
+    expect(wrapper.find('.network-error').length).to.equal(1)
   })
 
   it('should not render button group when saveRef is defined', () => {
@@ -145,6 +146,12 @@ describe('The AchForm Component', () => {
     const wrapper = shallow(<AchForm  {...mockProps} />)
 
     expect(wrapper.find('.custom-label').length).to.equal(1)
+  })
+
+  it('should not show a network error', () => {
+    const mockProps = generateMockProps({ showNetworkError: false })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+    expect(wrapper.find('.network-error').length).to.equal(0)
   })
 
 })

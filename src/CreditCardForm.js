@@ -142,6 +142,9 @@ export default class CreditCardForm extends Component {
     /** Customized link that switches to the ACH payment method */
     achLink: PropTypes.node,
 
+    /** optional prop to disable the network errors */
+    showNetworkError: PropTypes.bool,
+
   }
 
   static defaultProps = {
@@ -174,7 +177,7 @@ export default class CreditCardForm extends Component {
     )
 
     // setup debug information when using `loadingState`
-    if(!!loadingState === true && this.isThisMethod()){
+    if (!!loadingState === true && this.isThisMethod()) {
       this.loadingTimeOut = setTimeout(() => {
         logError("The form has not loaded after 5 seconds.", apiOptions.loggingLevel)
         this.onError({
@@ -185,7 +188,7 @@ export default class CreditCardForm extends Component {
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearTimeout(this.loadingTimeOut)
   }
 
@@ -461,6 +464,7 @@ export default class CreditCardForm extends Component {
       instrument,
       overrideProps = {},
       showInlineError = true,
+      showNetworkError = true,
       isUpdate = false,
       creditCardLabel = <label className="cc-label">Paying by Credit Card</label>,
     } = this.props
@@ -544,7 +548,9 @@ export default class CreditCardForm extends Component {
             </div>
           </div>
           <div className="ui clearing divider"></div>
-          <span>{getErrorText('', 'networkError', errors)}</span>
+          {showNetworkError === true && 
+            <span className="network-error">{getErrorText('', 'networkError', errors)}</span>
+          }
           {!!this.props.saveRef === false &&
             <ButtonGroup
               showAccept={false}
