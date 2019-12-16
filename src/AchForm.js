@@ -206,6 +206,7 @@ export default class AchForm extends Component {
   componentDidUpdate(prevProps) {
     const { method } = this.props
     if (prevProps.method !== method && this.isThisMethod()) {
+      clearTimeout(this.loadingTimeOut)
       this.setState({ loading: false })
     }
   }
