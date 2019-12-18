@@ -2,7 +2,13 @@ import React from 'react';
 
 import AchForm from './AchForm'
 
+jest.useFakeTimers();
+
 describe('The AchForm Component', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  });
+
   const generateMockProps = (props) => {
     return {
       id: "test123",
@@ -152,6 +158,31 @@ describe('The AchForm Component', () => {
     const mockProps = generateMockProps({ showNetworkError: false })
     const wrapper = shallow(<AchForm  {...mockProps} />)
     expect(wrapper.find('.network-error').length).to.equal(0)
+  })
+  
+  it('should remove the loading state when method changes', () => {
+    const mockProps = generateMockProps({ method: "ach", loadingState: <h1>Test</h1> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(wrapper.state().loading).to.equal(true)
+    wrapper.setProps({method: "plaid"})
+    expect(wrapper.state().loading).to.equal(false)
+  })
+
+  it('should set a timeout and remove it when method changes', () => {
+    const mockProps = generateMockProps({ method: "ach", loadingState: <h1>Test</h1> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(setTimeout.mock.calls.length).to.equal(1);
+    wrapper.setProps({method: "plaid"})
+    expect(clearTimeout.mock.calls.length).to.equal(1);
+  })
+
+  it('should not set a timeout', () => {
+    const mockProps = generateMockProps({ method: "plaid", loadingState: <h1>Test</h1> })
+    const wrapper = shallow(<AchForm  {...mockProps} />)
+
+    expect(setTimeout.mock.calls.length).to.equal(0);
   })
 
 })

@@ -205,7 +205,11 @@ export default class AchForm extends Component {
 
   componentDidUpdate(prevProps) {
     const { method } = this.props
-    if (prevProps.method !== method && this.isThisMethod()) {
+    if (prevProps.method !== method) {
+      // clean up the timeout if the previous method was this method and is no longer
+      if((prevProps.method === PaymentMethods.METHOD_ACH)){
+        clearTimeout(this.loadingTimeOut)
+      }
       this.setState({ loading: false })
     }
   }
