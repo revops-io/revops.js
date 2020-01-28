@@ -448,7 +448,7 @@ export default class AchForm extends Component {
     const callbacks = this.bindCallbacks()
     const token = await getToken({ ...this.props, isUpdate })
 
-    submitForm(
+    return submitForm(
       payload,
       token,
       form,
