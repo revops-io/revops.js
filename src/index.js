@@ -8,7 +8,7 @@ export const configureVault = (
   apiOptions = {
     env: 'production',
   },
-  onLoad: false,
+  onLoad
 ) => {
   if (!!window !== true && !!document !== true) {
     throw new Error("Illegal call. `configureVault` is being executed outside browser context.")
