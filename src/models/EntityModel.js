@@ -5,9 +5,6 @@ import { EntityDate } from './index'
 
 export class EntityModel {
 
-  dateUpdated: string
-  dateCreated: string
-
   constructor(params = {}) {
     this.id = params.id || this._generateUUID()
     this.dateUpdated = params.dateUpdated || new EntityDate().toIsoString()
