@@ -97,24 +97,23 @@ export class Account extends EntityModel {
             } else {
               logError(`[${status}] RevOps API error:`, loggingLevel, response);
             }
-            if (!!onError !== false && typeof onError === "function") {
-              onError(
-                !!response.error === true
-                  ? response.error
-                  : {
-                      message: "Unknown Error",
-                      code: "unknown_error"
-                    }
-              );
 
-              reject(
-                !!response.error === true
-                  ? response.error
-                  : {
-                      message: "Unknown Error",
-                      code: "unknown_error"
-                    }
-              );
+            const error =
+              !!response.error === true
+                ? response.error
+                : {
+                    message: "Unknown Error",
+                    code: "unknown_error"
+                  };
+
+            if (!!onError !== false && typeof onError === "function") {
+              onError(error);
+            }
+
+            if (!!reject !== false && typeof reject === "function") {
+              reject(error);
+            } else {
+              logError("No 'reject' function was supplied to the promise");
             }
           } else {
             Object.keys(response).map(attrName =>
@@ -131,34 +130,44 @@ export class Account extends EntityModel {
               onComplete(response);
             }
 
-            resolve(response);
+            if (!!resolve !== false && typeof resolve === "function") {
+              resolve(response);
+            } else {
+              logError("No 'resolve' function was supplied to the promise");
+            }
           }
         },
         errors => {
+          // lift up instrument data and remove the prefix
+          let _errors = Object.entries(errors).map(([key, value]) => {
+            const keyName = key.replace("instrument.", "");
+            return [
+              keyName,
+              {
+                ...value,
+                elementId: keyName
+              }
+            ];
+          });
+
+          // map back to object
+          _errors = _errors.reduce(
+            (mappedObject, [key, value]) => ({
+              ...mappedObject,
+              [key]: value
+            }),
+            {}
+          );
+
+          if (!!reject !== false && typeof reject === "function") {
+            reject(_errors);
+          }
+
           if (
             !!onValidationError !== false &&
             typeof onValidationError === "function"
           ) {
-            // lift up instrument data and remove the prefix
-            errors = Object.entries(errors).map(([key, value]) => {
-              const keyName = key.replace("instrument.", "");
-              return [
-                keyName,
-                {
-                  ...value,
-                  elementId: keyName
-                }
-              ];
-            });
-
-            errors = errors.reduce(
-              (mappedObject, [key, value]) => ({
-                ...mappedObject,
-                [key]: value
-              }),
-              {}
-            );
-            onValidationError(errors);
+            onValidationError(_errors);
           }
         }
       );

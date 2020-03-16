@@ -30,9 +30,15 @@ export default class App extends Component {
   submitSecure = () => {
     // tell the revops form to submit itself
     if (!!this.saveRef === true) {
-      this.saveRef.current.onSubmit()
+      // onSubmit will return a promise
+      this.saveRef.current.onSubmit(
+        // same payload as onComplete
+        payload => console.log("success", payload),
+        // same payload as onError and onValidationError
+        payload => console.log("reject", payload)
+      );
     }
-  }
+  };
 
   /**
    * getToken() calls our example auth server with an accountId 
