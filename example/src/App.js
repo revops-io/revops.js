@@ -31,12 +31,15 @@ export default class App extends Component {
     // tell the revops form to submit itself
     if (!!this.saveRef === true) {
       // onSubmit will return a promise
-      this.saveRef.current.onSubmit(
-        // same payload as onComplete
-        payload => console.log("success", payload),
-        // same payload as onError and onValidationError
-        payload => console.log("reject", payload)
-      );
+      this.saveRef.current
+        .onSubmit()
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          // both validation and network errors are return by `reject` in the promise
+          console.log(err)
+        });
     }
   };
 
