@@ -107,7 +107,7 @@ export default class App extends Component {
           <RevOpsAuth
             getToken={this.getToken}
             apiOptions={{
-              loggingLevel: "error", // "warning" // "log"
+              loggingLevel: "info", // "warning", "info", "error"
             }}
             account={{
               accountId: "your-account-id",

@@ -28,7 +28,7 @@ import configure from './client/VaultConfig'
 
 import { PaymentMethods } from './PaymentMethod'
 
-import { logError } from './helpers/Logger'
+import { logError, logInfo } from './helpers/Logger'
 
 const NUMBER_OF_FIELDS = 7
 
@@ -448,13 +448,21 @@ export default class AchForm extends Component {
     const callbacks = this.bindCallbacks()
     const token = await getToken({ ...this.props, isUpdate })
 
-    return submitForm(
-      payload,
-      token,
-      form,
-      callbacks,
-      apiOptions,
-    )
+    if (!!this.props.saveRef === false) {
+      submitForm(payload, token, form, callbacks, apiOptions)
+        .then(res => {
+          logInfo("Form submitted successfully.", apiOptions.loggingLevel, res);
+        })
+        .catch(e => {
+          logError(
+            "There was and issue with the submitting the form.",
+            apiOptions.loggingLevel,
+            e
+          );
+        });
+    } else {
+      return submitForm(payload, token, form, callbacks, apiOptions);
+    }
   }
 
   creditCardLink = () => (

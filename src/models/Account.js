@@ -110,11 +110,7 @@ export class Account extends EntityModel {
               onError(error);
             }
 
-            if (!!reject !== false && typeof reject === "function") {
-              reject(error);
-            } else {
-              logError("No 'reject' function was supplied to the promise");
-            }
+            reject(error);
           } else {
             Object.keys(response).map(attrName =>
               this._setAttr(attrName, response[attrName])
@@ -130,11 +126,7 @@ export class Account extends EntityModel {
               onComplete(response);
             }
 
-            if (!!resolve !== false && typeof resolve === "function") {
-              resolve(response);
-            } else {
-              logError("No 'resolve' function was supplied to the promise");
-            }
+            resolve(response);
           }
         },
         errors => {
@@ -159,9 +151,7 @@ export class Account extends EntityModel {
             {}
           );
 
-          if (!!reject !== false && typeof reject === "function") {
-            reject(_errors);
-          }
+          reject(_errors);
 
           if (
             !!onValidationError !== false &&
