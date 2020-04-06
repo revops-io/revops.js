@@ -29,7 +29,7 @@ import {
 import { Instrument, Account } from './models'
 
 import { PaymentMethods } from './PaymentMethod'
-import { logError } from './helpers/Logger'
+import { logError, logInfo } from './helpers/Logger'
 
 const NUMBER_OF_FIELDS = 5
 
@@ -430,13 +430,21 @@ export default class CreditCardForm extends Component {
     const callbacks = this.bindCallbacks()
     const token = await getToken({ ...this.props, isUpdate })
 
-    submitForm(
-      payload,
-      token,
-      form,
-      callbacks,
-      apiOptions,
-    )
+    if (!!this.props.saveRef === false) {
+      submitForm(payload, token, form, callbacks, apiOptions)
+        .then(res => {
+          logInfo("Form submitted successfully.", apiOptions.loggingLevel, res);
+        })
+        .catch(e => {
+          logError(
+            "There was and issue with the submitting the form.",
+            apiOptions.loggingLevel,
+            e
+          );
+        });
+    } else {
+      return submitForm(payload, token, form, callbacks, apiOptions);
+    }
   }
 
   achLink = () => (

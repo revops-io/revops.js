@@ -30,9 +30,18 @@ export default class App extends Component {
   submitSecure = () => {
     // tell the revops form to submit itself
     if (!!this.saveRef === true) {
-      this.saveRef.current.onSubmit()
+      // onSubmit will return a promise
+      this.saveRef.current
+        .onSubmit()
+        .then(res => {
+          console.log(res)
+        })
+        .catch(err => {
+          // both validation and network errors are return by `reject` in the promise
+          console.log(err)
+        });
     }
-  }
+  };
 
   /**
    * getToken() calls our example auth server with an accountId 
@@ -98,7 +107,7 @@ export default class App extends Component {
           <RevOpsAuth
             getToken={this.getToken}
             apiOptions={{
-              loggingLevel: "error", // "warning" // "log"
+              loggingLevel: "info", // "warning", "info", "error"
             }}
             account={{
               accountId: "your-account-id",
