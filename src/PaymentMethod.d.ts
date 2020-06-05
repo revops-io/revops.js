@@ -46,9 +46,6 @@ export interface PaymentMethodProps {
     /** A callable function to fire when an error occurs on the form. */
     onError?: PropTypes.func,
 
-    /** Toggle for showing/hiding plaid info */
-    togglePlaidHandler?: () => void,
-
     /** Optional reference to allow your own save buttons */
     saveRef?: RefObject,
 

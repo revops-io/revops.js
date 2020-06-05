@@ -32,7 +32,6 @@ describe('Account Model', () => {
           dateUpdated: '2019-09-15T10:35:08-07:00',
           id: '9ad03e08-7143-44e0-a75c-586c05987562',
           paymentMethod: '',
-          plaidLinkPublicToken: ''
         }),
         dateCreated: '2019-09-15T10:35:08-07:00',
         dateUpdated: '2019-09-15T10:35:08-07:00',
@@ -65,7 +64,6 @@ describe('Account Model', () => {
           dateUpdated: '2019-09-15T10:35:08-07:00',
           id: '',
           paymentMethod: '',
-          plaidLinkPublicToken: ''
         },
         dateCreated: '2019-09-15T10:35:08-07:00',
         dateUpdated: '2019-09-15T10:35:08-07:00',

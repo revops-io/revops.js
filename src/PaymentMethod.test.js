@@ -12,7 +12,6 @@ describe('The PaymentMethod Component', () => {
       methods: [
         PaymentMethods.METHOD_CARD,
         PaymentMethods.METHOD_ACH,
-        PaymentMethods.METHOD_PLAID,
       ],
       defaultMethod: PaymentMethods.METHOD_ACH,
       instrument: {},
@@ -108,40 +107,6 @@ describe('The PaymentMethod Component', () => {
       const wrapper = shallow(<PaymentMethod  {...mockProps} />)
 
       expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_CARD)).to.equal(false)
-    })
-  })
-
-  describe('Plaid Section', () => {
-    it('PaymentMethod should render without a PlaidForm', () => {
-      const mockProps = generateMockProps({})
-      const wrapper = shallow(<PaymentMethod  {...mockProps} />)
-
-      wrapper.setState({ method: PaymentMethods.METHOD_PLAID })
-      expect(wrapper.find('PlaidForm').length).to.equal(1)
-    })
-
-    it('isPlaidEnabled should return true', () => {
-      const mockProps = generateMockProps({
-        methods: [
-          PaymentMethods.METHOD_PLAID,
-        ],
-        defaultMethod: PaymentMethods.METHOD_PLAID,
-      })
-      const wrapper = shallow(<PaymentMethod  {...mockProps} />)
-
-      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_PLAID)).to.equal(true)
-    })
-
-    it('isPlaidEnabled should return false', () => {
-      const mockProps = generateMockProps({
-        methods: [
-          PaymentMethods.METHOD_CARD,
-        ],
-        defaultMethod: PaymentMethods.METHOD_CARD,
-      })
-      const wrapper = shallow(<PaymentMethod  {...mockProps} />)
-
-      expect(wrapper.instance().isMethodEnabled(PaymentMethods.METHOD_PLAID)).to.equal(false)
     })
   })
 

@@ -22,55 +22,9 @@ export const configureVault = (
   document.body.appendChild(script)
 }
 
-/* configurePlaid
- * @param env - string - options are local, staging, production.
- * @param onLoad - function(plaidLink) - called when plaid is loaded.
- * @param onSelect - function(publicToken, metadata) - called when account is selected.
- */
-export const configurePlaid = (
-  env = false,
-  onLoad = false,
-  onSelect = false,
-) => {
-
-  if (!!window !== true && !!document !== true) {
-    throw new Error("Illegal call. `configurePlaid` is being executed outside browser context.")
-  }
-
-  const plaid = document.createElement("script")
-  plaid.src = configure(env).plaidUrl
-  plaid.async = true
-  plaid.onload = () => {
-    const handleOnSuccess = (publicToken, metadata) => {
-      onSelect(publicToken, metadata)
-    }
-
-    const plaidLink = window.Plaid.create({
-      env: configure(env).plaidEnvironment,
-      clientName: 'RevOps.js',
-      key: configure(env).plaidKey,
-      product: ['auth'],
-      selectAccount: true,
-      onSuccess: handleOnSuccess,
-      onExit: function(err, metadata) {
-        // The user exited th Link flow.
-        if (err != null) {
-          // The user encountered a Plaid API error prior to exiting.
-        }
-      },
-    })
-
-    onLoad(plaidLink)
-  }
-  document.body.appendChild(plaid);
-}
-
 export { default as ErrorMessage } from './ErrorMessage'
 export { default as Field } from './Field'
-export { default as TogglePlaid } from './TogglePlaid'
 export { default as CreditCardForm } from './CreditCardForm'
-export { default as PaymentMethod } from './PaymentMethod'
-export { default as PlaidForm } from './PlaidForm'
 export { default as AchForm } from './AchForm'
 export { default as SignUp } from './SignUp'
 export { default as RevOpsAuth } from './RevOpsAuth'
