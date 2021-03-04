@@ -122,12 +122,15 @@ export default class AchForm extends Component {
      * Only allowed properties are allowed, see documentation for details. 
      */
     overrideProps: PropTypes.shape({
-      css: PropTypes.object, // CSS in JS
-      placeholder: PropTypes.string,
-      color: PropTypes.string,
-      errorColor: PropTypes.string,
-      showCardLink: PropTypes.bool, // some fields only
-      label: PropTypes.string,
+      "bank-postalcode" : PropTypes.shape({
+        css: PropTypes.object, // CSS in JS
+        placeholder: PropTypes.string,
+        color: PropTypes.string,
+        errorColor: PropTypes.string,
+        showCardLink: PropTypes.bool, // some fields only
+        label: PropTypes.string,
+        hide: PropTypes.bool
+      })
     }),
 
     /** determines if validation errors should be shown */
@@ -560,6 +563,7 @@ export default class AchForm extends Component {
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
+    const hidePostalCode = overrideProps["bank-postalcode"] && overrideProps["bank-postalcode"].hide
 
     return (
       <React.Fragment>
@@ -603,15 +607,22 @@ export default class AchForm extends Component {
                   {...propHelper.overrideFieldProps("bank-holder-name")}
                 />
 
-                <Field
-                  id="bank-postalcode"
-                  name="postalCode"
-                  label="Postal Code"
-                  defaultValue={getDefaultValue(instrument, 'postalcode', '')}
-                  showInlineError={showInlineError}
-                  errors={errors}
-                  {...propHelper.overrideFieldProps("bank-postalcode")}
-                />
+                {!hidePostalCode && (
+                    <Field
+                      id="bank-postalcode"
+                      name="postalCode"
+                      label="Postal Code"
+                      defaultValue={getDefaultValue(
+                        instrument,
+                        "postalcode",
+                        ""
+                      )}
+                      showInlineError={showInlineError}
+                      errors={errors}
+                      {...propHelper.overrideFieldProps("bank-postalcode")}
+                    />
+                  )
+                }
 
                 <Field
                   id="bank-account-country"
