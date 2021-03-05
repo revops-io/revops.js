@@ -116,12 +116,15 @@ export default class CreditCardForm extends Component {
      * Only allowed properties are allowed, see see documentation for details.
      */
     overrideProps: PropTypes.shape({
-      css: PropTypes.object, // CSS in JS
-      placeholder: PropTypes.string,
-      color: PropTypes.string,
-      errorColor: PropTypes.string,
-      showCardLink: PropTypes.bool, // some fields only
-      label: PropTypes.string,
+      "card-postalcode" : PropTypes.shape({
+        css: PropTypes.object, // CSS in JS
+        placeholder: PropTypes.string,
+        color: PropTypes.string,
+        errorColor: PropTypes.string,
+        showCardLink: PropTypes.bool, // some fields only
+        label: PropTypes.string,
+        hide: PropTypes.bool
+      })
     }),
 
     /** determines if validation errors should be shown */
@@ -482,6 +485,7 @@ export default class CreditCardForm extends Component {
     } = this.props
 
     const propHelper = new PropertyHelper(overrideProps)
+    const hidePostalCode = overrideProps["card-postalcode"] && overrideProps["card-postalcode"].hide
 
     return (
       <React.Fragment>
@@ -546,15 +550,21 @@ export default class CreditCardForm extends Component {
                     {...propHelper.overrideFieldProps("card-cvc")}
                   />
 
-                  <Field
-                    id="card-postalcode"
-                    name="postalCode"
-                    label="Postal Code"
-                    defaultValue={getDefaultValue(instrument, 'postalCode', '')}
-                    showInlineError={showInlineError}
-                    errors={errors}
-                    {...propHelper.overrideFieldProps("card-postalcode")}
-                  />
+                  {!hidePostalCode && (
+                      <Field
+                        id="card-postalcode"
+                        name="postalCode"
+                        label="Postal Code"
+                        defaultValue={getDefaultValue(
+                          instrument,
+                          "postalCode",
+                          ""
+                        )}
+                        showInlineError={showInlineError}
+                        errors={errors}
+                        {...propHelper.overrideFieldProps("card-postalcode")}
+                      />
+                    )}
                 </React.Fragment>
               }
             </div>
