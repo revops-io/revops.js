@@ -56,17 +56,6 @@ export class Account extends EntityModel {
   ) {
     const { loggingLevel = "" } = apiOptions;
 
-    if (!!apiKey === false) {
-      throw new Error(
-        "Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop."
-      );
-    }
-    if (apiKey.startsWith("sk_") === true) {
-      throw new Error(
-        "Unable to call save. You are attempting to use a secret key."
-      );
-    }
-
     return new Promise((resolve, reject) => {
       form.submit(
         ACCOUNTS_LIST_RESOURCE,
@@ -85,7 +74,7 @@ export class Account extends EntityModel {
           if (status >= 400) {
             if (status === 401) {
               logWarning(
-                "[401] RevOps API access denied. Update your `publicKey`.",
+                "[401] RevOps API access denied. Update your `publicKey` or `getToken` callback.",
                 loggingLevel
               );
             } else if (status === 400) {
@@ -106,7 +95,7 @@ export class Account extends EntityModel {
                     code: "unknown_error"
                   };
 
-            if (!!onError !== false && typeof onError === "function") {
+            if (!!onError && typeof onError === "function") {
               onError(error);
             }
 
@@ -116,13 +105,13 @@ export class Account extends EntityModel {
               this._setAttr(attrName, response[attrName])
             );
 
-            if (!!onNext !== false && typeof onNext === "function") {
+            if (!!onNext && typeof onNext === "function") {
               onNext(status, {
                 ...response
               });
             }
 
-            if (!!onComplete !== false && typeof onComplete === "function") {
+            if (!!onComplete && typeof onComplete === "function") {
               onComplete(response);
             }
 
@@ -154,7 +143,7 @@ export class Account extends EntityModel {
           reject(_errors);
 
           if (
-            !!onValidationError !== false &&
+            !!onValidationError &&
             typeof onValidationError === "function"
           ) {
             onValidationError(_errors);

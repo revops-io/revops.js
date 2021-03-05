@@ -90,17 +90,6 @@ export class Instrument extends EntityModel {
   ) {
     const { loggingLevel = "" } = apiOptions;
 
-    if (!!apiKey === false) {
-      throw new Error(
-        "Unable to call save. Empty `apiKey`, make sure you have set your publicKey prop."
-      );
-    }
-    if (apiKey.startsWith("sk_") === true) {
-      throw new Error(
-        "Unable to call save. You are attempting to use a secret key."
-      );
-    }
-
     const url = isInstrumentUpdate(this)
       ? INSTRUMENTS_INSTANCE_RESOURCE(this.businessAccountId, this.id)
       : INSTRUMENTS_LIST_RESOURCE(this.businessAccountId);
@@ -144,11 +133,11 @@ export class Instrument extends EntityModel {
                     code: "unknown_error"
                   };
 
-            if (!!onError !== false && typeof onError === "function") {
+            if (!!onError && typeof onError === "function") {
               onError(error);
             }
 
-            if (!!reject !== false && typeof reject === "function") {
+            if (!!reject && typeof reject === "function") {
               reject(error);
             } else {
               logError("No 'reject' function was supplied to the promise");
@@ -158,17 +147,17 @@ export class Instrument extends EntityModel {
               this._setAttr(attrName, response[attrName])
             );
 
-            if (!!onNext !== false && typeof onNext === "function") {
+            if (!!onNext && typeof onNext === "function") {
               onNext(status, {
                 ...response
               });
             }
 
-            if (!!onComplete !== false && typeof onComplete === "function") {
+            if (!!onComplete && typeof onComplete === "function") {
               onComplete(response);
             }
 
-            if (!!resolve !== false && typeof resolve === "function") {
+            if (!!resolve && typeof resolve === "function") {
               resolve(response);
             } else {
               logError("No 'resolve' function was supplied to the promise");
@@ -195,12 +184,12 @@ export class Instrument extends EntityModel {
             {}
           );
 
-          if (!!reject !== false && typeof reject === "function") {
+          if (!!reject && typeof reject === "function") {
             reject(_errors);
           }
 
           if (
-            !!onValidationError !== false &&
+            !!onValidationError &&
             typeof onValidationError === "function"
           ) {
             // tell the developer a validation issue has occurred

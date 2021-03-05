@@ -1,6 +1,16 @@
 import { logError, logWarning } from '../helpers/Logger'
 
 export function submitForm (object, token, form, callbacks, apiOptions = {}, isUpdate){
+  if (!token) {
+    throw new Error(
+      "Unable to authenticate the request. Set the `publicKey` prop or pass a `getToken` callback."
+    );
+  }
+  if (token.startsWith("sk_") === true) {
+    throw new Error(
+      "Unable to call save. You are attempting to use a secret key."
+    );
+  }
   return object.saveWithSecureForm(token, form, callbacks, apiOptions, isUpdate)
 }
 
