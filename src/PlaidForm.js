@@ -1,36 +1,23 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-
-import { submitForm, getToken } from './actions/FormActions'
+import React, { Component } from "react"
+import PropTypes from "prop-types"
+import Account from "./models/Account"
+import Instrument from "./models/Instrument"
+import { submitForm, getToken } from "./actions/FormActions"
 
 import {
   convertAPIError,
   getDefaultValue,
   isInstrumentUpdate,
   getErrorText,
-} from './FormHelpers'
+} from "./FormHelpers"
 
-import { ButtonGroup } from './ButtonGroup'
-import * as SharedStyles from './SharedStyles'
-
-import {
-  TogglePlaid,
-  configureVault,
-  configurePlaid,
-  Field
-} from './index'
-
-import {
-  PropertyHelper,
-} from './helpers/PropHelpers'
-
-import { Instrument, Account } from './models'
-
-import configure from './client/VaultConfig'
-
-import { PaymentMethods } from './PaymentMethod'
-
-import { logError, logInfo } from './helpers/Logger'
+import { ButtonGroup } from "./ButtonGroup"
+import * as SharedStyles from "./SharedStyles"
+import { TogglePlaid, configureVault, configurePlaid, Field } from "./index"
+import { PropertyHelper } from "./helpers/PropHelpers"
+import configure from "./client/VaultConfig"
+import { PaymentMethods } from "./PaymentMethod"
+import { logError, logInfo } from "./helpers/Logger"
 
 export default class PlaidForm extends Component {
   static propTypes = {
@@ -68,7 +55,7 @@ export default class PlaidForm extends Component {
     buttonStylesPrimary: PropTypes.object,
 
     /** Styles for your secondary CTA button.
-    ** Eg. Previous, Cancel buttons. */
+     ** Eg. Previous, Cancel buttons. */
     buttonStylesSecondary: PropTypes.object,
 
     /** Styles for your text links. */
@@ -98,10 +85,10 @@ export default class PlaidForm extends Component {
     /** getToken (accountId) => { access_token } callback function that is called before every call requiring authorization */
     getToken: PropTypes.func,
 
-    /** 
-     * a token that grants permission to interact with the RevOps API 
-     * takes the place of the public key when performing secure operations 
-    */
+    /**
+     * a token that grants permission to interact with the RevOps API
+     * takes the place of the public key when performing secure operations
+     */
     accessToken: PropTypes.string,
 
     children: PropTypes.element,
@@ -110,9 +97,9 @@ export default class PlaidForm extends Component {
     instrument: PropTypes.object,
 
     /**
-     * overrideProps is an object where keys names are ids of the particular 
-     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`. 
-     * Only allowed properties are allowed, see documentation for details. 
+     * overrideProps is an object where keys names are ids of the particular
+     * element in the DOM. `<div id="bank-name" > = "bank-name": {}`.
+     * Only allowed properties are allowed, see documentation for details.
      */
     overrideProps: PropTypes.shape({
       css: PropTypes.object, // CSS in JS
@@ -152,7 +139,6 @@ export default class PlaidForm extends Component {
 
     /** optional prop to disable the network errors */
     showNetworkError: PropTypes.bool,
-
   }
 
   static defaultProps = {
@@ -186,15 +172,12 @@ export default class PlaidForm extends Component {
     const { apiOptions, loadingState } = this.props
     const conf = configure(apiOptions)
 
-    configureVault(
-      conf,
-      this.initialize,
-    )
+    configureVault(conf, this.initialize)
 
     if (apiOptions) {
       configurePlaid(
         conf.env,
-        (plaidLink) => {
+        plaidLink => {
           this.onPlaidLoad(plaidLink)
         },
         this.onPlaidSelect,
@@ -202,18 +185,21 @@ export default class PlaidForm extends Component {
     }
 
     // setup debug information when using `loadingState`
-    if(!!loadingState === true && this.isThisMethod()){
+    if (!!loadingState === true && this.isThisMethod()) {
       this.loadingTimeOut = setTimeout(() => {
-        logError("The form has not loaded after 5 seconds.", apiOptions.loggingLevel)
+        logError(
+          "The form has not loaded after 5 seconds.",
+          apiOptions.loggingLevel,
+        )
         this.onError({
-          "message": "Form not loaded successfully.",
-          "code": "form_timeout"
+          message: "Form not loaded successfully.",
+          code: "form_timeout",
         })
       }, 5000)
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     clearTimeout(this.loadingTimeOut)
   }
 
@@ -221,14 +207,14 @@ export default class PlaidForm extends Component {
     const { method } = this.props
     if (prevProps.method !== method) {
       // clean up the timeout if the previous method was this method and is no longer
-      if(prevProps.method === PaymentMethods.METHOD_PLAID){
+      if (prevProps.method === PaymentMethods.METHOD_PLAID) {
         clearTimeout(this.loadingTimeOut)
       }
       this.setState({ loading: false })
     }
   }
 
-  onPlaidLoad = (plaidLink) => {
+  onPlaidLoad = plaidLink => {
     this.plaidLink = plaidLink
   }
 
@@ -241,14 +227,14 @@ export default class PlaidForm extends Component {
   }
 
   isFormFieldCreated(field) {
-    return (!!this.form === true &&
+    return (
+      !!this.form === true &&
       !!this.form.state === true &&
       !!this.form.state[field] === true
     )
   }
 
   createFormField(fieldSelector, field, defaultValue, options = {}) {
-
     if (this.isFormFieldCreated(field) === false) {
       this.form.field(fieldSelector, {
         name: field,
@@ -263,10 +249,12 @@ export default class PlaidForm extends Component {
   getBankName = () => {
     const { account } = this.props
 
-    let defaultBankName = getDefaultValue(account, 'bankName', '')
+    let defaultBankName = getDefaultValue(account, "bankName", "")
 
-    if (!!this.state.plaidMetadata !== false &&
-      !!this.state.plaidMetadata.institution !== false) {
+    if (
+      !!this.state.plaidMetadata !== false &&
+      !!this.state.plaidMetadata.institution !== false
+    ) {
       defaultBankName = this.state.plaidMetadata.institution.name
     }
 
@@ -274,41 +262,41 @@ export default class PlaidForm extends Component {
   }
 
   initialize = () => {
-    const {
-      createAccount = false,
-    } = this.props
+    const { createAccount = false } = this.props
     if (!!this.form === false) {
       // eslint-disable-next-line
-      this.form = VGSCollect.create(configure(this.props.env).vaultId, state => this.isFinishedLoading(state));
+      this.form = VGSCollect.create(configure(this.props.env).vaultId, state =>
+        this.isFinishedLoading(state),
+      )
     }
 
     this.createFormField(
       "#bank-name-plaid .field-space",
-      createAccount === true ? "instrument." : "" + 'bank_name',
+      createAccount === true ? "instrument." : "" + "bank_name",
       this.getBankName(),
       {
         type: "text",
-        readOnly: 'readOnly',
+        readOnly: "readOnly",
         placeholder: "Name of Bank Institution",
         validations: ["required"],
-        defaultValue: "Plaid Bank"
-      }
+        defaultValue: "Plaid Bank",
+      },
     )
   }
 
-  onComplete = (response) => {
+  onComplete = response => {
     const { onComplete } = this.props
 
     this.setState({
       saving: false,
     })
 
-    if (onComplete !== false && typeof (onComplete) === 'function') {
+    if (onComplete !== false && typeof onComplete === "function") {
       onComplete(response)
     }
   }
 
-  onError = (error) => {
+  onError = error => {
     const { onError } = this.props
     this.setState({
       errors: {
@@ -318,12 +306,12 @@ export default class PlaidForm extends Component {
       saving: false,
     })
 
-    if (onError !== false && typeof (onError) === 'function') {
+    if (onError !== false && typeof onError === "function") {
       onError(error)
     }
   }
 
-  onValidationError = (errors) => {
+  onValidationError = errors => {
     const { onValidationError } = this.props
     this.setState({
       errors: {
@@ -331,7 +319,10 @@ export default class PlaidForm extends Component {
       },
     })
 
-    if (onValidationError !== false && typeof (onValidationError) === 'function') {
+    if (
+      onValidationError !== false &&
+      typeof onValidationError === "function"
+    ) {
       onValidationError(errors)
     }
   }
@@ -355,7 +346,7 @@ export default class PlaidForm extends Component {
         ...account, // add in the account information on the payload
         instrument: {
           ...payload,
-        }
+        },
       })
     }
     return payload
@@ -390,17 +381,17 @@ export default class PlaidForm extends Component {
     if (!!this.props.saveRef === false) {
       submitForm(payload, token, form, callbacks, apiOptions)
         .then(res => {
-          logInfo("Form submitted successfully.", apiOptions.loggingLevel, res);
+          logInfo("Form submitted successfully.", apiOptions.loggingLevel, res)
         })
         .catch(e => {
           logError(
             "There was and issue with the submitting the form.",
             apiOptions.loggingLevel,
-            e
-          );
-        });
+            e,
+          )
+        })
     } else {
-      return submitForm(payload, token, form, callbacks, apiOptions);
+      return submitForm(payload, token, form, callbacks, apiOptions)
     }
   }
 
@@ -416,7 +407,7 @@ export default class PlaidForm extends Component {
 
       clearTimeout(this.loadingTimeOut)
 
-      if (onLoad !== false && typeof (onLoad) === 'function') {
+      if (onLoad !== false && typeof onLoad === "function") {
         onLoad()
       }
     }
@@ -447,9 +438,10 @@ export default class PlaidForm extends Component {
   }
 
   creditCardLink = () => (
-    <a style={this.props.linkStyling}
+    <a
       className="pay-by-cc-link"
-      onClick={this.props.changePaymentMethod}>
+      onClick={this.props.changePaymentMethod}
+      style={this.props.linkStyling}>
       Pay by credit card instead
     </a>
   )
@@ -467,10 +459,7 @@ export default class PlaidForm extends Component {
   }
 
   getACHLink = () => {
-    const {
-      showACHLink = true,
-      achLink = this.achLink(),
-    } = this.props
+    const { showACHLink = true, achLink = this.achLink() } = this.props
 
     if (showACHLink === false) {
       return null
@@ -480,14 +469,14 @@ export default class PlaidForm extends Component {
 
   achLink = () => (
     <TogglePlaid
+      plaidSelected={true}
       style={this.props.linkStyling}
       togglePlaidHandler={this.props.togglePlaidHandler}
-      plaidSelected={true}
     />
   )
 
   render() {
-    const { errors, } = this.state
+    const { errors } = this.state
     const {
       onLast,
       onCancel,
@@ -503,62 +492,65 @@ export default class PlaidForm extends Component {
 
     return (
       <React.Fragment>
-        {
-          isUpdate === false &&
+        {isUpdate === false &&
           this.state.loading === true &&
-          this.isThisMethod() &&
-          <div className="loader-holder">
-            {this.props.loadingState}
-          </div>
-        }
+          this.isThisMethod() && (
+            <div className="loader-holder">{this.props.loadingState}</div>
+          )}
         <section style={this.getSectionDisplayProps()}>
           {plaidLabel}
           {this.getCreditCardLink()}
           <button
             className="btn-primary centered single"
-            style={this.props.buttonStylesPrimary}
-            onClick={() => this.openPlaid()}>
+            onClick={() => this.openPlaid()}
+            style={this.props.buttonStylesPrimary}>
             Sync your bank account
-        </button>
-          {!!this.state.plaidMetadata !== false &&
-            <div id="plaid-form" >
+          </button>
+          {!!this.state.plaidMetadata !== false && (
+            <div id="plaid-form">
               <div className="ui info message">
                 <div className="content">
                   <i aria-hidden="true" className="university icon"></i>
-                  <span>{this.state.plaidMetadata.account.name} XXXXXXXXX {this.state.plaidMetadata.account.mask}</span>&nbsp;
-                <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
-              </div>
+                  <span>
+                    {this.state.plaidMetadata.account.name} XXXXXXXXX{" "}
+                    {this.state.plaidMetadata.account.mask}
+                  </span>
+                  &nbsp;
+                  <span>{this.state.plaidMetadata.account.subtype}</span>&nbsp;
+                </div>
               </div>
             </div>
-          }
+          )}
 
-          <div style={{ display: 'none' }}>
+          <div style={{ display: "none" }}>
             <Field
-              id="bank-name-plaid"
-              name="bankName"
-              label="Bank Name"
-              defaultValue={getDefaultValue(instrument, 'bankName', '')}
-              showInlineError={showInlineError}
+              defaultValue={getDefaultValue(instrument, "bankName", "")}
               errors={errors}
+              id="bank-name-plaid"
+              label="Bank Name"
+              name="bankName"
+              showInlineError={showInlineError}
               {...propHelper.overrideFieldProps("bank-name")}
             />
           </div>
           {this.getACHLink()}
           <div className="ui clearing divider"></div>
-          {showNetworkError === true && 
-            <span className="network-error">{getErrorText('', 'networkError', errors)}</span>
-          }
-          {!!this.props.saveRef === false &&
+          {showNetworkError === true && (
+            <span className="network-error">
+              {getErrorText("", "networkError", errors)}
+            </span>
+          )}
+          {!!this.props.saveRef === false && (
             <ButtonGroup
-              loading={this.state.loading}
-              onSubmit={this.onSubmit}
-              onLast={onLast}
-              onCancel={onCancel}
-              finalStep={true}
               buttonStylesPrimary={this.props.buttonStylesPrimary}
               buttonStylesSecondary={this.props.buttonStylesSecondary}
+              finalStep={true}
+              loading={this.state.loading}
+              onCancel={onCancel}
+              onLast={onLast}
+              onSubmit={this.onSubmit}
             />
-          }
+          )}
         </section>
       </React.Fragment>
     )

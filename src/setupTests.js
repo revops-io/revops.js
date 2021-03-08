@@ -1,9 +1,9 @@
-import { mount, render, shallow, configure } from 'enzyme'
-import chai, { expect } from 'chai'
-import 'raf/polyfill'
-import Adapter from 'enzyme-adapter-react-16'
-import sinon from 'sinon'
-import sinonChai from 'sinon-chai'
+import { mount, render, shallow, configure } from "enzyme"
+import chai, { expect } from "chai"
+import "raf/polyfill"
+import Adapter from "enzyme-adapter-react-16"
+import sinon from "sinon"
+import sinonChai from "sinon-chai"
 chai.use(sinonChai)
 
 configure({ adapter: new Adapter() })
