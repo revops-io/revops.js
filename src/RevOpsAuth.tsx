@@ -1,6 +1,7 @@
 import React, { Component, ReactNode } from "react"
 import { makeAccount } from "./actions/AccountActions"
 import { getToken } from "./actions/FormActions"
+import Account from "./models/Account"
 
 interface Props {
   account: Account
