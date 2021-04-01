@@ -514,10 +514,9 @@ export default class AchForm extends Component {
   }
 
   finishedLoading = (formState) => {
-    const { onLoad } = this.props
-
-    if (this.state.loading === true && this.isThisMethod()) {
-      if (Object.keys(formState).length === NUMBER_OF_FIELDS) {
+    const { onLoad, overrideProps } = this.props
+    if (!!this.state.loading && this.isThisMethod()) {
+      if (Object.keys(formState).length === getExpectedFieldCount(overrideProps)) {
         this.setState({ loading: false })
 
         clearTimeout(this.loadingTimeOut)
@@ -686,3 +685,9 @@ export default class AchForm extends Component {
     )
   }
 }
+
+const getExpectedFieldCount = ( overrideProps = {}) => {
+  const hidePostalCode =
+    !!(overrideProps["bank-postalcode"] && overrideProps["bank-postalcode"].hide)
+  return hidePostalCode ? NUMBER_OF_FIELDS - 1 : NUMBER_OF_FIELDS;
+};
