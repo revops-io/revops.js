@@ -235,6 +235,7 @@ export default class CreditCardForm extends Component {
         defaultValue: getDefaultValue(instrument, 'holderName', ''),
         placeholder: "Florence Izote",
         validations: ["required"],
+        autoComplete: "cc-name",
         css: this.props.inputStyles,
         ...propHelper.overrideCollectProps('card-name'),
       })
@@ -249,7 +250,7 @@ export default class CreditCardForm extends Component {
         placeholder: "Card number",
         validations: ["required", "validCardNumber"],
         showCardIcon: true,
-        autoComplete: 'card-number',
+        autoComplete: "cc-number",
         css: this.props.inputStyles,
         ...propHelper.overrideCollectProps('card-number', ["showCardIcon"]),
       })
@@ -263,6 +264,7 @@ export default class CreditCardForm extends Component {
         defaultValue: getDefaultValue(instrument, 'cardCvv', ''),
         placeholder: "311",
         validations: ["required", "validCardSecurityCode"],
+        autoComplete: "cc-csc",
         css: this.props.inputStyles,
         ...propHelper.overrideCollectProps('card-cvc'),
       })
@@ -282,6 +284,7 @@ export default class CreditCardForm extends Component {
           })
         ],
         validations: ["required", "validCardExpirationDate"],
+        autoComplete: "cc-exp",
         css: this.props.inputStyles,
         ...propHelper.overrideCollectProps('card-expdate'),
       })
