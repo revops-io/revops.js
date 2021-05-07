@@ -7,7 +7,6 @@ import { makeAccount } from './actions/AccountActions'
 
 import {
   CreditCardForm,
-  PlaidForm,
   AchForm,
 } from './index'
 
@@ -25,7 +24,6 @@ import _ from 'lodash'
 export const PaymentMethods = {
   METHOD_ACH: 'ach',
   METHOD_CARD: 'credit-card',
-  METHOD_PLAID: 'plaid',
 }
 
 export default class PaymentMethod extends Component {
@@ -84,9 +82,6 @@ export default class PaymentMethod extends Component {
 
     /** A callable function to fire when an validation error occurs on the form. */
     onValidationError: PropTypes.func,
-
-    /** Toggle for showing/hiding plaid info */
-    togglePlaidHandler: PropTypes.func,
 
     /** Optional reference to allow your own save buttons */
     saveRef: PropTypes.shape({ current: PropTypes.any }),
@@ -329,30 +324,14 @@ export default class PaymentMethod extends Component {
             <div id="bank-info">
               <AchForm
                 ref={method === PaymentMethods.METHOD_ACH ? this.props.saveRef : null}
-                hideTogglePlaid={(isUpdate === false && this.isMethodEnabled(PaymentMethods.METHOD_PLAID)) ?
-                  false : true
-                }
                 changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
                 showCardLink={isUpdate === false && this.isMethodEnabled(PaymentMethods.METHOD_CARD)}
-                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_PLAID)}
                 {...subProperties}
               >
                 {renderAchForms}
               </AchForm>
             </div>
           }
-          {
-            this.isMethodEnabled(PaymentMethods.METHOD_PLAID) &&
-            <div id="bank-info">
-              <PlaidForm
-                ref={method === PaymentMethods.METHOD_PLAID ? this.props.saveRef : null}
-                changePaymentMethod={() => this.changeMethod(PaymentMethods.METHOD_CARD)}
-                togglePlaidHandler={() => this.changeMethod(PaymentMethods.METHOD_ACH)}
-                {...subProperties}
-              />
-            </div>
-          }
-
           {method === false && <div className="ui clearing divider"></div>}
           {method === false &&
             <ButtonGroup
