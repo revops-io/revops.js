@@ -148,6 +148,9 @@ export default class CreditCardForm extends Component {
     /** optional prop to disable the network errors */
     showNetworkError: PropTypes.bool,
 
+    /** optional prop to provide custom postal code validations */
+    postalCodeValidations: PropTypes.arrayOf(PropTypes.string),
+
   }
 
   static defaultProps = {
@@ -218,6 +221,7 @@ export default class CreditCardForm extends Component {
       createAccount = false,
       inputStyles,
       overrideProps = {},
+      postalCodeValidations = null,
     } = this.props
     let conf = configure(this.props.apiOptions)
 
@@ -292,12 +296,12 @@ export default class CreditCardForm extends Component {
 
     this.initForm('card-postalcode', () =>
       form.field("#card-postalcode .field-space", {
-        type: "zip-code",
+        type: "text",
         errorColor: this.props.errorColor,
         defaultValue: getDefaultValue(instrument, 'postalCode', ''),
         name: prefix + 'postal_code',
         placeholder: "Postal code",
-        validations: ["required"],
+        validations: postalCodeValidations ? postalCodeValidations : ["required"],
         css: this.props.inputStyles,
         ...propHelper.overrideCollectProps('card-postalcode'),
       })
