@@ -296,7 +296,7 @@ export default class CreditCardForm extends Component {
 
     this.initForm('card-postalcode', () =>
       form.field("#card-postalcode .field-space", {
-        type: postalCodeValidations ? "text" : "zip-code",
+        type: "text",
         errorColor: this.props.errorColor,
         defaultValue: getDefaultValue(instrument, 'postalCode', ''),
         name: prefix + 'postal_code',
