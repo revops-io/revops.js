@@ -161,8 +161,8 @@ describe('The CreditCardForm Component', () => {
   })
 
   it('should not set a timeout', () => {
-    const mockProps = generateMockProps({ method: "plaid", loadingState: <h1>Test</h1> })
-    const wrapper = shallow(<CreditCardForm  {...mockProps} />)
+    const mockProps = generateMockProps({ method: "ach", loadingState: <h1>Test</h1> })
+    shallow(<CreditCardForm  {...mockProps} />)
 
     expect(setTimeout.mock.calls.length).to.equal(0);
   })

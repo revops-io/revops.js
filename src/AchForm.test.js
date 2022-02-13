@@ -21,12 +21,10 @@ describe('The AchForm Component', () => {
         billingPreferences: {},
         saveWithSecureForm: jest.fn(),
       },
-      hideTogglePlaid: false,
       showCardLink: true,
       instrument: {
         saveWithSecureForm: jest.fn(),
       },
-      togglePlaidHandler: jest.fn(),
       ...props,
     }
   }
@@ -113,40 +111,6 @@ describe('The AchForm Component', () => {
 
   })
 
-  it('Should get the default Plaid link', () => {
-    const mockProps = generateMockProps({})
-    const wrapper = shallow(<AchForm  {...mockProps} />)
-
-    expect(wrapper.find('TogglePlaid').length).to.equal(1)
-  })
-
-  it('Should return the customized Plaid link ', () => {
-    const mockProps = generateMockProps({ plaidLink: <p></p> })
-    const wrapper = shallow(<AchForm  {...mockProps} />)
-
-    const link = wrapper.instance().getPlaidLink()
-    expect(link.type).to.equal('p')
-
-    wrapper.setProps({ plaidLink: "" })
-    expect(wrapper.instance().getPlaidLink()).to.equal("")
-  })
-
-  it('Should NOT return a Plaid link ', () => {
-    const mockProps = generateMockProps({ hideTogglePlaid: true })
-    const wrapper = shallow(<AchForm  {...mockProps} />)
-
-    expect(wrapper.instance().getPlaidLink()).to.equal(null)
-
-    wrapper.setProps({ plaidLink: <p></p>, hideTogglePlaid: true  })
-    expect(wrapper.instance().getPlaidLink()).to.equal(null)
-
-    wrapper.setProps({ plaidLink: null, hideTogglePlaid: false })
-    expect(wrapper.instance().getPlaidLink()).to.equal(null)
-
-    wrapper.setProps({ plaidLink: false, hideTogglePlaid: false })
-    expect(wrapper.instance().getPlaidLink()).to.equal(false)
-  })
-
   it('Should return a custom label', () => {
     const mockProps = generateMockProps({ achLabel: <p className="custom-label"></p> })
     const wrapper = shallow(<AchForm  {...mockProps} />)
@@ -165,7 +129,7 @@ describe('The AchForm Component', () => {
     const wrapper = shallow(<AchForm  {...mockProps} />)
 
     expect(wrapper.state().loading).to.equal(true)
-    wrapper.setProps({method: "plaid"})
+    wrapper.setProps({method: "credit-card"})
     expect(wrapper.state().loading).to.equal(false)
   })
 
@@ -174,13 +138,13 @@ describe('The AchForm Component', () => {
     const wrapper = shallow(<AchForm  {...mockProps} />)
 
     expect(setTimeout.mock.calls.length).to.equal(1);
-    wrapper.setProps({method: "plaid"})
+    wrapper.setProps({method: "credit-card"})
     expect(clearTimeout.mock.calls.length).to.equal(1);
   })
 
   it('should not set a timeout', () => {
-    const mockProps = generateMockProps({ method: "plaid", loadingState: <h1>Test</h1> })
-    const wrapper = shallow(<AchForm  {...mockProps} />)
+    const mockProps = generateMockProps({ method: "ach", loadingState: false})
+    shallow(<AchForm  {...mockProps} />)
 
     expect(setTimeout.mock.calls.length).to.equal(0);
   })

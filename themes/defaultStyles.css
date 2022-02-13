@@ -40,7 +40,7 @@ a.pay-by-cc-link:hover,
 
 /*
  * -----------------------
- * Fields (Card, ACH, Plaid)
+ * Fields (Card, ACH)
  * ----------------------- */
 
 .field-space iframe {
@@ -63,8 +63,7 @@ a.pay-by-cc-link:hover,
 
 #signup-form .field > label,
 #card-form .field > label,
-#ach-form .field > label,
-#plaid-form .field > label {
+#ach-form .field > label {
   color: #777582;
   font-weight: bold;
   margin-top: 1rem;
@@ -103,7 +102,7 @@ label.h3:first-child {
 #card-cvc.card-cvc-container,
 #card-postalcode.card-postalcode-container {
   width: 30%;
-  display: inline-block;
+  display: inline-grid;
 }
 #card-expdate.card-expdate-container,
 #card-cvc.card-cvc-container {
@@ -126,11 +125,6 @@ label.h3 {}
 #bank-account-country.bank-account-country-container {
   display: inline-block;
 }
-
-/*
- * -----------------------
- * Plaid Form
- * -----------------------*/
 
 /*
  * -----------------------

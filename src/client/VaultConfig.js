@@ -5,9 +5,6 @@ const production = () => ({
   name: ENV_PRODUCTION,
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
   revopsBaseUrl: 'https://vault.revops.io',
-  plaidUrl: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
-  plaidEnvironment: ENV_PRODUCTION, // production when we are ready
-  plaidKey: 'c648203cbd9ce4b7ea39f26c61f115',
   vaultId: 'tnt2w1xznia',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-production'
@@ -17,9 +14,6 @@ const sandbox = () => ({
   name: ENV_SANDBOX,
   vaultCollectUrl: 'https://js.verygoodvault.com/vgs-collect/1/ACvYkoDARh7Ajf3DhktqckgY.js',
   revopsBaseUrl: 'https://vault.revops.io',
-  plaidUrl: 'https://cdn.plaid.com/link/v2/stable/link-initialize.js',
-  plaidEnvironment: ENV_SANDBOX, // production when we are ready
-  plaidKey: 'c648203cbd9ce4b7ea39f26c61f115',
   vaultId: 'tnt2w1xznia',
   baseUrl: `https://${document.location.host}`,
   serviceName: 'revops-js-production'

@@ -14,7 +14,6 @@ import * as SharedStyles from './SharedStyles'
 
 import {
   Field,
-  TogglePlaid,
   configureVault,
 } from './index'
 
@@ -58,12 +57,6 @@ export default class AchForm extends Component {
 
     /** A callable function to fire when an validation error occurs on the form. */
     onValidationError: PropTypes.func,
-
-    /** Toggle for showing/hiding plaid info */
-    togglePlaidHandler: PropTypes.func,
-
-    /** A boolean to hide the plaid toggler, it defaults to hidden. */
-    hideTogglePlaid: PropTypes.bool,
 
     /** A boolean to show/hide change to credit card link. */
     showCardLink: PropTypes.bool,
@@ -151,15 +144,11 @@ export default class AchForm extends Component {
     /** Customized link that switches to the credit card payment method */
     creditCardLink: PropTypes.node,
 
-    /** Customized link that switches to the Plaid payment method */
-    plaidLink: PropTypes.node,
-
     /** optional prop to disable the network errors */
     showNetworkError: PropTypes.bool,
   }
 
   static defaultProps = {
-    hideTogglePlaid: true,
     showCardLink: false,
     inputStyles: SharedStyles.inputStyles,
     sectionStyle: SharedStyles.sectionStyle,
@@ -488,25 +477,6 @@ export default class AchForm extends Component {
     return creditCardLink
   }
 
-  getPlaidLink = () => {
-    const {
-      hideTogglePlaid = false,
-      plaidLink = this.plaidLink(),
-    } = this.props
-
-    if (hideTogglePlaid === true) {
-      return null
-    }
-    return plaidLink
-  }
-
-  plaidLink = () => (
-    <TogglePlaid style={this.props.linkStyling} togglePlaidHandler={this.props.togglePlaidHandler} />
-  )
-
-  openPlaid = () => {
-    this.plaidLink.open()
-  }
 
   isThisMethod = () => {
     const { method } = this.props
@@ -669,7 +639,6 @@ export default class AchForm extends Component {
           {showNetworkError === true &&
             <span className="network-error">{getErrorText('', 'networkError', errors)}</span>
           }
-          {this.getPlaidLink()}
           {!!this.props.saveRef === false &&
             <ButtonGroup
               onLast={onLast}
